@@ -25,3 +25,9 @@ puts f.class
 
 g = test_class 'foobar'
 puts g.class
+
+class Blubb; end
+Wright::Resource.register Blubb
+blubb do |b|
+  puts b
+end
