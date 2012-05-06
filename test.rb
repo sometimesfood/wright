@@ -22,3 +22,6 @@ f = test_class "hello" do |t|
   puts t
 end
 puts f.class
+
+g = test_class 'foobar'
+puts g.class

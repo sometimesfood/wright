@@ -13,7 +13,7 @@ module Wright
     private
     def self.yield_resource(resource_class, name, &block)
       r = resource_class.new(name)
-      yield(r)
+      yield(r) if block_given?
       r
     end
   end
