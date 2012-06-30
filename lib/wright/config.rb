@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Wright
   class Config
     @config_hash = {}
