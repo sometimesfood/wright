@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby1.9.1
 
-$LOAD_PATH.unshift File.dirname(__FILE__)
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'lib')
 
 require 'wright/resource'
 require 'wright/resources/package'
+
 include Wright::Resource
 
 # use an existing resource
