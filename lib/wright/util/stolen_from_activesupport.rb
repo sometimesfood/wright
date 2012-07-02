@@ -44,5 +44,77 @@ module Wright
         lower_case_and_underscored_word.to_s[0].chr.downcase + camelize(lower_case_and_underscored_word)[1..-1]
       end
     end
+
+    # Tries to find a constant with the name specified in the argument string:
+    #
+    #   "Module".constantize     # => Module
+    #   "Test::Unit".constantize # => Test::Unit
+    #
+    # The name is assumed to be the one of a top-level constant, no matter whether
+    # it starts with "::" or not. No lexical context is taken into account:
+    #
+    #   C = 'outside'
+    #   module M
+    #     C = 'inside'
+    #     C               # => 'inside'
+    #     "C".constantize # => 'outside', same as ::C
+    #   end
+    #
+    # NameError is raised when the name is not in CamelCase or the constant is
+    # unknown.
+    def self.constantize(camel_cased_word)
+      names = camel_cased_word.split('::')
+      names.shift if names.empty? || names.first.empty?
+
+      constant = Object
+      names.each do |name|
+        constant = constant.const_defined?(name, false) ? constant.const_get(name) : constant.const_missing(name)
+      end
+      constant
+    end
+
+    # Tries to find a constant with the name specified in the argument string:
+    #
+    #   "Module".safe_constantize     # => Module
+    #   "Test::Unit".safe_constantize # => Test::Unit
+    #
+    # The name is assumed to be the one of a top-level constant, no matter whether
+    # it starts with "::" or not. No lexical context is taken into account:
+    #
+    #   C = 'outside'
+    #   module M
+    #     C = 'inside'
+    #     C                    # => 'inside'
+    #     "C".safe_constantize # => 'outside', same as ::C
+    #   end
+    #
+    # nil is returned when the name is not in CamelCase or the constant (or part of it) is
+    # unknown.
+    #
+    #   "blargle".safe_constantize  # => nil
+    #   "UnknownModule".safe_constantize  # => nil
+    #   "UnknownModule::Foo::Bar".safe_constantize  # => nil
+    #
+    def self.safe_constantize(camel_cased_word)
+      begin
+        constantize(camel_cased_word)
+      rescue NameError => e
+        raise unless e.message =~ /(uninitialized constant|wrong constant name) #{const_regexp(camel_cased_word)}$/ ||
+          e.name.to_s == camel_cased_word.to_s
+      rescue ArgumentError => e
+        raise unless e.message =~ /not missing constant #{const_regexp(camel_cased_word)}\!$/
+      end
+    end
+
+    # Mount a regular expression that will match part by part of the constant.
+    # For instance, Foo::Bar::Baz will generate Foo(::Bar(::Baz)?)?
+    def self.const_regexp(camel_cased_word) #:nodoc:
+      parts = camel_cased_word.split("::")
+      last  = parts.pop
+
+      parts.reverse.inject(last) do |acc, part|
+        part.empty? ? acc : "#{part}(::#{acc})?"
+      end
+    end
   end
 end
