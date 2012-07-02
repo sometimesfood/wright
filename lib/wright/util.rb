@@ -7,7 +7,7 @@ module Wright
     end
 
     def self.filename_to_classname(filename)
-      camelize(filename.chomp('.rb'))
+      camelize(filename.chomp('.rb')).chomp('::')
     end
   end
 end

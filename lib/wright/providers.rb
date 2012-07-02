@@ -1,12 +1,6 @@
-require 'wright/util'
+require 'wright/util/recursive_autoloader'
 
-class Wright::Providers
+module Wright::Providers
   PROVIDER_DIR = File.expand_path('providers', File.dirname(__FILE__))
-
-  Dir.chdir(PROVIDER_DIR) do
-    Dir['*.rb'].each do |filename|
-      classname = "#{Wright::Util.filename_to_classname(filename)}"
-      autoload classname, File.expand_path(filename)
-    end
-  end
+  Wright::Util::RecursiveAutoloader.add_autoloads(PROVIDER_DIR, self.name)
 end
