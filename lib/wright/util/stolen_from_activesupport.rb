@@ -101,8 +101,6 @@ module Wright
       rescue NameError => e
         raise unless e.message =~ /(uninitialized constant|wrong constant name) #{const_regexp(camel_cased_word)}$/ ||
           e.name.to_s == camel_cased_word.to_s
-      rescue ArgumentError => e
-        raise unless e.message =~ /not missing constant #{const_regexp(camel_cased_word)}\!$/
       end
     end
 
