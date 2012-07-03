@@ -26,7 +26,10 @@ module Wright
         unless class_exists(parent_class)
           raise ArgumentError.new("Can't resolve parent_class #{parent_class}")
         end
+        add_autoloads_unsafe(directory, parent_class)
+      end
 
+      def self.add_autoloads_unsafe(directory, parent_class)
         Dir.chdir(directory) do
           add_autoloads_for_current_dir(parent_class)
           Dir['*/'].each do |dir|
@@ -34,10 +37,15 @@ module Wright
             ensure_subclass_exists(parent_class, subclass)
             new_parent = Wright::Util.filename_to_classname(
                                            File.join(parent_class, dir))
-            add_autoloads(dir, new_parent)
+            add_autoloads_unsafe(dir, new_parent)
           end
         end
       end
+
+      private_class_method :add_autoloads_for_current_dir
+      private_class_method :ensure_subclass_exists
+      private_class_method :add_autoloads_unsafe
+      private_class_method :class_exists
     end
   end
 end
