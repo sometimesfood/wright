@@ -13,4 +13,6 @@ Gem::Specification.new do |gem|
   gem.name          = 'wright'
   gem.require_paths = ['lib']
   gem.version       = Wright::VERSION
+
+  gem.add_development_dependency 'simplecov'
 end
