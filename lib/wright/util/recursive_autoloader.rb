@@ -12,7 +12,8 @@ module Wright
       end
 
       def self.ensure_subclass_exists(classname, subclass)
-        return true if Wright::Util.safe_constantize(classname)
+        complete_classname = "#{classname}::#{subclass}"
+        return true if class_exists(complete_classname)
         klass = Wright::Util.constantize(classname)
         klass.const_set(subclass, Class.new)
       end
