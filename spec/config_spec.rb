@@ -2,18 +2,29 @@ require_relative 'spec_helper'
 
 require 'wright/config'
 
+class Wright::Config
+  def self.clear
+    @config_hash.clear
+  end
+end
+
 describe Wright::Config do
   before(:each) do
-    # duplicate Wright::Config for testing
-    @config = Wright::Config.dup
+    Wright::Config.clear
   end
 
   it 'should behave like a Hash' do
-    @config.size.must_equal 0
-    @config[:foo] = :bar
-    @config[:bar] = :baz
-    @config[:foo].must_equal :bar
-    @config[:bar].must_equal :baz
-    @config.size.must_equal 2
+    Wright::Config.size.must_equal 0
+    Wright::Config[:foo] = :bar
+    Wright::Config[:bar] = :baz
+    Wright::Config[:foo].must_equal :bar
+    Wright::Config[:bar].must_equal :baz
+    Wright::Config.size.must_equal 2
+  end
+
+  it 'should handle nested keys' do
+    Wright::Config[:foo] = { :bar => :baz }
+    Wright::Config.has_nested_key?(:foo, :bar).must_equal true
+    Wright::Config.has_nested_key?(:foo, :bar, :qux).must_equal false
   end
 end
