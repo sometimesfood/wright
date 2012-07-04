@@ -26,5 +26,7 @@ describe Wright::Config do
     Wright::Config[:foo] = { :bar => :baz }
     Wright::Config.has_nested_key?(:foo, :bar).must_equal true
     Wright::Config.has_nested_key?(:foo, :bar, :qux).must_equal false
+    Wright::Config.has_nested_key?(:nonexistent).must_equal false
+    Wright::Config.has_nested_key?(:nonexistent1, :nonexistent2).must_equal false
   end
 end
