@@ -9,17 +9,27 @@ module Wright
     end
 
     private
+    def resource_class
+      Util.camelize(@resource_name)
+    end
+
     def provider_name
       if Wright::Config.has_nested_key?(:resources, @resource_name, :provider)
         Wright::Config[:resources][@resource_name][:provider]
       else
-        "Wright::Providers::#{Util.camelize(@resource_name)}"
+        "Wright::Providers::#{resource_class}"
       end
     end
 
     def provider_for_resource
       klass = Util.safe_constantize(provider_name)
-      klass.new unless klass.nil?
+      if klass
+        klass.new
+      else
+        # TODO: use a proper logger for this
+        puts "Warning: Could not find a provider for resource #{resource_class}"
+        nil
+      end
     end
   end
 end
