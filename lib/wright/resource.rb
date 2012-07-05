@@ -14,6 +14,9 @@ module Wright
     def self.yield_resource(resource_class, name, &block)
       r = resource_class.new(name)
       yield(r) if block_given?
+      if r.respond_to?(:default_action) && r.default_action.respond_to?(:call)
+        r.default_action.call
+      end
       r
     end
   end
