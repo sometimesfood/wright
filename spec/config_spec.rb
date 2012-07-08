@@ -2,12 +2,6 @@ require_relative 'spec_helper'
 
 require 'wright/config'
 
-class Wright::Config
-  def self.clear
-    @config_hash.clear
-  end
-end
-
 describe Wright::Config do
   before(:each) do
     Wright::Config.clear

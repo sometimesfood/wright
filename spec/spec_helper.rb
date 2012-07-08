@@ -9,5 +9,14 @@ begin
 rescue LoadError
 end
 
+# extend Wright::Config to pass on clear for tests
+module Wright
+  class Config
+    def self.clear
+      @config_hash.clear
+    end
+  end
+end
+
 require 'minitest/spec'
 require 'minitest/autorun'
