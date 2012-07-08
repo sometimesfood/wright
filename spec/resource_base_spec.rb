@@ -2,29 +2,23 @@ require_relative 'spec_helper'
 
 require 'wright/resource_base'
 
-COMPLAINT = 'I was initialized and all I got was this lousy'
-THANKS = 'Great souvenir, thanks!'
+# add provider attribute reader for tests
+class Wright::ResourceBase
+  attr_reader :provider
+end
 
 module Wright
   module Providers
-    class Souvenir
-      def initialize(resource)
-        souvenir = resource.name
-        @complaint = "#{COMPLAINT} #{souvenir}."
-      end
-      attr_reader :complaint
-    end
-
-    class AlternateSouvenir
+    class Sample
       def initialize(resource); end
-      def complaint; THANKS; end
+    end
+    class AlternateSample
+      def initialize(resource); end
     end
   end
 end
 
-class Souvenir < Wright::ResourceBase
-  def complaint; @provider.complaint; end
-end
+class Sample < Wright::ResourceBase; end
 
 describe Wright::ResourceBase do
   before(:each) do
@@ -32,22 +26,21 @@ describe Wright::ResourceBase do
   end
 
   it 'should retrieve a provider for a resource' do
-    souvenir = :tshirt
-    complaint = "#{COMPLAINT} #{souvenir}."
-    Souvenir.new(souvenir).complaint.must_equal complaint
+    provider_class = Wright::Providers::Sample
+    Sample.new(:name).provider.must_be_kind_of provider_class
   end
 
   it 'should retrieve a provider for a resource listed in the config' do
-    # instantiating the Souvenir resource without config yields the
-    # Souvenir provider
-    souvenir = :mug
-    Souvenir.new(souvenir).complaint.must_equal "#{COMPLAINT} #{souvenir}."
+    # instantiating the Sample resource without any config should
+    # yield the Sample provider
+    provider_class = Wright::Providers::Sample
+    Sample.new(:name).provider.must_be_kind_of provider_class
 
-    # when the provider for Souvenir resources is set to
-    # AlternateSouvenir, AlternateSouvenir should be instantiated
-    alternate = 'Wright::Providers::AlternateSouvenir'
-    Wright::Config[:resources] = { souvenir: {provider: alternate } }
-    Souvenir.new(:something).complaint.must_equal THANKS
+    # when the provider for Sample resources is set to
+    # AlternateSample, AlternateSample should be instantiated
+    alternate = Wright::Providers::AlternateSample
+    Wright::Config[:resources] = { sample: {provider: alternate.name } }
+    Sample.new(:name).provider.must_be_kind_of alternate
   end
 
   it 'should display warnings for nonexistent providers' do
