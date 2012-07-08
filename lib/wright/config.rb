@@ -17,5 +17,13 @@ module Wright
       end
       last_hash.respond_to?(:has_key?) && last_hash.has_key?(last_key)
     end
+
+    def self.nested_value(*path)
+      if has_nested_key?(*path)
+        path.inject(@config_hash) { |hash, key| hash[key] }
+      else
+        nil
+      end
+    end
   end
 end
