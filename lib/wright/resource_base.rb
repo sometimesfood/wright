@@ -1,5 +1,6 @@
 require 'wright/config'
 require 'wright/util'
+require 'wright/logger'
 
 module Wright
   class ResourceBase
@@ -26,8 +27,8 @@ module Wright
       if klass
         klass.new
       else
-        # TODO: use a proper logger for this
-        puts "Warning: Could not find a provider for resource #{resource_class}"
+        warning = "Could not find a provider for resource #{resource_class}"
+        Wright.log.warn warning
         nil
       end
     end

@@ -18,5 +18,10 @@ module Wright
   end
 end
 
+def reset_logger
+  Wright::log = Wright::Logger.new
+  Wright::log.formatter = Wright::Logger::Formatter.new
+end
+
 require 'minitest/spec'
 require 'minitest/autorun'

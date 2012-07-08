@@ -48,7 +48,10 @@ describe Wright::ResourceBase do
 
   it 'should display warnings for nonexistent providers' do
     class NonExistent < Wright::ResourceBase; end
-    output = "Warning: Could not find a provider for resource NonExistent\n"
-    proc { NonExistent.new(:something) }.must_output(output)
+    output = "WARN: Could not find a provider for resource NonExistent\n"
+    proc do
+      reset_logger
+      NonExistent.new(:something)
+    end.must_output(output)
   end
 end
