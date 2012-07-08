@@ -2,21 +2,28 @@ require_relative 'spec_helper'
 
 require 'wright/resource_base'
 
+COMPLAINT = 'I was initialized and all I got was this lousy'
+THANKS = 'Great souvenir, thanks!'
+
 module Wright
   module Providers
-    class FooBar
-      OUTPUT = 'I was initialized and all I got was this lousy T-shirt.'
-      def initialize
-        puts OUTPUT
+    class Souvenir
+      def initialize(resource)
+        souvenir = resource.name
+        @complaint = "#{COMPLAINT} #{souvenir}."
       end
+      attr_reader :complaint
+    end
+
+    class AlternateSouvenir
+      def initialize(resource); end
+      def complaint; THANKS; end
     end
   end
 end
 
-class Wright::Providers::Broken
-  def initialize
-    raise RuntimeError.new("I'm broken and should not be instantiated.")
-  end
+class Souvenir < Wright::ResourceBase
+  def complaint; @provider.complaint; end
 end
 
 describe Wright::ResourceBase do
@@ -25,25 +32,22 @@ describe Wright::ResourceBase do
   end
 
   it 'should retrieve a provider for a resource' do
-    class FooBar < Wright::ResourceBase; end
-
-    output = "#{Wright::Providers::FooBar::OUTPUT}\n"
-    proc { FooBar.new(:something) }.must_output(output)
+    souvenir = :tshirt
+    complaint = "#{COMPLAINT} #{souvenir}."
+    Souvenir.new(souvenir).complaint.must_equal complaint
   end
 
   it 'should retrieve a provider for a resource listed in the config' do
-    class Broken < Wright::ResourceBase; end
+    # instantiating the Souvenir resource without config yields the
+    # Souvenir provider
+    souvenir = :mug
+    Souvenir.new(souvenir).complaint.must_equal "#{COMPLAINT} #{souvenir}."
 
-    # instantiating the Broken resource without config yields the
-    # Broken provider
-    proc { Broken.new(:something) }.must_raise(RuntimeError)
-
-    # when the provider for Broken resources is set to FooBar,
-    # FooBar should be instantiated
-    foobar = 'Wright::Providers::FooBar'
-    Wright::Config[:resources] = { broken: {provider: foobar } }
-    output = "#{Wright::Providers::FooBar::OUTPUT}\n"
-    proc { Broken.new(:something) }.must_output(output)
+    # when the provider for Souvenir resources is set to
+    # AlternateSouvenir, AlternateSouvenir should be instantiated
+    alternate = 'Wright::Providers::AlternateSouvenir'
+    Wright::Config[:resources] = { souvenir: {provider: alternate } }
+    Souvenir.new(:something).complaint.must_equal THANKS
   end
 
   it 'should display warnings for nonexistent providers' do

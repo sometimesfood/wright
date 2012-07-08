@@ -5,9 +5,11 @@ require 'wright/logger'
 module Wright
   class ResourceBase
     def initialize(name)
+      @name = name
       @resource_name = Util.class_to_resource_name(self.class).to_sym
       @provider = provider_for_resource
     end
+    attr_reader :name
 
     private
     def resource_class
@@ -25,7 +27,7 @@ module Wright
     def provider_for_resource
       klass = Util.safe_constantize(provider_name)
       if klass
-        klass.new
+        klass.new(self)
       else
         warning = "Could not find a provider for resource #{resource_class}"
         Wright.log.warn warning
