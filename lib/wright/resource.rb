@@ -3,7 +3,7 @@ require 'wright/util'
 require 'wright/logger'
 
 module Wright
-  class ResourceBase
+  class Resource
     def initialize(name)
       @name = name
       @resource_name = Util.class_to_resource_name(self.class).to_sym

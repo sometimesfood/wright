@@ -1,9 +1,9 @@
 require_relative 'spec_helper'
 
-require 'wright/resource_base'
+require 'wright/resource'
 
 # add provider attribute reader for tests
-class Wright::ResourceBase
+class Wright::Resource
   attr_reader :provider
 end
 
@@ -18,9 +18,9 @@ module Wright
   end
 end
 
-class Sample < Wright::ResourceBase; end
+class Sample < Wright::Resource; end
 
-describe Wright::ResourceBase do
+describe Wright::Resource do
   before(:each) do
     Wright::Config.clear
   end
@@ -44,7 +44,7 @@ describe Wright::ResourceBase do
   end
 
   it 'should display warnings for nonexistent providers' do
-    class NonExistent < Wright::ResourceBase; end
+    class NonExistent < Wright::Resource; end
     output = "WARN: Could not find a provider for resource NonExistent\n"
     proc do
       reset_logger
