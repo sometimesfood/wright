@@ -1,4 +1,5 @@
-require 'wright/resource'
+require 'wright/dsl'
+
 module Wright
   class Package
     attr_reader :name
@@ -15,4 +16,4 @@ module Wright
   end
 end
 
-Wright::Resource.register Wright::Package
+Wright::DSL.register_resource Wright::Package

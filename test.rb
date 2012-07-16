@@ -2,10 +2,10 @@
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'lib')
 
-require 'wright/resource'
+require 'wright/dsl'
 require 'wright/resources/package'
 
-include Wright::Resource
+include Wright::DSL
 
 # use an existing resource
 package "test" do |p|
@@ -17,7 +17,7 @@ end
 class TestClass
   def initialize(name); end
 end
-Wright::Resource.register TestClass
+Wright::DSL.register_resource TestClass
 
 f = test_class "hello" do |t|
   puts t
@@ -28,7 +28,7 @@ g = test_class 'foobar'
 puts g.class
 
 class Blubb; end
-Wright::Resource.register Blubb
+Wright::DSL.register_resource Blubb
 blubb do |b|
   puts b
 end
