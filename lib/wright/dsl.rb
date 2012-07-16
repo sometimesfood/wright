@@ -1,8 +1,8 @@
 require 'wright/util'
 
 module Wright
-  module Resource
-    def self.register(resource_class)
+  module DSL
+    def self.register_resource(resource_class)
       method_name = Util.class_to_resource_name(resource_class)
       this_module = self
       define_method(method_name) do |name = nil, &block|

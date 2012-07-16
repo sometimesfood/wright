@@ -1,17 +1,15 @@
 require_relative 'spec_helper'
 
-require 'wright/resource'
+require 'wright/dsl'
 
-include Wright
-
-describe Resource do
+describe Wright::DSL do
   before(:each) do
-    # duplicate Wright::Resource for testing
-    resource_module = Resource.dup
+    # duplicate Wright::DSL for testing
+    dsl_module = Wright::DSL.dup
     @recipe = Class.new do
-      extend resource_module
+      extend dsl_module
     end
-    @resource_module = resource_module
+    @dsl_module = dsl_module
   end
 
   it 'should register new resources at runtime' do
@@ -20,9 +18,9 @@ describe Resource do
       def initialize(name); end
     end
 
-    @resource_module.register(resource_class)
+    @dsl_module.register_resource(resource_class)
 
-    resource_name = Util.class_to_resource_name(resource_class)
+    resource_name = Wright::Util.class_to_resource_name(resource_class)
     @recipe.must_respond_to(resource_name)
     resource = @recipe.send(resource_name)
     resource.must_be_instance_of(resource_class)
@@ -36,8 +34,8 @@ describe Resource do
       end
       attr_accessor :default_action
     end
-    @resource_module.register(resource_class)
-    resource_name = Util.class_to_resource_name(resource_class)
+    @dsl_module.register_resource(resource_class)
+    resource_name = Wright::Util.class_to_resource_name(resource_class)
     proc { @recipe.send(resource_name, 'world') }.must_output("Hello world\n")
   end
 end
