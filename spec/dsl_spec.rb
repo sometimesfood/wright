@@ -29,10 +29,8 @@ describe Wright::DSL do
   it 'should execute the default action for a resource' do
     resource_class = Class.new do
       def self.name; 'Hello'; end
-      def initialize(name)
-        @default_action = Proc.new { puts "Hello #{name}" }
-      end
-      attr_accessor :default_action
+      def initialize(name); @name = name; end
+      def default_action; puts "Hello #{@name}"; end
     end
     @dsl_module.register_resource(resource_class)
     resource_name = Wright::Util.class_to_resource_name(resource_class)
