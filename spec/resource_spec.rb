@@ -28,10 +28,7 @@ end
 class Sample < Wright::Resource; end
 
 class Updater < Wright::Resource
-  def do_if_updated(update_action)
-    @on_update = update_action
-    run_update_action_if_updated
-  end
+  def do_something; run_update_action_if_updated; end
 end
 
 describe Wright::Resource do
@@ -72,14 +69,20 @@ describe Wright::Resource do
     provider = Wright::Providers::AlwaysUpdated
     Wright::Config[:resources] = { updater: {provider: provider.name } }
     resource = Updater.new(:name)
-    proc { resource.do_if_updated(@say_hello) }.must_output @hello
+    proc do
+      resource.on_update = @say_hello
+      resource.do_something
+    end.must_output @hello
   end
 
   it 'should not run update actions if there were no updates' do
     provider = Wright::Providers::NeverUpdated
     Wright::Config[:resources] = { updater: {provider: provider.name } }
     resource = Updater.new(:name)
-    proc { resource.do_if_updated(@say_hello) }.must_be_silent
+    proc do
+      resource.on_update = @say_hello
+      resource.do_something
+    end.must_be_silent
   end
 
   it 'should display a warning if the provider does not support updates' do
@@ -89,7 +92,8 @@ describe Wright::Resource do
     warning = "WARN: Provider #{provider.name} does not support updates\n"
     proc do
       reset_logger
-      resource.do_if_updated(@say_hello)
+      resource.on_update = @say_hello
+      resource.do_something
     end.must_output warning
   end
 
@@ -99,8 +103,16 @@ describe Wright::Resource do
     resource = Updater.new(:name)
     proc do
       reset_logger
-      resource.do_if_updated(nil)
+      resource.on_update = nil
+      resource.do_something
     end.must_be_silent
+  end
+
+  it 'should raise an ArgumentError if on_update is not callable' do
+    resource = Sample.new(:name)
+    proc { resource.on_update = "I'm a string" }.must_raise ArgumentError
+    proc { resource.on_update = Proc.new {} }.must_be_silent
+    proc { resource.on_update = nil }.must_be_silent
   end
 
   it 'should run actions' do

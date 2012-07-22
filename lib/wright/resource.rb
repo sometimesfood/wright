@@ -12,8 +12,16 @@ module Wright
       @on_update = nil
     end
 
-    attr_accessor :action, :on_update
-    attr_reader :name
+    attr_accessor :action
+    attr_reader :name, :on_update
+
+    def on_update=(on_update)
+      if on_update.respond_to?(:call) || on_update.nil?
+        @on_update = on_update
+      else
+        raise ArgumentError.new("#{on_update} is not callable")
+      end
+    end
 
     def run_action
       if @action
@@ -25,7 +33,6 @@ module Wright
 
     private
     def run_update_action
-      # TODO: maybe add some error checking; @on_update.respond_to?(:call)
       @on_update.call unless @on_update.nil?
     end
 
