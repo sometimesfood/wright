@@ -9,20 +9,36 @@ end
 
 module Wright
   module Providers
-    class Sample
+    class Base
       def initialize(resource); end
     end
-    class AlternateSample
-      def initialize(resource); end
+
+    class Sample < Base; end
+    class AlternateSample < Base; end
+
+    class AlwaysUpdated < Base
+      def updated?; true; end
+    end
+    class NeverUpdated < Base
+      def updated?; false; end
     end
   end
 end
 
 class Sample < Wright::Resource; end
 
+class Updater < Wright::Resource
+  def do_if_updated(update_action)
+    @on_update = update_action
+    run_update_action_if_updated
+  end
+end
+
 describe Wright::Resource do
   before(:each) do
     Wright::Config.clear
+    @hello = 'Hello world'
+    @say_hello = proc { print @hello }
   end
 
   it 'should retrieve a provider for a resource' do
@@ -50,5 +66,40 @@ describe Wright::Resource do
       reset_logger
       NonExistent.new(:something)
     end.must_output(output)
+  end
+
+  it 'should run update actions on updates' do
+    provider = Wright::Providers::AlwaysUpdated
+    Wright::Config[:resources] = { updater: {provider: provider.name } }
+    resource = Updater.new(:name)
+    proc { resource.do_if_updated(@say_hello) }.must_output @hello
+  end
+
+  it 'should not run update actions if there were no updates' do
+    provider = Wright::Providers::NeverUpdated
+    Wright::Config[:resources] = { updater: {provider: provider.name } }
+    resource = Updater.new(:name)
+    proc { resource.do_if_updated(@say_hello) }.must_be_silent
+  end
+
+  it 'should display a warning if the provider does not support updates' do
+    provider = Wright::Providers::Sample
+    Wright::Config[:resources] = { updater: {provider: provider.name } }
+    resource = Updater.new(:name)
+    warning = "WARN: Provider #{provider.name} does not support updates\n"
+    proc do
+      reset_logger
+      resource.do_if_updated(@say_hello)
+    end.must_output warning
+  end
+
+  it 'should not display a warning if there is no update action defined' do
+    provider = Wright::Providers::Sample
+    Wright::Config[:resources] = { updater: {provider: provider.name } }
+    resource = Updater.new(:name)
+    proc do
+      reset_logger
+      resource.do_if_updated(nil)
+    end.must_be_silent
   end
 end
