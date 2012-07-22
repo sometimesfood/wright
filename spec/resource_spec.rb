@@ -102,4 +102,26 @@ describe Wright::Resource do
       resource.do_if_updated(nil)
     end.must_be_silent
   end
+
+  it 'should run actions' do
+    class NiSayer < Wright::Resource
+      def say!; print 'Ni!'; end
+      def say; raise RuntimeError.new('This should never be called'); end
+      def shout; print 'NI!'; end
+    end
+    Wright::Config[:resources] = { ni_sayer: {provider: 'Sample' } }
+    ni_sayer = NiSayer.new(:michael)
+    proc do
+      ni_sayer.action = :say
+      ni_sayer.run_action
+    end.must_output 'Ni!'
+    proc do
+      ni_sayer.action = :shout
+      ni_sayer.run_action
+    end.must_output 'NI!'
+    proc do
+      ni_sayer.action = nil
+      ni_sayer.run_action
+    end.must_be_silent
+  end
 end

@@ -8,11 +8,20 @@ module Wright
       @name = name
       @resource_name = Util.class_to_resource_name(self.class).to_sym
       @provider = provider_for_resource
+      @action = nil
       @on_update = nil
     end
 
-    attr_accessor :on_update
+    attr_accessor :action, :on_update
     attr_reader :name
+
+    def run_action
+      if @action
+        bang_action = "#{@action}!".to_sym
+        action = respond_to?(bang_action) ? bang_action : @action
+        send(action)
+      end
+    end
 
     private
     def run_update_action

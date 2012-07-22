@@ -30,7 +30,7 @@ describe Wright::DSL do
     resource_class = Class.new do
       def self.name; 'Hello'; end
       def initialize(name); @name = name; end
-      def default_action; puts "Hello #{@name}"; end
+      def run_action; puts "Hello #{@name}"; end
     end
     @dsl_module.register_resource(resource_class)
     resource_name = Wright::Util.class_to_resource_name(resource_class)
