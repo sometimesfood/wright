@@ -85,6 +85,22 @@ describe Wright::Resource do
     end.must_be_silent
   end
 
+  it 'should not run update actions in dry-run mode' do
+    Wright.dry_run do
+      provider = Wright::Providers::AlwaysUpdated
+      Wright::Config[:resources] = { updater: {provider: provider.name } }
+      name = :farnsworth
+      resource = Updater.new(name)
+      resource_info = "#{resource.resource_name} '#{resource.name}'"
+      output = "INFO: Would trigger update action for #{resource_info}\n"
+      proc do
+        reset_logger
+        resource.on_update = @say_hello
+        resource.do_something
+      end.must_output output
+    end
+  end
+
   it 'should display a warning if the provider does not support updates' do
     provider = Wright::Providers::Sample
     Wright::Config[:resources] = { updater: {provider: provider.name } }

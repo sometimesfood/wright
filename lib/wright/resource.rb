@@ -1,6 +1,7 @@
 require 'wright/config'
 require 'wright/util'
 require 'wright/logger'
+require 'wright/dry_run'
 
 module Wright
   class Resource
@@ -13,7 +14,7 @@ module Wright
     end
 
     attr_accessor :action
-    attr_reader :name, :on_update
+    attr_reader :name, :resource_name, :on_update
 
     def on_update=(on_update)
       if on_update.respond_to?(:call) || on_update.nil?
@@ -33,7 +34,14 @@ module Wright
 
     private
     def run_update_action
-      @on_update.call unless @on_update.nil?
+      unless @on_update.nil?
+        if Wright.dry_run?
+          resource = "#{@resource_name} '#{@name}'"
+          Wright.log.info "Would trigger update action for #{resource}"
+        else
+          @on_update.call
+        end
+      end
     end
 
     def run_update_action_if_updated
