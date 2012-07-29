@@ -36,4 +36,17 @@ describe Wright::DSL do
     resource_name = Wright::Util.class_to_resource_name(resource_class)
     proc { @recipe.send(resource_name, 'world') }.must_output("Hello world\n")
   end
+
+  it 'should call blocks passed to a resource function' do
+    resource_class = Class.new do
+      def self.name; 'ResourceKlass'; end
+      def initialize(name); end
+    end
+    @dsl_module.register_resource(resource_class)
+
+    resource_name = Wright::Util.class_to_resource_name(resource_class)
+    block = proc { |resource| throw resource.class }
+
+    proc { @recipe.send(resource_name, nil, &block) }.must_throw resource_class
+  end
 end
