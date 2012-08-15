@@ -8,7 +8,7 @@ class Wright::Resource
 end
 
 module Wright
-  module Providers
+  module Provider
     class Base
       def initialize(resource); end
     end
@@ -39,19 +39,19 @@ describe Wright::Resource do
   end
 
   it 'should retrieve a provider for a resource' do
-    provider_class = Wright::Providers::Sample
+    provider_class = Wright::Provider::Sample
     Sample.new(:name).provider.must_be_kind_of provider_class
   end
 
   it 'should retrieve a provider for a resource listed in the config' do
     # instantiating the Sample resource without any config should
     # yield the Sample provider
-    provider_class = Wright::Providers::Sample
+    provider_class = Wright::Provider::Sample
     Sample.new(:name).provider.must_be_kind_of provider_class
 
     # when the provider for Sample resources is set to
     # AlternateSample, AlternateSample should be instantiated
-    alternate = Wright::Providers::AlternateSample
+    alternate = Wright::Provider::AlternateSample
     Wright::Config[:resources] = { sample: {provider: alternate.name } }
     Sample.new(:name).provider.must_be_kind_of alternate
   end
@@ -66,7 +66,7 @@ describe Wright::Resource do
   end
 
   it 'should run update actions on updates' do
-    provider = Wright::Providers::AlwaysUpdated
+    provider = Wright::Provider::AlwaysUpdated
     Wright::Config[:resources] = { updater: {provider: provider.name } }
     resource = Updater.new(:name)
     proc do
@@ -76,7 +76,7 @@ describe Wright::Resource do
   end
 
   it 'should not run update actions if there were no updates' do
-    provider = Wright::Providers::NeverUpdated
+    provider = Wright::Provider::NeverUpdated
     Wright::Config[:resources] = { updater: {provider: provider.name } }
     resource = Updater.new(:name)
     proc do
@@ -87,7 +87,7 @@ describe Wright::Resource do
 
   it 'should not run update actions in dry-run mode' do
     Wright.dry_run do
-      provider = Wright::Providers::AlwaysUpdated
+      provider = Wright::Provider::AlwaysUpdated
       Wright::Config[:resources] = { updater: {provider: provider.name } }
       name = :farnsworth
       resource = Updater.new(name)
@@ -102,7 +102,7 @@ describe Wright::Resource do
   end
 
   it 'should display a warning if the provider does not support updates' do
-    provider = Wright::Providers::Sample
+    provider = Wright::Provider::Sample
     Wright::Config[:resources] = { updater: {provider: provider.name } }
     resource = Updater.new(:name)
     warning = "WARN: Provider #{provider.name} does not support updates\n"
@@ -114,7 +114,7 @@ describe Wright::Resource do
   end
 
   it 'should not display a warning if there is no update action defined' do
-    provider = Wright::Providers::Sample
+    provider = Wright::Provider::Sample
     Wright::Config[:resources] = { updater: {provider: provider.name } }
     resource = Updater.new(:name)
     proc do

@@ -63,7 +63,7 @@ module Wright
       if Wright::Config.has_nested_key?(:resources, @resource_name, :provider)
         Wright::Config[:resources][@resource_name][:provider]
       else
-        "Wright::Providers::#{resource_class}"
+        "Wright::Provider::#{resource_class}"
       end
     end
 
