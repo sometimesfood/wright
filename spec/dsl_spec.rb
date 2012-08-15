@@ -5,11 +5,11 @@ require 'wright/dsl'
 describe Wright::DSL do
   before(:each) do
     # duplicate Wright::DSL for testing
-    dsl_module = Wright::DSL.dup
+    dsl = Wright::DSL.dup
     @recipe = Class.new do
-      extend dsl_module
+      extend dsl
     end
-    @dsl_module = dsl_module
+    @Wright_DSL = dsl
   end
 
   it 'should register new resources at runtime' do
@@ -18,9 +18,9 @@ describe Wright::DSL do
       def initialize(name); end
     end
 
-    @dsl_module.register_resource(resource_class)
+    @Wright_DSL.register_resource(resource_class)
 
-    resource_name = Wright::Util.class_to_resource_name(resource_class)
+    resource_name = 'resource_klass'
     @recipe.must_respond_to(resource_name)
     resource = @recipe.send(resource_name)
     resource.must_be_instance_of(resource_class)
@@ -32,7 +32,7 @@ describe Wright::DSL do
       def initialize(name); @name = name; end
       def run_action; puts "Hello #{@name}"; end
     end
-    @dsl_module.register_resource(resource_class)
+    @Wright_DSL.register_resource(resource_class)
     resource_name = Wright::Util.class_to_resource_name(resource_class)
     proc { @recipe.send(resource_name, 'world') }.must_output("Hello world\n")
   end
@@ -42,7 +42,7 @@ describe Wright::DSL do
       def self.name; 'ResourceKlass'; end
       def initialize(name); end
     end
-    @dsl_module.register_resource(resource_class)
+    @Wright_DSL.register_resource(resource_class)
 
     resource_name = Wright::Util.class_to_resource_name(resource_class)
     block = proc { |resource| throw resource.class }
