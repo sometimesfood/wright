@@ -1,4 +1,4 @@
-require 'wright/version'
-
-module Wright
-end
+require 'wright/config'
+require 'wright/dsl'
+require 'wright/provider'
+require 'wright/resource'
