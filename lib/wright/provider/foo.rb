@@ -1,3 +1,3 @@
 class Wright::Provider::Foo; end
 
-puts 'loaded Wright::Provider::Foo'
+# puts 'loaded Wright::Provider::Foo'

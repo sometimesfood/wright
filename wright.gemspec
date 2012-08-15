@@ -15,4 +15,5 @@ Gem::Specification.new do |gem|
   gem.version       = Wright::VERSION
 
   gem.add_development_dependency 'simplecov'
+  gem.add_development_dependency 'rdoc'
 end
