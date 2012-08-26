@@ -1,19 +1,18 @@
 require 'wright/dsl'
+require 'wright/resource'
 
-module Wright
-  class Package
-    attr_reader :name
-    attr_accessor :lalala
+class Wright::Resource::Package < Wright::Resource
+  attr_reader :name
+  attr_accessor :lalala
 
-    def initialize(name)
-      @name = name
-      @lalala = :blablabla
-    end
+  def initialize(name)
+    super
+    @lalala = :blablabla
+  end
 
-    def to_s
-      "#{self.class} '#{@name}': @lalala=#{@lalala}"
-    end
+  def to_s
+    "#{self.class} '#{@name}': @lalala=#{@lalala}"
   end
 end
 
-Wright::DSL.register_resource Wright::Package
+Wright::DSL.register_resource Wright::Resource::Package

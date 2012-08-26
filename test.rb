@@ -3,7 +3,7 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'lib')
 
 require 'wright/dsl'
-require 'wright/resources/package'
+require 'wright/resource/package'
 
 include Wright::DSL
 
@@ -27,7 +27,7 @@ puts f.class
 g = test_class 'foobar'
 puts g.class
 
-class Blubb; end
+class Blubb < Wright::Resource; end
 Wright::DSL.register_resource Blubb
 blubb do |b|
   puts b
