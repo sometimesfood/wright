@@ -4,7 +4,11 @@ require 'wright/config'
 require 'wright/util/color'
 
 module Wright
+
+  # Public: Default logger for Wright.
   class Logger < ::Logger
+
+    # Public: Default formatter for Wright log messages.
     class Formatter < ::Logger::Formatter
       # Internal: Called by Wright::Logger to format log messages.
       #
@@ -24,6 +28,13 @@ module Wright
       end
 
       private
+      # Internal: ANSI-Colorize a log message according to its
+      # severity.
+      #
+      # string   - The String log message to be colorized.
+      # severity - The String severity of the log message.
+      #
+      # Returns the colorized String.
       def colorize(string, severity)
         case severity
         when 'ERROR', 'FATAL'
@@ -38,6 +49,12 @@ module Wright
       end
     end
 
+    # Public: Initialize a Logger.
+    #
+    # Enables log colorization if the log device is a TTY and
+    # colorization was not disabled before initialization.
+    #
+    # logdev - The log device used by the Logger.
     def initialize(logdev = $stdout)
       super
       Wright::Config[:log] ||= {}
@@ -48,6 +65,7 @@ module Wright
   end
 
   class << self
+    # Public: Gets/Sets Wright's Logger.
     attr_accessor :log
   end
   @log = Wright::Logger.new
