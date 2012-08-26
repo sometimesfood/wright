@@ -10,7 +10,6 @@ module Wright
   # Examples
   #
   #   Wright::Config[:foo] = { bar: :baz }
-  #
   #   Wright::Config[:foo][:bar]
   #   # => :baz
   class Config
@@ -35,7 +34,7 @@ module Wright
     #   # => false
     #
     # Returns true if the configuration value is set and false
-    # otherwise.
+    #   otherwise.
     def self.has_nested_key?(*path)
       last_key = path.pop
       last_hash = path.inject(@config_hash) do |hash, key|

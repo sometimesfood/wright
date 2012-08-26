@@ -56,7 +56,7 @@ module Wright
     end
 
     def resource_class
-      Util.camelize(@resource_name)
+      Util::ActiveSupport.camelize(@resource_name)
     end
 
     def provider_name
@@ -68,7 +68,7 @@ module Wright
     end
 
     def provider_for_resource
-      klass = Util.safe_constantize(provider_name)
+      klass = Util::ActiveSupport.safe_constantize(provider_name)
       if klass
         klass.new(self)
       else

@@ -4,7 +4,7 @@ module Wright
   module Util
     module RecursiveAutoloader
       def self.add_autoloads_for_current_dir(parent_class)
-        klass = Wright::Util.constantize(parent_class)
+        klass = Wright::Util::ActiveSupport.constantize(parent_class)
         Dir['*.rb'].each do |filename|
           classname = "#{Wright::Util.filename_to_classname(filename)}"
           klass.autoload classname, File.expand_path(filename)
@@ -14,12 +14,12 @@ module Wright
       def self.ensure_subclass_exists(classname, subclass)
         complete_classname = "#{classname}::#{subclass}"
         return true if class_exists(complete_classname)
-        klass = Wright::Util.constantize(classname)
+        klass = Wright::Util::ActiveSupport.constantize(classname)
         klass.const_set(subclass, Class.new)
       end
 
       def self.class_exists(classname)
-        !Wright::Util.safe_constantize(classname).nil?
+        !Wright::Util::ActiveSupport.safe_constantize(classname).nil?
       end
 
       def self.add_autoloads(directory, parent_class)
