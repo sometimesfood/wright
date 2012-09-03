@@ -8,7 +8,7 @@ class Wright::Resource
 end
 
 module Wright
-  module Provider
+  class Provider
     class Base
       def initialize(resource); end
     end
@@ -28,7 +28,9 @@ end
 class Sample < Wright::Resource; end
 
 class Updater < Wright::Resource
-  def do_something; run_update_action_if_updated; end
+  def do_something
+    maybe_destructive {}
+  end
 end
 
 describe Wright::Resource do

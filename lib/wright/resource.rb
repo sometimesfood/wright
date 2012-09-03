@@ -32,6 +32,11 @@ module Wright
       end
     end
 
+    def maybe_destructive
+      yield
+      run_update_action_if_updated
+    end
+
     private
     def run_update_action
       unless @on_update.nil?
