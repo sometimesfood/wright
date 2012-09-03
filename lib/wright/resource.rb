@@ -11,9 +11,10 @@ module Wright
       @provider = provider_for_resource
       @action = nil
       @on_update = nil
+      @ignore_failure = false
     end
 
-    attr_accessor :action
+    attr_accessor :action, :ignore_failure
     attr_reader :name, :resource_name, :on_update
 
     def on_update=(on_update)
@@ -33,7 +34,14 @@ module Wright
     end
 
     def maybe_destructive
-      yield
+      begin
+        yield
+      rescue => e
+        resource = "#{@resource_name}"
+        resource << " '#{@name}'" if @name
+        Wright.log.error "#{resource}: #{e}"
+        raise e unless @ignore_failure
+      end
       run_update_action_if_updated
     end
 

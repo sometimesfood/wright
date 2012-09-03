@@ -9,17 +9,15 @@ end
 
 module Wright
   class Provider
-    class Base
-      def initialize(resource); end
-    end
+    def initialize(resource); end
 
-    class Sample < Base; end
-    class AlternateSample < Base; end
+    class Sample < Wright::Provider; end
+    class AlternateSample < Wright::Provider; end
 
-    class AlwaysUpdated < Base
+    class AlwaysUpdated < Wright::Provider
       def updated?; true; end
     end
-    class NeverUpdated < Base
+    class NeverUpdated < Wright::Provider
       def updated?; false; end
     end
   end
@@ -153,5 +151,27 @@ describe Wright::Resource do
       ni_sayer.action = nil
       ni_sayer.run_action
     end.must_be_silent
+  end
+
+  it 'should not raise exceptions if ignore_failure is enabled' do
+    class Wright::Provider::RaisesExceptions < Wright::Provider
+      def raise_hell; raise 'hell'; end
+    end
+    class RaisesExceptions < Wright::Resource
+      def raise_hell; maybe_destructive { @provider.raise_hell }; end
+    end
+
+    resource = RaisesExceptions.new(:fake_name)
+
+    proc do
+      resource.ignore_failure = true
+      reset_logger
+      resource.raise_hell
+    end.must_output "ERROR: raises_exceptions 'fake_name': hell\n"
+
+    proc do
+      resource.ignore_failure = false
+      resource.raise_hell
+    end.must_raise(RuntimeError)
   end
 end
