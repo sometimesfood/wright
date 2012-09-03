@@ -1,6 +1,7 @@
 require_relative 'spec_helper'
 
 require 'wright/resource'
+require 'wright/provider'
 
 # add provider attribute reader for tests
 class Wright::Resource
@@ -9,8 +10,6 @@ end
 
 module Wright
   class Provider
-    def initialize(resource); end
-
     class Sample < Wright::Provider; end
     class AlternateSample < Wright::Provider; end
 
@@ -103,6 +102,7 @@ describe Wright::Resource do
 
   it 'should display a warning if the provider does not support updates' do
     provider = Wright::Provider::Sample
+    provider.send(:undef_method, :updated?)
     Wright::Config[:resources] = { updater: {provider: provider.name } }
     resource = Updater.new(:name)
     warning = "WARN: Provider #{provider.name} does not support updates\n"
