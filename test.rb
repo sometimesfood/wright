@@ -32,3 +32,32 @@ Wright::DSL.register_resource Blubb
 blubb do |b|
   puts b
 end
+
+puts '#########################################'
+require 'wright'
+class Wright::Provider::Bla < Wright::Provider
+  def install
+    puts 'Bla: installing...'
+    @updated = true
+    raise 'oh noes!'
+  end
+end
+
+class Bla < Wright::Resource
+  def initialize(name)
+    super
+    @action = :install
+  end
+
+  def install
+    maybe_destructive do
+      @provider.install
+    end
+  end
+end
+Wright::DSL.register_resource Bla
+
+bla "lalala-23" do |b|
+  b.on_update = Proc.new { puts "Oh yeah!" }
+  b.ignore_failure = true
+end
