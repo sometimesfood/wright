@@ -36,10 +36,10 @@ end
 puts '#########################################'
 require 'wright'
 class Wright::Provider::Bla < Wright::Provider
-  def install
+  def install!
     puts 'Bla: installing...'
     @updated = true
-    raise 'oh noes!'
+#    raise 'oh noes!'
   end
 end
 
@@ -49,15 +49,20 @@ class Bla < Wright::Resource
     @action = :install
   end
 
-  def install
+  def install!
     maybe_destructive do
-      @provider.install
+      @provider.install!
     end
+  end
+
+  def something_else
+    puts "something else..."
   end
 end
 Wright::DSL.register_resource Bla
 
 bla "lalala-23" do |b|
   b.on_update = Proc.new { puts "Oh yeah!" }
+  b.action = :something_else
   b.ignore_failure = true
 end
