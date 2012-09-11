@@ -18,6 +18,10 @@ module Wright
   end
 end
 
+def reset_logger_config
+  Wright::Config[:log] = { colorize: false }
+end
+
 def reset_logger
   Wright::log = Wright::Logger.new
   Wright::log.formatter = Wright::Logger::Formatter.new

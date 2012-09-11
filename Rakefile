@@ -4,7 +4,7 @@ require 'rake/testtask'
 require 'rdoc/task'
 
 Rake::TestTask.new do |t|
-  t.pattern = 'spec/*_spec.rb'
+  t.pattern = 'spec/**/*_spec.rb'
 end
 
 RDoc::Task.new do |t|
