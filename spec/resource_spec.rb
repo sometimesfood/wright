@@ -32,9 +32,14 @@ end
 
 describe Wright::Resource do
   before(:each) do
+    @config = Wright::Config.dump
     Wright::Config.clear
     @hello = 'Hello world'
     @say_hello = proc { print @hello }
+  end
+
+  after(:each) do
+    Wright::Config.restore(@config)
   end
 
   it 'should retrieve a provider for a resource' do

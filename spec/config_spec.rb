@@ -4,7 +4,12 @@ require 'wright/config'
 
 describe Wright::Config do
   before(:each) do
+    @config = Wright::Config.dump
     Wright::Config.clear
+  end
+
+  after(:each) do
+    Wright::Config.restore(@config)
   end
 
   it 'should behave like a Hash' do
