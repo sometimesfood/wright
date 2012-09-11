@@ -26,7 +26,7 @@ class Sample < Wright::Resource; end
 
 class Updater < Wright::Resource
   def do_something
-    maybe_destructive {}
+    might_update_resource {}
   end
 end
 
@@ -163,7 +163,7 @@ describe Wright::Resource do
       def raise_hell; raise 'hell'; end
     end
     class RaisesExceptions < Wright::Resource
-      def raise_hell; maybe_destructive { @provider.raise_hell }; end
+      def raise_hell; might_update_resource { @provider.raise_hell }; end
     end
 
     resource = RaisesExceptions.new(:fake_name)

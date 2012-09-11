@@ -33,7 +33,7 @@ module Wright
       end
     end
 
-    def maybe_destructive
+    def might_update_resource
       begin
         yield
       rescue => e

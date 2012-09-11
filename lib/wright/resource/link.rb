@@ -16,13 +16,13 @@ class Wright::Resource::Link < Wright::Resource
   alias :to=    :source=
 
   def create!
-    maybe_destructive do
+    might_update_resource do
       @provider.create!
     end
   end
 
   def remove!
-    maybe_destructive do
+    might_update_resource do
       @provider.remove!
     end
   end

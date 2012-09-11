@@ -50,7 +50,7 @@ class Bla < Wright::Resource
   end
 
   def install!
-    maybe_destructive do
+    might_update_resource do
       @provider.install!
     end
   end
