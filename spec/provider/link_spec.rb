@@ -2,7 +2,6 @@ require_relative '../spec_helper'
 
 require 'wright/provider/link'
 require 'fileutils'
-require 'fakefs/safe'
 
 describe Wright::Provider::Link do
   before(:each) do

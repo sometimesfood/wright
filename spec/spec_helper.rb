@@ -1,3 +1,11 @@
+require 'fakefs/safe'
+
+class FakeFS::File
+  def self.write(filename, file_content)
+    File.open(filename, 'w') { |f| f.write(file_content) }
+  end
+end
+
 begin
   require 'simplecov'
   if ENV['COVERAGE']

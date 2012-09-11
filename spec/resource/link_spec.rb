@@ -2,7 +2,6 @@ require_relative '../spec_helper'
 
 require 'wright/resource/link'
 require 'fileutils'
-require 'fakefs/safe'
 
 describe Wright::Resource::Link do
   def link_resource(source, target)
@@ -53,7 +52,7 @@ describe Wright::Resource::Link do
   it 'should not overwrite existing files' do
     FakeFS do
       file_content = 'Hello world'
-      File.open(@target, 'w') { |f| f.write(file_content) } # TODO: FakeFS::File.write
+      File.write(@target, file_content)
       link = link_resource(@source, @target)
       proc { link.create! }.must_raise(Errno::EEXIST)
       File.read(@target).must_equal(file_content)
