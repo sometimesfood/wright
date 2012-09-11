@@ -66,10 +66,10 @@ describe Wright::Resource::Link do
       FileUtils.ln_s(@source, @target)
       link = Wright::Resource::Link.new(@target)
       assert File.exist?(@source)
-      assert File.exist?(@target) && File.symlink?(@target)
+      assert File.symlink?(@target)
       link.remove!
       assert  File.exist?(@source)
-      assert !File.exist?(@target)
+      assert !File.symlink?(@target)
     end
   end
 

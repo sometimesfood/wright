@@ -17,7 +17,7 @@ class Wright::Provider::Link < Wright::Provider
       raise RuntimeError, "#{@resource.target} is not a symlink"
     end
 
-    if File.exist?(@resource.target)
+    if File.symlink?(@resource.target)
       FileUtils.rm(@resource.target)
       @updated = true
     end
