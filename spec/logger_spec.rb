@@ -12,8 +12,13 @@ FORMATS = {
 
 describe Wright::Logger do
   before(:each) do
+    @config = Wright::Config.dump
     Wright::Config.clear
     @message = 'Soylent Green is STILL made out of people!'
+  end
+
+  after(:each) do
+    Wright::Config.restore(@config)
   end
 
   it 'should enable colors on TTYs' do

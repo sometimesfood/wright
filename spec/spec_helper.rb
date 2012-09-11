@@ -15,11 +15,13 @@ module Wright
     def self.clear
       @config_hash.clear
     end
+    def self.dump
+      @config_hash.clone
+    end
+    def self.restore(hash)
+      @config_hash = hash
+    end
   end
-end
-
-def reset_logger_config
-  Wright::Config[:log] = { colorize: false }
 end
 
 def reset_logger

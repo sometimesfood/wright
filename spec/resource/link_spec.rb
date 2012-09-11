@@ -55,10 +55,7 @@ describe Wright::Resource::Link do
       file_content = 'Hello world'
       File.open(@target, 'w') { |f| f.write(file_content) } # TODO: FakeFS::File.write
       link = link_resource(@source, @target)
-      proc do
-        reset_logger_config
-        link.create!
-      end.must_raise(Errno::EEXIST)
+      proc { link.create! }.must_raise(Errno::EEXIST)
       File.read(@target).must_equal(file_content)
     end
   end
@@ -81,10 +78,7 @@ describe Wright::Resource::Link do
       FileUtils.touch(@target)
       link = Wright::Resource::Link.new(@target)
       assert File.exist?(@target)
-      proc do
-        reset_logger_config
-        link.remove!
-      end.must_raise RuntimeError
+      proc { link.remove! }.must_raise RuntimeError
       assert File.exist?(@target)
     end
   end
