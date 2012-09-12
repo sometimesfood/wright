@@ -33,7 +33,11 @@ module Wright
       end
     end
 
-    def might_update_resource
+    private
+    # Public: This is not documented yet.
+    #
+    # Returns nothing.
+    def might_update_resource #:doc:
       begin
         yield
       rescue => e
@@ -45,7 +49,6 @@ module Wright
       run_update_action_if_updated
     end
 
-    private
     def run_update_action
       unless @on_update.nil?
         if Wright.dry_run?
