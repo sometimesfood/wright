@@ -1,7 +1,12 @@
 require 'wright/provider'
 require 'fileutils'
 
+# Public: Link provider. Used as a Provider for Resource::Link.
 class Wright::Provider::Link < Wright::Provider
+
+  # Public: Create or update the Link.
+  #
+  # Returns nothing.
   def create!
     unless exist?
       if File.exist?(@resource.target) && !File.symlink?(@resource.target)
@@ -12,6 +17,9 @@ class Wright::Provider::Link < Wright::Provider
     end
   end
 
+  # Public: Remove the Link.
+  #
+  # Returns nothing.
   def remove!
     if File.exist?(@resource.target) && !File.symlink?(@resource.target)
       raise RuntimeError, "#{@resource.target} is not a symlink"
@@ -23,14 +31,23 @@ class Wright::Provider::Link < Wright::Provider
     end
   end
 
-  def exist?
+  private
+  # Internal: Checks if the specified link exists.
+  #
+  # Returns true if the link exists and has the specified source and
+  # false otherwise.
+  def exist? #:doc:
     File.symlink?(@resource.target) &&
       File.readlink(@resource.target) == @resource.source
   end
 
+  # Internal: Creates a link to a source file named target.
+  #
+  # If the target is a symlink to a directory, ln_sfn does not descend
+  # into it, similar to "ln -sfn source target".
+  #
+  # Returns nothing.
   def ln_sfn(source, target)
-    # if target is a symlink to a directory, don't descend (similar to
-    # GNU ln's -n option and OpenBSD ln's -h option)
     if File.symlink?(target) && File.directory?(target)
       FileUtils.rm(target)
     end
