@@ -12,24 +12,15 @@ class Wright::Resource::Symlink < Wright::Resource
 
   # Public: Initialize a Symlink.
   #
-  # target - The link's target.
-  def initialize(target)
+  # name - The link's name.
+  def initialize(name)
     super
-    @source = nil
+    @to = nil
     @action = :create
   end
 
-  # Public: Gets/Sets the Symlink's source.
-  attr_accessor :source
-
-  # Public: Gets the Symlink's target
-  attr_reader :target
-  alias_method :target, :name
-
-  # Public: Gets/Sets the Symlink's source.
-  alias_method :to,     :source
-  # Public: Gets/Sets the Symlink's source.
-  alias_method :to=,    :source=
+  # Public: Gets/Sets the link's target.
+  attr_accessor :to
 
   # Public: Create or update the Symlink.
   #

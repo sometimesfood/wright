@@ -9,10 +9,10 @@ class Wright::Provider::Symlink < Wright::Provider
   # Returns nothing.
   def create!
     unless exist?
-      if File.exist?(@resource.target) && !File.symlink?(@resource.target)
-        raise Errno::EEXIST, @resource.target
+      if File.exist?(@resource.name) && !File.symlink?(@resource.name)
+        raise Errno::EEXIST, @resource.name
       end
-      ln_sfn(@resource.source, @resource.target)
+      ln_sfn(@resource.to, @resource.name)
       @updated = true
     end
   end
@@ -21,12 +21,12 @@ class Wright::Provider::Symlink < Wright::Provider
   #
   # Returns nothing.
   def remove!
-    if File.exist?(@resource.target) && !File.symlink?(@resource.target)
-      raise RuntimeError, "#{@resource.target} is not a symlink"
+    if File.exist?(@resource.name) && !File.symlink?(@resource.name)
+      raise RuntimeError, "#{@resource.name} is not a symlink"
     end
 
-    if File.symlink?(@resource.target)
-      FileUtils.rm(@resource.target)
+    if File.symlink?(@resource.name)
+      FileUtils.rm(@resource.name)
       @updated = true
     end
   end
@@ -34,23 +34,24 @@ class Wright::Provider::Symlink < Wright::Provider
   private
   # Internal: Checks if the specified link exists.
   #
-  # Returns true if the link exists and has the specified source and
-  # false otherwise.
+  # Returns true if the link exists and points to the specified target
+  # and false otherwise.
   def exist? #:doc:
-    File.symlink?(@resource.target) &&
-      File.readlink(@resource.target) == @resource.source
+    File.symlink?(@resource.name) &&
+      File.readlink(@resource.name) == @resource.to
   end
 
-  # Internal: Creates a link to a source file named target.
+  # Internal: Creates a link named link_name to target.
   #
-  # If the target is a symlink to a directory, ln_sfn does not descend
-  # into it, similar to "ln -sfn source target".
+  # If the file denoted by link_name is a symlink to a directory,
+  # ln_sfn does not descend into it. Behaves similar to GNU ln(1) or
+  # OpenBSD ln(1) when using "ln -sfn to link_name".
   #
   # Returns nothing.
-  def ln_sfn(source, target)
-    if File.symlink?(target) && File.directory?(target)
-      FileUtils.rm(target)
+  def ln_sfn(target, link_name)
+    if File.symlink?(link_name) && File.directory?(link_name)
+      FileUtils.rm(link_name)
     end
-    FileUtils.ln_sf(source, target)
+    FileUtils.ln_sf(target, link_name)
   end
 end

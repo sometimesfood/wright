@@ -6,8 +6,8 @@ require 'fileutils'
 describe Wright::Provider::Symlink do
   before(:each) do
     @link_resource = Object.new
-    def @link_resource.source; 'foo'; end
-    def @link_resource.target; 'bar'; end
+    def @link_resource.to; 'foo'; end
+    def @link_resource.name; 'bar'; end
   end
 
   after(:each) do
@@ -26,12 +26,12 @@ describe Wright::Provider::Symlink do
     it 'should return the update status if a link was not created' do
       FakeFS do
         link = Wright::Provider::Symlink.new(@link_resource)
-        FileUtils.ln_sf(@link_resource.source, @link_resource.target)
+        FileUtils.ln_sf(@link_resource.to, @link_resource.name)
         link.create!
         assert !link.updated?
 
-        FileUtils.rm(@link_resource.target)
-        FileUtils.touch(@link_resource.target)
+        FileUtils.rm(@link_resource.name)
+        FileUtils.touch(@link_resource.name)
         proc { link.create! }.must_raise Errno::EEXIST
         assert !link.updated?
       end
@@ -39,7 +39,7 @@ describe Wright::Provider::Symlink do
 
     it 'should return the update status if a link was changed' do
       FakeFS do
-        FileUtils.ln_sf('old-source', @link_resource.target)
+        FileUtils.ln_sf('old-source', @link_resource.name)
         link = Wright::Provider::Symlink.new(@link_resource)
         link.create!
         assert link.updated?
@@ -49,7 +49,7 @@ describe Wright::Provider::Symlink do
     it 'should return the update status if a link was not changed' do
       FakeFS do
         link = Wright::Provider::Symlink.new(@link_resource)
-        FileUtils.ln_sf(@link_resource.source, @link_resource.target)
+        FileUtils.ln_sf(@link_resource.to, @link_resource.name)
         link.create!
         assert !link.updated?
       end
@@ -58,7 +58,7 @@ describe Wright::Provider::Symlink do
     it 'should return the update status if a link was removed' do
       FakeFS do
         link = Wright::Provider::Symlink.new(@link_resource)
-        FileUtils.ln_sf(@link_resource.source, @link_resource.target)
+        FileUtils.ln_sf(@link_resource.to, @link_resource.name)
         link.remove!
         assert link.updated?
       end
@@ -70,7 +70,7 @@ describe Wright::Provider::Symlink do
         link.remove!
         assert !link.updated?
 
-        FileUtils.touch(@link_resource.target)
+        FileUtils.touch(@link_resource.name)
         proc { link.remove! }.must_raise RuntimeError
         assert !link.updated?
       end
