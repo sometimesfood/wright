@@ -1,9 +1,9 @@
 require_relative '../spec_helper'
 
-require 'wright/provider/link'
+require 'wright/provider/symlink'
 require 'fileutils'
 
-describe Wright::Provider::Link do
+describe Wright::Provider::Symlink do
   before(:each) do
     @link_resource = Object.new
     def @link_resource.source; 'foo'; end
@@ -17,7 +17,7 @@ describe Wright::Provider::Link do
   describe '#updated?' do
     it 'should return the update status if a link was created' do
       FakeFS do
-        link = Wright::Provider::Link.new(@link_resource)
+        link = Wright::Provider::Symlink.new(@link_resource)
         link.create!
         assert link.updated?
       end
@@ -25,7 +25,7 @@ describe Wright::Provider::Link do
 
     it 'should return the update status if a link was not created' do
       FakeFS do
-        link = Wright::Provider::Link.new(@link_resource)
+        link = Wright::Provider::Symlink.new(@link_resource)
         FileUtils.ln_sf(@link_resource.source, @link_resource.target)
         link.create!
         assert !link.updated?
@@ -40,7 +40,7 @@ describe Wright::Provider::Link do
     it 'should return the update status if a link was changed' do
       FakeFS do
         FileUtils.ln_sf('old-source', @link_resource.target)
-        link = Wright::Provider::Link.new(@link_resource)
+        link = Wright::Provider::Symlink.new(@link_resource)
         link.create!
         assert link.updated?
       end
@@ -48,7 +48,7 @@ describe Wright::Provider::Link do
 
     it 'should return the update status if a link was not changed' do
       FakeFS do
-        link = Wright::Provider::Link.new(@link_resource)
+        link = Wright::Provider::Symlink.new(@link_resource)
         FileUtils.ln_sf(@link_resource.source, @link_resource.target)
         link.create!
         assert !link.updated?
@@ -57,7 +57,7 @@ describe Wright::Provider::Link do
 
     it 'should return the update status if a link was removed' do
       FakeFS do
-        link = Wright::Provider::Link.new(@link_resource)
+        link = Wright::Provider::Symlink.new(@link_resource)
         FileUtils.ln_sf(@link_resource.source, @link_resource.target)
         link.remove!
         assert link.updated?
@@ -66,7 +66,7 @@ describe Wright::Provider::Link do
 
     it 'should return the update status if a link was not removed' do
       FakeFS do
-        link = Wright::Provider::Link.new(@link_resource)
+        link = Wright::Provider::Symlink.new(@link_resource)
         link.remove!
         assert !link.updated?
 

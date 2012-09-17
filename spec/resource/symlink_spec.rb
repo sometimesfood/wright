@@ -1,11 +1,11 @@
 require_relative '../spec_helper'
 
-require 'wright/resource/link'
+require 'wright/resource/symlink'
 require 'fileutils'
 
-describe Wright::Resource::Link do
+describe Wright::Resource::Symlink do
   def link_resource(source, target)
-    link = Wright::Resource::Link.new(target)
+    link = Wright::Resource::Symlink.new(target)
     link.source = source
     link
   end
@@ -63,7 +63,7 @@ describe Wright::Resource::Link do
     FakeFS do
       FileUtils.touch(@source)
       FileUtils.ln_s(@source, @target)
-      link = Wright::Resource::Link.new(@target)
+      link = Wright::Resource::Symlink.new(@target)
       assert File.exist?(@source)
       assert File.symlink?(@target)
       link.remove!
@@ -75,7 +75,7 @@ describe Wright::Resource::Link do
   it 'should not remove existing regular files' do
     FakeFS do
       FileUtils.touch(@target)
-      link = Wright::Resource::Link.new(@target)
+      link = Wright::Resource::Symlink.new(@target)
       assert File.exist?(@target)
       proc { link.remove! }.must_raise RuntimeError
       assert File.exist?(@target)

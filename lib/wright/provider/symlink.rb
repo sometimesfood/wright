@@ -1,10 +1,10 @@
 require 'wright/provider'
 require 'fileutils'
 
-# Public: Link provider. Used as a Provider for Resource::Link.
-class Wright::Provider::Link < Wright::Provider
+# Public: Symlink provider. Used as a Provider for Resource::Symlink.
+class Wright::Provider::Symlink < Wright::Provider
 
-  # Public: Create or update the Link.
+  # Public: Create or update the Symlink.
   #
   # Returns nothing.
   def create!
@@ -17,7 +17,7 @@ class Wright::Provider::Link < Wright::Provider
     end
   end
 
-  # Public: Remove the Link.
+  # Public: Remove the Symlink.
   #
   # Returns nothing.
   def remove!

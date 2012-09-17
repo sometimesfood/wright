@@ -1,16 +1,16 @@
 require 'wright/resource'
 require 'wright/dsl'
 
-# Public: Link resource, represents a symlink.
+# Public: Symlink resource, represents a symlink.
 #
 # Examples
 #
-#   link = Wright::Resource::Link.new('/tmp/fstab')
+#   link = Wright::Resource::Symlink.new('/tmp/fstab')
 #   link.to = '/etc/fstab'
 #   link.create!
-class Wright::Resource::Link < Wright::Resource
+class Wright::Resource::Symlink < Wright::Resource
 
-  # Public: Initialize a Link.
+  # Public: Initialize a Symlink.
   #
   # target - The link's target.
   def initialize(target)
@@ -19,19 +19,19 @@ class Wright::Resource::Link < Wright::Resource
     @action = :create
   end
 
-  # Public: Gets/Sets the Link's source.
+  # Public: Gets/Sets the Symlink's source.
   attr_accessor :source
 
-  # Public: Gets the Link's target
+  # Public: Gets the Symlink's target
   attr_reader :target
   alias_method :target, :name
 
-  # Public: Gets/Sets the Link's source.
+  # Public: Gets/Sets the Symlink's source.
   alias_method :to,     :source
-  # Public: Gets/Sets the Link's source.
+  # Public: Gets/Sets the Symlink's source.
   alias_method :to=,    :source=
 
-  # Public: Create or update the Link.
+  # Public: Create or update the Symlink.
   #
   # Returns nothing.
   def create!
@@ -40,7 +40,7 @@ class Wright::Resource::Link < Wright::Resource
     end
   end
 
-  # Public: Remove the Link.
+  # Public: Remove the Symlink.
   #
   # Returns nothing.
   def remove!
@@ -50,4 +50,4 @@ class Wright::Resource::Link < Wright::Resource
   end
 end
 
-Wright::DSL.register_resource(Wright::Resource::Link)
+Wright::DSL.register_resource(Wright::Resource::Symlink)
