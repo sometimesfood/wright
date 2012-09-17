@@ -10,10 +10,10 @@ class Wright::Resource::Link < Wright::Resource
   attr_accessor :source
   attr_reader   :target
 
-  alias :target :name
-  alias :from   :target
-  alias :to     :source
-  alias :to=    :source=
+  alias_method :target, :name
+  alias_method :from,   :target
+  alias_method :to,     :source
+  alias_method :to=,    :source=
 
   def create!
     might_update_resource do
