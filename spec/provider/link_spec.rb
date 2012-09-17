@@ -5,9 +5,9 @@ require 'fileutils'
 
 describe Wright::Provider::Link do
   before(:each) do
-    @link_resource = MiniTest::Mock.new
-    @link_resource.expect(:source, 'foo')
-    @link_resource.expect(:target, 'bar')
+    @link_resource = Object.new
+    def @link_resource.source; 'foo'; end
+    def @link_resource.target; 'bar'; end
   end
 
   after(:each) do

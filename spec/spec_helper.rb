@@ -38,5 +38,4 @@ def reset_logger
 end
 
 require 'minitest/spec'
-require 'minitest/mock'
 require 'minitest/autorun'
