@@ -8,13 +8,13 @@ class Wright::Provider::Symlink < Wright::Provider
   #
   # Returns nothing.
   def create!
-    unless exist?
-      if File.exist?(@resource.name) && !File.symlink?(@resource.name)
-        raise Errno::EEXIST, @resource.name
-      end
-      ln_sfn(@resource.to, @resource.name)
-      @updated = true
+    return if exist?
+
+    if File.exist?(@resource.name) && !File.symlink?(@resource.name)
+      raise Errno::EEXIST, @resource.name
     end
+    ln_sfn(@resource.to, @resource.name)
+    @updated = true
   end
 
   # Public: Remove the Symlink.
