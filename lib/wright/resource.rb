@@ -46,7 +46,7 @@ module Wright
         Wright.log.error "#{resource}: #{e}"
         raise e unless @ignore_failure
       end
-      run_update_action_if_updated
+      run_update_action if @provider.updated?
     end
 
     def run_update_action
@@ -56,17 +56,6 @@ module Wright
           Wright.log.info "Would trigger update action for #{resource}"
         else
           @on_update.call
-        end
-      end
-    end
-
-    def run_update_action_if_updated
-      if @provider.respond_to?(:updated?)
-        run_update_action if @provider.updated?
-      else
-        if @on_update
-          warning = "Provider #{@provider.class.name} does not support updates"
-          Wright.log.warn warning
         end
       end
     end

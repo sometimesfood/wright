@@ -105,19 +105,6 @@ describe Wright::Resource do
     end
   end
 
-  it 'should display a warning if the provider does not support updates' do
-    provider = Wright::Provider::Sample
-    provider.send(:undef_method, :updated?)
-    Wright::Config[:resources] = { updater: {provider: provider.name } }
-    resource = Updater.new(:name)
-    warning = "WARN: Provider #{provider.name} does not support updates\n"
-    proc do
-      reset_logger
-      resource.on_update = @say_hello
-      resource.do_something
-    end.must_output warning
-  end
-
   it 'should not display a warning if there is no update action defined' do
     provider = Wright::Provider::Sample
     Wright::Config[:resources] = { updater: {provider: provider.name } }
