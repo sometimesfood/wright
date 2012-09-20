@@ -85,4 +85,34 @@ describe Wright::Resource::Symlink do
       end
     end
   end
+
+  describe 'dry_run' do
+    it 'should not actually create symlinks' do
+      # FakeFS and minitest don't get along, only use FakeFS when needed
+      link = link_resource(@target, @link_name)
+      message = "INFO: (would) create symlink: #@link_name -> #@target\n"
+      Wright.dry_run do
+        proc do
+          reset_logger
+          FakeFS { link.create! }
+        end.must_output message
+        FakeFS { assert !File.symlink?(@link_name) }
+      end
+    end
+
+    it 'should not actually remove symlinks' do
+      link = link_resource(@target, @link_name)
+      message = "INFO: (would) remove symlink: #@link_name\n"
+      Wright.dry_run do
+        proc do
+          reset_logger
+          FakeFS do
+            FileUtils.ln_sf(@target, @link_name)
+            link.remove!
+          end
+        end.must_output message
+      end
+      FakeFS { assert File.symlink?(@link_name) }
+    end
+  end
 end

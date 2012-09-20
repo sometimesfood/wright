@@ -26,7 +26,11 @@ class Wright::Provider::Symlink < Wright::Provider
     end
 
     if File.symlink?(@resource.name)
-      FileUtils.rm(@resource.name)
+      if Wright.dry_run?
+        Wright.log.info "(would) remove symlink: #{@resource.name}"
+      else
+        FileUtils.rm(@resource.name)
+      end
       @updated = true
     end
   end
@@ -49,9 +53,13 @@ class Wright::Provider::Symlink < Wright::Provider
   #
   # Returns nothing.
   def ln_sfn(target, link_name)
-    if File.symlink?(link_name) && File.directory?(link_name)
-      FileUtils.rm(link_name)
+    if Wright.dry_run?
+      Wright.log.info "(would) create symlink: #{link_name} -> #{target}"
+    else
+      if File.symlink?(link_name) && File.directory?(link_name)
+        FileUtils.rm(link_name)
+      end
+      FileUtils.ln_sf(target, link_name)
     end
-    FileUtils.ln_sf(target, link_name)
   end
 end
