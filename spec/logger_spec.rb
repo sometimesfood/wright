@@ -22,18 +22,18 @@ describe Wright::Logger do
   end
 
   it 'should enable colors on TTYs' do
-    logger = Wright::Logger.new
+    Wright::Logger.new
     Wright::Config[:log][:colorize].must_equal true
   end
 
   it 'should disable colors if the log device is not a TTY' do
-    logger = Wright::Logger.new(StringIO.new)
+    Wright::Logger.new(StringIO.new)
     Wright::Config[:log][:colorize].must_equal false
   end
 
   it 'should not change predefined color preferences' do
     Wright::Config[:log] = { colorize: false }
-    logger = Wright::Logger.new
+    Wright::Logger.new
     Wright::Config[:log][:colorize].must_equal false
   end
 
