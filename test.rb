@@ -1,16 +1,20 @@
-#!/usr/bin/env ruby1.9.1
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'lib')
 
-require 'wright/dsl'
-require 'wright/resource/package'
+require 'wright'
+require 'wright/resource/symlink'
 
 include Wright::DSL
 
-# use an existing resource
-package "test" do |p|
-  p.lalala = :dumdidum
-  puts p
+Wright.dry_run do
+  # use an existing resource
+  symlink '/tmp/fstab' do |l|
+    l.to = '/etc/fstab'
+    puts l
+  end
 end
 
 # define and register a new resource class at runtime
@@ -62,6 +66,8 @@ end
 Wright::DSL.register_resource Bla
 
 bla "lalala-23" do |b|
+#  b.provider = Wright::Provider::Bla.new(b)
+#  b.provider = Wright::Provider::Bla
   b.on_update = Proc.new { puts "Oh yeah!" }
   b.action = :something_else
   b.ignore_failure = true
