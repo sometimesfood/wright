@@ -29,6 +29,7 @@ class Wright::Provider::Symlink < Wright::Provider
       if Wright.dry_run?
         Wright.log.info "(would) remove symlink: #{@resource.name}"
       else
+        Wright.log.info "remove symlink: #{@resource.name}"
         FileUtils.rm(@resource.name)
       end
       @updated = true
@@ -56,6 +57,7 @@ class Wright::Provider::Symlink < Wright::Provider
     if Wright.dry_run?
       Wright.log.info "(would) create symlink: #{link_name} -> #{target}"
     else
+      Wright.log.info "create symlink: #{link_name} -> #{target}"
       if File.symlink?(link_name) && File.directory?(link_name)
         FileUtils.rm(link_name)
       end
