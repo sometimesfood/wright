@@ -8,19 +8,26 @@ describe Wright::Provider::Symlink do
     @link_resource = Object.new
     def @link_resource.to; 'foo'; end
     def @link_resource.name; 'bar'; end
-    @log_level = Wright.log.level
-    Wright.log.level = Wright::Logger::FATAL
+
+    symlink_to_s = "#{@link_resource.name} -> #{@link_resource.to}"
+    @create_message = "INFO: create symlink: #{symlink_to_s}\n"
+    @create_message_dry = "INFO: (would) create symlink: #{symlink_to_s}\n"
+    @remove_message = "INFO: remove symlink: #{@link_resource.name}\n"
+    @remove_message_dry = "INFO: (would) remove symlink: #{@link_resource.name}\n"
   end
 
   after(:each) do
     FakeFS::FileSystem.clear
-    Wright.log.level = @log_level
   end
 
   describe '#updated?' do
     it 'should return the update status if a link was created' do
+      # FakeFS and minitest don't get along, only use FakeFS when needed
       link = Wright::Provider::Symlink.new(@link_resource)
-      FakeFS { link.create! }
+      proc do
+        reset_logger
+        FakeFS { link.create! }
+      end.must_output @create_message
       assert link.updated?
     end
 
@@ -39,12 +46,15 @@ describe Wright::Provider::Symlink do
     end
 
     it 'should return the update status if a link was changed' do
-      FakeFS do
-        FileUtils.ln_sf('old-source', @link_resource.name)
-        link = Wright::Provider::Symlink.new(@link_resource)
-        link.create!
-        assert link.updated?
-      end
+      link = Wright::Provider::Symlink.new(@link_resource)
+      proc do
+        reset_logger
+        FakeFS do
+          FileUtils.ln_sf('old-source', @link_resource.name)
+          link.create!
+        end
+      end.must_output @create_message
+      assert link.updated?
     end
 
     it 'should return the update status if a link was not changed' do
@@ -57,12 +67,15 @@ describe Wright::Provider::Symlink do
     end
 
     it 'should return the update status if a link was removed' do
-      FakeFS do
-        link = Wright::Provider::Symlink.new(@link_resource)
-        FileUtils.ln_sf(@link_resource.to, @link_resource.name)
-        link.remove!
-        assert link.updated?
-      end
+      link = Wright::Provider::Symlink.new(@link_resource)
+      proc do
+        reset_logger
+        FakeFS do
+          FileUtils.ln_sf(@link_resource.to, @link_resource.name)
+          link.remove!
+        end
+      end.must_output @remove_message
+      assert link.updated?
     end
 
     it 'should return the update status if a link was not removed' do
@@ -75,6 +88,33 @@ describe Wright::Provider::Symlink do
         proc { link.remove! }.must_raise RuntimeError
         assert !link.updated?
       end
+    end
+  end
+
+  describe 'dry_run' do
+    it 'should not actually create symlinks' do
+      link = Wright::Provider::Symlink.new(@link_resource)
+      Wright.dry_run do
+        proc do
+          reset_logger
+          FakeFS { link.create! }
+        end.must_output @create_message_dry
+        FakeFS { assert !File.symlink?(@link_resource.name) }
+      end
+    end
+
+    it 'should not actually remove symlinks' do
+      link = Wright::Provider::Symlink.new(@link_resource)
+      Wright.dry_run do
+        proc do
+          reset_logger
+          FakeFS do
+            FileUtils.ln_sf(@link_resource.to, @link_resource.name)
+            link.remove!
+          end
+        end.must_output @remove_message_dry
+      end
+      FakeFS { assert File.symlink?(@link_resource.name) }
     end
   end
 end
