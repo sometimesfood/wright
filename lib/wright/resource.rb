@@ -4,7 +4,13 @@ require 'wright/logger'
 require 'wright/dry_run'
 
 module Wright
+
+  # Public: Resource base class.
   class Resource
+
+    # Public: Initialize a Resource.
+    #
+    # name - The resource's name.
     def initialize(name)
       @name = name
       @resource_name = Util.class_to_resource_name(self.class).to_sym
@@ -14,9 +20,37 @@ module Wright
       @ignore_failure = false
     end
 
-    attr_accessor :action, :ignore_failure
-    attr_reader :name, :resource_name, :on_update
+    # Public: Gets/Sets the name Symbol of the method to be run by run_action.
+    attr_accessor :action
 
+    # Public: Gets/Sets the ignore_failure attribute.
+    attr_accessor :ignore_failure
+
+    # Public: Returns the resource's name attribute.
+    #
+    # Examples
+    #
+    #   foo = Wright::Resource::Symlink.new('/tmp/fstab')
+    #   foo.name
+    #   # => "/tmp/fstab"
+    attr_reader :name
+
+    # Public: Returns a compact resource name Symbol.
+    #
+    # Examples
+    #
+    #   foo = Wright::Resource::Symlink.new(nil)
+    #   foo.resource_name
+    #   # => :symlink
+    attr_reader :resource_name
+
+    # Public: Sets an update action for a resource.
+    #
+    # on_update - The block that is called if the resource is
+    #             updated. Has to respond to :call.
+    #
+    # Returns nothing.
+    # Raises ArgumentError if on_update is not callable
     def on_update=(on_update)
       if on_update.respond_to?(:call) || on_update.nil?
         @on_update = on_update
@@ -25,6 +59,13 @@ module Wright
       end
     end
 
+    # Public: Runs the resource's current action.
+    #
+    # Examples
+    #
+    #   fstab = Wright::Resource::Symlink.new('/tmp/fstab')
+    #   fstab.action = :remove!
+    #   fstab.run_action
     def run_action
       if @action
         bang_action = "#{@action}!".to_sym
