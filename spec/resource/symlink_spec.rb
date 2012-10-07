@@ -1,16 +1,20 @@
 require_relative '../spec_helper'
 
 require 'wright/resource/symlink'
+require 'wright/provider/symlink'
 require 'fileutils'
 
 describe Wright::Resource::Symlink do
   before(:each) do
     @target = 'foo'
     @link_name = 'bar'
+    @log_level = Wright.log.level
+    Wright.log.level = Wright::Logger::FATAL
   end
 
   after(:each) do
     FakeFS::FileSystem.clear
+    Wright.log.level = @log_level
   end
 
   def link_resource(target, link_name)

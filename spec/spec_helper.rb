@@ -1,4 +1,5 @@
 require 'fakefs/safe'
+require 'wright/logger'
 
 class FakeFS::File
   def self.write(filename, file_content)
@@ -33,8 +34,8 @@ module Wright
 end
 
 def reset_logger
-  Wright::log = Wright::Logger.new
-  Wright::log.formatter = Wright::Logger::Formatter.new
+  Wright.log = Wright::Logger.new
+  Wright.log.formatter = Wright::Logger::Formatter.new
 end
 
 require 'minitest/spec'

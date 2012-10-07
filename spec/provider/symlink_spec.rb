@@ -1,7 +1,9 @@
 require_relative '../spec_helper'
 
-require 'wright/provider/symlink'
 require 'fileutils'
+
+require 'wright/provider/symlink'
+require 'wright/dry_run'
 
 describe Wright::Provider::Symlink do
   before(:each) do
