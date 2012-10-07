@@ -70,4 +70,5 @@ module Wright
   end
   @log = Wright::Logger.new
   @log.formatter = Wright::Logger::Formatter.new
+  @log.level = Wright::Logger::INFO
 end
