@@ -4,6 +4,7 @@ require 'wright/logger'
 require 'wright/config'
 
 FORMATS = {
+  debug: :none,
   info:  :none,
   warn:  :yellow,
   error: :red,
