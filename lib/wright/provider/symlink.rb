@@ -8,7 +8,11 @@ class Wright::Provider::Symlink < Wright::Provider
   #
   # Returns nothing.
   def create!
-    return if exist?
+    if exist?
+      symlink = symlink_to_s(@resource.name, @resource.to)
+      Wright.log.debug "symlink already created: #{symlink}"
+      return
+    end
 
     if File.exist?(@resource.name) && !File.symlink?(@resource.name)
       raise Errno::EEXIST, @resource.name
@@ -33,6 +37,8 @@ class Wright::Provider::Symlink < Wright::Provider
         FileUtils.rm(@resource.name)
       end
       @updated = true
+    else
+      Wright.log.debug "symlink already removed: #{@resource.name}"
     end
   end
 
@@ -54,14 +60,19 @@ class Wright::Provider::Symlink < Wright::Provider
   #
   # Returns nothing.
   def ln_sfn(target, link_name)
+    symlink = symlink_to_s(link_name, target)
     if Wright.dry_run?
-      Wright.log.info "(would) create symlink: #{link_name} -> #{target}"
+      Wright.log.info "(would) create symlink: #{symlink}"
     else
-      Wright.log.info "create symlink: #{link_name} -> #{target}"
+      Wright.log.info "create symlink: #{symlink}"
       if File.symlink?(link_name) && File.directory?(link_name)
         FileUtils.rm(link_name)
       end
       FileUtils.ln_sf(target, link_name)
     end
+  end
+
+  def symlink_to_s(link_name, target)
+    "#{link_name} -> #{target}"
   end
 end

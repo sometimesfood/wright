@@ -11,11 +11,15 @@ describe Wright::Provider::Symlink do
     def @link_resource.to; 'foo'; end
     def @link_resource.name; 'bar'; end
 
-    symlink_to_s = "#{@link_resource.name} -> #{@link_resource.to}"
+    name = @link_resource.name
+    to = @link_resource.to
+    symlink_to_s = "#{name} -> #{to}"
     @create_message = "INFO: create symlink: #{symlink_to_s}\n"
     @create_message_dry = "INFO: (would) create symlink: #{symlink_to_s}\n"
-    @remove_message = "INFO: remove symlink: #{@link_resource.name}\n"
-    @remove_message_dry = "INFO: (would) remove symlink: #{@link_resource.name}\n"
+    @create_message_debug = "DEBUG: symlink already created: #{symlink_to_s}\n"
+    @remove_message = "INFO: remove symlink: #{name}\n"
+    @remove_message_dry = "INFO: (would) remove symlink: #{name}\n"
+    @remove_message_debug = "DEBUG: symlink already removed: #{name}\n"
   end
 
   after(:each) do
@@ -34,12 +38,17 @@ describe Wright::Provider::Symlink do
     end
 
     it 'should return the update status if a link was not created' do
-      FakeFS do
-        link = Wright::Provider::Symlink.new(@link_resource)
-        FileUtils.ln_sf(@link_resource.to, @link_resource.name)
-        link.create!
-        assert !link.updated?
+      link = Wright::Provider::Symlink.new(@link_resource)
+      proc do
+        FakeFS do
+          reset_logger
+          FileUtils.ln_sf(@link_resource.to, @link_resource.name)
+          link.create!
+          assert !link.updated?
+        end
+      end.must_output @create_message_debug
 
+      FakeFS do
         FileUtils.rm(@link_resource.name)
         FileUtils.touch(@link_resource.name)
         proc { link.create! }.must_raise Errno::EEXIST
@@ -81,11 +90,14 @@ describe Wright::Provider::Symlink do
     end
 
     it 'should return the update status if a link was not removed' do
-      FakeFS do
-        link = Wright::Provider::Symlink.new(@link_resource)
-        link.remove!
+      link = Wright::Provider::Symlink.new(@link_resource)
+      proc do
+        reset_logger
+        FakeFS { link.remove! }
         assert !link.updated?
+      end.must_output @remove_message_debug
 
+      FakeFS do
         FileUtils.touch(@link_resource.name)
         proc { link.remove! }.must_raise RuntimeError
         assert !link.updated?
