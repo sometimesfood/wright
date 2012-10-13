@@ -11,7 +11,7 @@ module Wright
     # Public: Initialize a Resource.
     #
     # name - The resource's name.
-    def initialize(name)
+    def initialize(name = nil)
       @name = name
       @resource_name = Util.class_to_resource_name(self.class).to_sym
       @provider = provider_for_resource
@@ -26,20 +26,25 @@ module Wright
     # Public: Gets/Sets the ignore_failure attribute.
     attr_accessor :ignore_failure
 
-    # Public: Returns the resource's name attribute.
+    # Public: Gets/Sets the resource's name attribute.
     #
     # Examples
     #
     #   foo = Wright::Resource::Symlink.new('/tmp/fstab')
     #   foo.name
     #   # => "/tmp/fstab"
-    attr_reader :name
+    #
+    #   bar = Wright::Resource::Symlink.new
+    #   bar.name = '/tmp/passwd'
+    #   bar.name
+    #   # => "/tmp/passwd"
+    attr_accessor :name
 
     # Public: Returns a compact resource name Symbol.
     #
     # Examples
     #
-    #   foo = Wright::Resource::Symlink.new(nil)
+    #   foo = Wright::Resource::Symlink.new
     #   foo.resource_name
     #   # => :symlink
     attr_reader :resource_name

@@ -44,20 +44,20 @@ describe Wright::Resource do
 
   it 'should retrieve a provider for a resource' do
     provider_class = Wright::Provider::Sample
-    Sample.new(:name).provider.must_be_kind_of provider_class
+    Sample.new.provider.must_be_kind_of provider_class
   end
 
   it 'should retrieve a provider for a resource listed in the config' do
     # instantiating the Sample resource without any config should
     # yield the Sample provider
     provider_class = Wright::Provider::Sample
-    Sample.new(:name).provider.must_be_kind_of provider_class
+    Sample.new.provider.must_be_kind_of provider_class
 
     # when the provider for Sample resources is set to
     # AlternateSample, AlternateSample should be instantiated
     alternate = Wright::Provider::AlternateSample
-    Wright::Config[:resources] = { sample: {provider: alternate.name } }
-    Sample.new(:name).provider.must_be_kind_of alternate
+    Wright::Config[:resources] = { sample: { provider: alternate.name } }
+    Sample.new.provider.must_be_kind_of alternate
   end
 
   it 'should display warnings for nonexistent providers' do
@@ -65,14 +65,14 @@ describe Wright::Resource do
     output = "WARN: Could not find a provider for resource NonExistent\n"
     proc do
       reset_logger
-      NonExistent.new(:something)
+      NonExistent.new
     end.must_output(output)
   end
 
   it 'should run update actions on updates' do
     provider = Wright::Provider::AlwaysUpdated
-    Wright::Config[:resources] = { updater: {provider: provider.name } }
-    resource = Updater.new(:name)
+    Wright::Config[:resources] = { updater: { provider: provider.name } }
+    resource = Updater.new
     proc do
       resource.on_update = @say_hello
       resource.do_something
@@ -81,8 +81,8 @@ describe Wright::Resource do
 
   it 'should not run update actions if there were no updates' do
     provider = Wright::Provider::NeverUpdated
-    Wright::Config[:resources] = { updater: {provider: provider.name } }
-    resource = Updater.new(:name)
+    Wright::Config[:resources] = { updater: { provider: provider.name } }
+    resource = Updater.new
     proc do
       resource.on_update = @say_hello
       resource.do_something
@@ -92,10 +92,10 @@ describe Wright::Resource do
   it 'should not run update actions in dry-run mode' do
     Wright.dry_run do
       provider = Wright::Provider::AlwaysUpdated
-      Wright::Config[:resources] = { updater: {provider: provider.name } }
+      Wright::Config[:resources] = { updater: { provider: provider.name } }
       name = :farnsworth
       resource = Updater.new(name)
-      resource_info = "#{resource.resource_name} '#{resource.name}'"
+      resource_info = "#{resource.resource_name} '#{name}'"
       output = "INFO: Would trigger update action for #{resource_info}\n"
       proc do
         reset_logger
@@ -107,8 +107,8 @@ describe Wright::Resource do
 
   it 'should not display a warning if there is no update action defined' do
     provider = Wright::Provider::Sample
-    Wright::Config[:resources] = { updater: {provider: provider.name } }
-    resource = Updater.new(:name)
+    Wright::Config[:resources] = { updater: { provider: provider.name } }
+    resource = Updater.new
     proc do
       reset_logger
       resource.on_update = nil
@@ -117,7 +117,7 @@ describe Wright::Resource do
   end
 
   it 'should raise an ArgumentError if on_update is not callable' do
-    resource = Sample.new(:name)
+    resource = Sample.new
     proc { resource.on_update = "I'm a string" }.must_raise ArgumentError
     proc { resource.on_update = Proc.new {} }.must_be_silent
     proc { resource.on_update = nil }.must_be_silent
@@ -129,8 +129,8 @@ describe Wright::Resource do
       def say; raise RuntimeError.new('This should never be called'); end
       def shout; print 'NI!'; end
     end
-    Wright::Config[:resources] = { ni_sayer: {provider: 'Sample' } }
-    ni_sayer = NiSayer.new(:michael)
+    Wright::Config[:resources] = { ni_sayer: { provider: 'Sample' } }
+    ni_sayer = NiSayer.new
     proc do
       ni_sayer.action = :say
       ni_sayer.run_action
@@ -153,7 +153,7 @@ describe Wright::Resource do
       def raise_hell; might_update_resource { @provider.raise_hell }; end
     end
 
-    resource = RaisesExceptions.new(:fake_name)
+    resource = RaisesExceptions.new('fake_name')
 
     proc do
       resource.ignore_failure = true
