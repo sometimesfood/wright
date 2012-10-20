@@ -57,7 +57,7 @@ module Wright
         klass = Wright::Util::ActiveSupport.constantize(parent_class)
         Dir['*.rb'].each do |filename|
           classname = "#{Wright::Util.filename_to_classname(filename)}"
-          klass.autoload classname, File.expand_path(filename)
+          klass.autoload classname, ::File.expand_path(filename)
         end
       end
       private_class_method :add_autoloads_for_current_dir
@@ -82,7 +82,7 @@ module Wright
             subclass = Wright::Util.filename_to_classname(dir)
             ensure_subclass_exists(parent_class, subclass)
             new_parent = Wright::Util.filename_to_classname(
-                                           File.join(parent_class, dir))
+                                           ::File.join(parent_class, dir))
             add_autoloads_unsafe(dir, new_parent)
           end
         end
