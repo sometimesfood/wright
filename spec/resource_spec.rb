@@ -75,7 +75,7 @@ describe Wright::Resource do
     resource = Updater.new
     proc do
       resource.on_update = @say_hello
-      resource.do_something
+      assert resource.do_something
     end.must_output @hello
   end
 
@@ -85,7 +85,7 @@ describe Wright::Resource do
     resource = Updater.new
     proc do
       resource.on_update = @say_hello
-      resource.do_something
+      assert !resource.do_something
     end.must_be_silent
   end
 
@@ -100,7 +100,7 @@ describe Wright::Resource do
       proc do
         reset_logger
         resource.on_update = @say_hello
-        resource.do_something
+        assert resource.do_something
       end.must_output output
     end
   end

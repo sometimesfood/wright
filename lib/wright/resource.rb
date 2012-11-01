@@ -82,7 +82,7 @@ module Wright
     private
     # Public: This is not documented yet.
     #
-    # Returns nothing.
+    # Returns true if the provider was updated and false otherwise.
     def might_update_resource #:doc:
       begin
         yield
@@ -92,7 +92,9 @@ module Wright
         Wright.log.error "#{resource}: #{e}"
         raise e unless @ignore_failure
       end
-      run_update_action if @provider.updated?
+      updated = @provider.updated?
+      run_update_action if updated
+      updated
     end
 
     def run_update_action

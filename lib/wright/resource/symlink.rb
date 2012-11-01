@@ -24,7 +24,7 @@ class Wright::Resource::Symlink < Wright::Resource
 
   # Public: Create or update the Symlink.
   #
-  # Returns nothing.
+  # Returns true if the symlink was updated and false otherwise.
   def create!
     might_update_resource do
       @provider.create!
@@ -33,7 +33,7 @@ class Wright::Resource::Symlink < Wright::Resource
 
   # Public: Remove the Symlink.
   #
-  # Returns nothing.
+  # Returns true if the symlink was updated and false otherwise.
   def remove!
     might_update_resource do
       @provider.remove!
