@@ -105,17 +105,6 @@ describe Wright::Resource do
     end
   end
 
-  it 'should not display a warning if there is no update action defined' do
-    provider = Wright::Provider::Sample
-    Wright::Config[:resources] = { updater: { provider: provider.name } }
-    resource = Updater.new
-    proc do
-      reset_logger
-      resource.on_update = nil
-      resource.do_something
-    end.must_be_silent
-  end
-
   it 'should raise an ArgumentError if on_update is not callable' do
     resource = Sample.new
     proc { resource.on_update = "I'm a string" }.must_raise ArgumentError
