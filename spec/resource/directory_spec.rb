@@ -62,5 +62,14 @@ describe Wright::Resource::Directory do
         assert File.directory?(@dirname)
       end
     end
+
+    it 'should not remove regular files' do
+      FakeFS do
+        FileUtils.touch(@dirname)
+        dir = Wright::Resource::Directory.new(@dirname)
+        proc { dir.remove! }.must_raise RuntimeError
+        assert File.exist?(@dirname)
+      end
+    end
   end
 end
