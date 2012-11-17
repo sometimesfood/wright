@@ -8,7 +8,7 @@ class Wright::Provider::Directory < Wright::Provider
   #
   # Returns nothing.
   def create!
-    if exist?
+    if File.directory?(@resource.name) && mode_uptodate?
       Wright.log.debug "directory already created: #{@resource.name}"
       return
     end
@@ -16,7 +16,7 @@ class Wright::Provider::Directory < Wright::Provider
     if File.exist?(@resource.name) && !File.directory?(@resource.name)
       raise Errno::EEXIST, @resource.name
     end
-    mkdir_p(@resource.name)
+    create_directory
     @updated = true
   end
 
@@ -43,19 +43,23 @@ class Wright::Provider::Directory < Wright::Provider
 
   private
 
-  # Internal: Checks if the specified directory exists.
-  #
-  # Returns true if the directory exists and false otherwise.
-  def exist? #:doc:
-    File.directory?(@resource.name)
+  def mode_uptodate?
+    return true unless @resource.mode
+    target_mode = Util::File.file_mode_to_i(@resource.mode, @resource.name)
+    current_mode = Util::File.file_mode(@resource.name)
+    current_mode == target_mode
   end
 
-  def mkdir_p(dirname)
+  def create_directory
+    dirname = @resource.name
+    mode = Wright::Util::File.file_mode_to_i(@resource.mode, dirname)
+    directory = "#{dirname} (#{mode.to_s(8)})"
     if Wright.dry_run?
-      Wright.log.info "(would) create directory: #{dirname}"
+      Wright.log.info "(would) create directory: #{directory}"
     else
-      Wright.log.info "create directory: #{dirname}"
+      Wright.log.info "create directory: #{directory}"
       FileUtils.mkdir_p(dirname)
+      FileUtils.chmod(mode, dirname)
     end
   end
 end

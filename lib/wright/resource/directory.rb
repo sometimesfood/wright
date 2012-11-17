@@ -14,8 +14,12 @@ class Wright::Resource::Directory < Wright::Resource
   # name - The directory's name.
   def initialize(name)
     super
+    @mode = nil
     @action = :create
   end
+
+  # Public: Gets/Sets the directory's mode.
+  attr_accessor :mode
 
   # Public: Create or update the directory.
   #

@@ -22,13 +22,15 @@ describe Wright::Resource::Directory do
       end
     end
 
-    it 'should not change existing directories' do
+    it 'should update existing directories' do
       FakeFS do
         FileUtils.mkdir_p(@dirname)
-        assert File.directory?(@dirname)
+        FileUtils.chmod(0600, @dirname)
         dir = Wright::Resource::Directory.new(@dirname)
+        dir.mode = '644'
         dir.create!
         assert File.directory?(@dirname)
+        Wright::Util::File.file_mode(@dirname).must_equal 0644
       end
     end
 
