@@ -22,6 +22,15 @@ describe Wright::Resource::Directory do
       end
     end
 
+    it 'should create directories recursively' do
+      FakeFS do
+        dirname = File.join(@dirname, @dirname, @dirname)
+        dir = Wright::Resource::Directory.new(dirname)
+        dir.create!
+        assert File.directory?(dirname)
+      end
+    end
+
     it 'should update existing directories' do
       FakeFS do
         FileUtils.mkdir_p(@dirname)
