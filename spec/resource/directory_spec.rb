@@ -22,4 +22,25 @@ describe Wright::Resource::Directory do
       end
     end
   end
+
+  describe '#remove!' do
+    it 'should remove directories' do
+      FakeFS do
+        FileUtils.mkdir_p(@dirname)
+        dir = Wright::Resource::Directory.new(@dirname)
+        dir.remove!
+        assert !File.exist?(@dirname)
+      end
+    end
+
+    it 'should not remove non-empty directories' do
+      FakeFS do
+        FileUtils.mkdir_p(@dirname)
+        FileUtils.touch(File.join(@dirname, 'somefile'))
+        dir = Wright::Resource::Directory.new(@dirname)
+        proc { dir.remove! }.must_raise Errno::ENOTEMPTY
+        assert File.directory?(@dirname)
+      end
+    end
+  end
 end

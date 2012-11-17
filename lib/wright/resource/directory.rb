@@ -25,6 +25,15 @@ class Wright::Resource::Directory < Wright::Resource
       @provider.create!
     end
   end
+
+  # Public: Remove the directory.
+  #
+  # Returns true if the directory was updated and false otherwise.
+  def remove!
+    might_update_resource do
+      @provider.remove!
+    end
+  end
 end
 
 Wright::DSL.register_resource(Wright::Resource::Directory)
