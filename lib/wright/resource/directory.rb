@@ -15,11 +15,19 @@ class Wright::Resource::Directory < Wright::Resource
   def initialize(name)
     super
     @mode = nil
+    @owner = nil
+    @group = nil
     @action = :create
   end
 
   # Public: Gets/Sets the directory's mode.
   attr_accessor :mode
+
+  # Public: Gets/Sets the directory's owner.
+  attr_accessor :owner
+
+  # Public: Gets/Sets the directory's group.
+  attr_accessor :group
 
   # Public: Create or update the directory.
   #

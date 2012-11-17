@@ -25,7 +25,7 @@ describe Util::File do
     end
   end
 
-  describe 'file_mode' do
+  describe 'file_owner' do
     it 'should return the correct owner for a given file' do
       FakeFS do
         FileUtils.touch(@file)
@@ -38,6 +38,22 @@ describe Util::File do
 
     it 'should return nil for non-existing files' do
       FakeFS { Util::File.file_mode(@file).must_be_nil }
+    end
+  end
+
+  describe 'file_group' do
+    it 'should return the correct group for a given file' do
+      FakeFS do
+        FileUtils.touch(@file)
+        pwent = Etc.getpwent
+        File.chown(pwent.uid, pwent.gid, @file)
+        Util::File.file_group(@file).must_equal pwent.gid
+        FakeFS::FileSystem.clear
+      end
+    end
+
+    it 'should return nil for non-existing files' do
+      FakeFS { Util::File.file_group(@file).must_be_nil }
     end
   end
 

@@ -108,10 +108,33 @@ module Wright
       #   Wright::Util::File.file_owner('foo')
       #   # => 0
       #
+      #   Wright::Util::File.file_owner('nonexistent')
+      #   # => nil
+      #
       # Returns the file owner's uid or nil if the file does not
       # exist.
       def self.file_owner(path)
         ::File.exist?(path) ? ::File.stat(path).uid : nil
+      end
+
+      # Internal: Get a file's owner.
+      #
+      # path - The file's path.
+      #
+      # Examples
+      #
+      #   FileUtils.touch('foo')
+      #   FileUtils.chown(0, 0, 'foo')
+      #   Wright::Util::File.file_group('foo')
+      #   # => 0
+      #
+      #   Wright::Util::File.file_group('nonexistent')
+      #   # => nil
+      #
+      # Returns the file owner's uid or nil if the file does not
+      # exist.
+      def self.file_group(path)
+        ::File.exist?(path) ? ::File.stat(path).gid : nil
       end
 
       # Internal: Convert file access modes to integer modes.

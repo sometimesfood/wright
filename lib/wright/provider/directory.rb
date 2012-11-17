@@ -8,7 +8,10 @@ class Wright::Provider::Directory < Wright::Provider
   #
   # Returns nothing.
   def create!
-    if File.directory?(@resource.name) && mode_uptodate?
+    if File.directory?(@resource.name) &&
+        mode_uptodate? &&
+        owner_uptodate? &&
+        group_uptodate?
       Wright.log.debug "directory already created: #{@resource.name}"
       return
     end
@@ -50,16 +53,35 @@ class Wright::Provider::Directory < Wright::Provider
     current_mode == target_mode
   end
 
+  def owner_uptodate?
+    return true unless @resource.owner
+    target_owner = Util::User.user_to_uid(@resource.owner)
+    current_owner = Util::File.file_owner(@resource.name)
+    current_owner == target_owner
+  end
+
+  def group_uptodate?
+    return true unless @resource.group
+    target_group = Util::User.group_to_gid(@resource.group)
+    current_group = Util::File.file_group(@resource.group)
+    current_group == target_group
+  end
+
   def create_directory
     dirname = @resource.name
     mode = Wright::Util::File.file_mode_to_i(@resource.mode, dirname)
-    directory = "#{dirname} (#{mode.to_s(8)})"
+    owner = @resource.owner
+    group = @resource.group
+    directory = "#{dirname} (#{mode.to_s(8)}, #{owner}:#{group})"
     if Wright.dry_run?
       Wright.log.info "(would) create directory: #{directory}"
     else
       Wright.log.info "create directory: #{directory}"
       FileUtils.mkdir_p(dirname)
       FileUtils.chmod(mode, dirname)
+      FileUtils.chown(Wright::Util::User.user_to_uid(owner),
+                      Wright::Util::User.group_to_gid(group),
+                      dirname)
     end
   end
 end
