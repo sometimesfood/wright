@@ -21,6 +21,24 @@ describe Wright::Resource::Directory do
         assert File.directory?(@dirname)
       end
     end
+
+    it 'should not change existing directories' do
+      FakeFS do
+        FileUtils.mkdir_p(@dirname)
+        assert File.directory?(@dirname)
+        dir = Wright::Resource::Directory.new(@dirname)
+        dir.create!
+        assert File.directory?(@dirname)
+      end
+    end
+
+    it 'should raise an exception if there is a regular file at path' do
+      FakeFS do
+        FileUtils.touch(@dirname)
+        dir = Wright::Resource::Directory.new(@dirname)
+        proc { dir.create! }.must_raise Errno::EEXIST
+      end
+    end
   end
 
   describe '#remove!' do
