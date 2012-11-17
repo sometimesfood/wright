@@ -25,6 +25,22 @@ describe Util::File do
     end
   end
 
+  describe 'file_mode' do
+    it 'should return the correct owner for a given file' do
+      FakeFS do
+        FileUtils.touch(@file)
+        pwent = Etc.getpwent
+        File.chown(pwent.uid, pwent.gid, @file)
+        Util::File.file_owner(@file).must_equal pwent.uid
+        FakeFS::FileSystem.clear
+      end
+    end
+
+    it 'should return nil for non-existing files' do
+      FakeFS { Util::File.file_mode(@file).must_be_nil }
+    end
+  end
+
   describe 'file_mode_to_i' do
     it 'should not change octal integer modes' do
       Util::File.file_mode_to_i(0644, 'nonexistent').must_equal 0644

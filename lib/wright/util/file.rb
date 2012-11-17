@@ -97,6 +97,23 @@ module Wright
         ::File.exist?(path) ? (::File.stat(path).mode & 07777) : nil
       end
 
+      # Internal: Get a file's owner.
+      #
+      # path - The file's path.
+      #
+      # Examples
+      #
+      #   FileUtils.touch('foo')
+      #   FileUtils.chown(0, 0, 'foo')
+      #   Wright::Util::File.file_owner('foo')
+      #   # => 0
+      #
+      # Returns the file owner's uid or nil if the file does not
+      # exist.
+      def self.file_owner(path)
+        ::File.exist?(path) ? ::File.stat(path).uid : nil
+      end
+
       # Internal: Convert file access modes to integer modes.
       #
       # mode - The mode to convert. Symbolic mode String, integer in a
