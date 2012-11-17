@@ -10,6 +10,21 @@ describe Util::File do
     @dir = 'somedir'
   end
 
+  describe 'file_mode' do
+    it 'should return the correct mode for a given file' do
+      FakeFS do
+        FileUtils.touch(@file)
+        FileUtils.chmod(0644, @file)
+        Util::File.file_mode(@file).must_equal 0644
+        FakeFS::FileSystem.clear
+      end
+    end
+
+    it 'should return nil for non-existing files' do
+      FakeFS { Util::File.file_mode(@file).must_be_nil }
+    end
+  end
+
   describe 'file_mode_to_i' do
     it 'should not change octal integer modes' do
       Util::File.file_mode_to_i(0644, 'nonexistent').must_equal 0644

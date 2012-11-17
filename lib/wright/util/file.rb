@@ -91,9 +91,10 @@ module Wright
       #   Wright::Util::File.file_mode('foo').to_s(8)
       #   # => "644"
       #
-      # Returns the file mode as an integer.
+      # Returns the file mode as an integer or nil if the file does
+      # not exist.
       def self.file_mode(path)
-        ::File.stat(path).mode & 07777
+        ::File.exist?(path) ? (::File.stat(path).mode & 07777) : nil
       end
 
       # Internal: Convert file access modes to integer modes.
