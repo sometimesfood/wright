@@ -1,5 +1,7 @@
-require 'wright/provider'
 require 'fileutils'
+require 'wright/provider'
+require 'wright/util/file'
+require 'wright/util/user'
 
 # Public: Directory provider. Used as a Provider for Resource::Directory.
 class Wright::Provider::Directory < Wright::Provider
@@ -78,7 +80,7 @@ class Wright::Provider::Directory < Wright::Provider
     else
       Wright.log.info "create directory: #{directory}"
       FileUtils.mkdir_p(dirname)
-      FileUtils.chmod(mode, dirname)
+      FileUtils.chmod(mode, dirname) if @resource.mode
       FileUtils.chown(Wright::Util::User.user_to_uid(owner),
                       Wright::Util::User.group_to_gid(group),
                       dirname)

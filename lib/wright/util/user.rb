@@ -18,9 +18,12 @@ module Wright
       #   Wright::Util::User.user_to_uid(0)
       #   # => 0
       #
-      # Returns the integer uid of the given user.
+      # Returns the integer uid of the given user or nil if user was
+      # nil.
       def self.user_to_uid(user)
-        user.is_a?(String) ? Etc.getpwnam(user).uid : user.to_i
+        if user
+          user.is_a?(String) ? Etc.getpwnam(user).uid : user.to_i
+        end
       end
 
       # Internal: Get a group's gid.
@@ -35,9 +38,12 @@ module Wright
       #   Wright::Util::User.group_to_gid(0)
       #   # => 0
       #
-      # Returns the integer gid of the given group.
+      # Returns the integer gid of the given group or nil if group was
+      # nil.
       def self.group_to_gid(group)
-        group.is_a?(String) ? Etc.getgrnam(group).gid : group.to_i
+        if group
+          group.is_a?(String) ? Etc.getgrnam(group).gid : group.to_i
+        end
       end
     end
   end
