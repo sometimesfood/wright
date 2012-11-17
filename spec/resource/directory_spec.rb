@@ -14,11 +14,13 @@ describe Wright::Resource::Directory do
       FakeFS do
         dir = Wright::Resource::Directory.new(@dirname)
         dir.mode = '644'
-        dir.owner = 42
+        dir.owner = 23
+        dir.group = 42
         dir.create!
         assert File.directory?(@dirname)
         Wright::Util::File.file_mode(@dirname).must_equal 0644
-        Wright::Util::File.file_owner(@dirname).must_equal 42
+        Wright::Util::File.file_owner(@dirname).must_equal 23
+        Wright::Util::File.file_group(@dirname).must_equal 42
       end
     end
 
@@ -59,6 +61,20 @@ describe Wright::Resource::Directory do
         Wright::Util::File.file_mode(@dirname).must_equal 0644
       end
     end
+
+    it 'should not change up-to-date directories' do
+      FakeFS do
+        FileUtils.mkdir_p(@dirname)
+        mode = Wright::Util::File.file_mode(@dirname)
+        owner = Wright::Util::File.file_owner(@dirname)
+        group = Wright::Util::File.file_group(@dirname)
+        Wright::Resource::Directory.new(@dirname).create!
+        Wright::Util::File.file_mode(@dirname).must_equal(mode)
+        Wright::Util::File.file_owner(@dirname).must_equal(owner)
+        Wright::Util::File.file_group(@dirname).must_equal(group)
+      end
+    end
+
 
     it 'should raise an exception if there is a regular file at path' do
       FakeFS do
