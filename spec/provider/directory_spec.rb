@@ -11,7 +11,7 @@ describe Wright::Provider::Directory do
     def @dir_resource.group; 42; end
     def @dir_resource.mode; 0700; end
 
-    dir = @dir_resource.name
+    dir = "'#{@dir_resource.name}'"
     @create_message = "INFO: create directory: #{dir}\n"
     @create_message_dry = "INFO: (would) create directory: #{dir}\n"
     @create_message_debug = "DEBUG: directory already created: #{dir}\n"

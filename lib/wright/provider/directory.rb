@@ -14,7 +14,7 @@ class Wright::Provider::Directory < Wright::Provider
         mode_uptodate? &&
         owner_uptodate? &&
         group_uptodate?
-      Wright.log.debug "directory already created: #{@resource.name}"
+      Wright.log.debug "directory already created: '#{@resource.name}'"
       return
     end
 
@@ -30,19 +30,19 @@ class Wright::Provider::Directory < Wright::Provider
   # Returns nothing.
   def remove!
     if File.exist?(@resource.name) && !File.directory?(@resource.name)
-      raise RuntimeError, "#{@resource.name} is not a directory"
+      raise RuntimeError, "'#{@resource.name}' exists but is not a directory"
     end
 
     if File.directory?(@resource.name)
       if Wright.dry_run?
-        Wright.log.info "(would) remove directory: #{@resource.name}"
+        Wright.log.info "(would) remove directory: '#{@resource.name}'"
       else
-        Wright.log.info "remove directory: #{@resource.name}"
+        Wright.log.info "remove directory: '#{@resource.name}'"
         FileUtils.rmdir(@resource.name)
       end
       @updated = true
     else
-      Wright.log.debug "directory already removed: #{@resource.name}"
+      Wright.log.debug "directory already removed: '#{@resource.name}'"
     end
   end
 
@@ -76,9 +76,9 @@ class Wright::Provider::Directory < Wright::Provider
     group = @resource.group
 
     if Wright.dry_run?
-      Wright.log.info "(would) create directory: #{dirname}"
+      Wright.log.info "(would) create directory: '#{dirname}'"
     else
-      Wright.log.info "create directory: #{dirname}"
+      Wright.log.info "create directory: '#{dirname}'"
       FileUtils.mkdir_p(dirname)
       FileUtils.chmod(mode, dirname) if @resource.mode
       FileUtils.chown(Wright::Util::User.user_to_uid(owner),
