@@ -65,7 +65,7 @@ class Wright::Provider::Directory < Wright::Provider
   def group_uptodate?
     return true unless @resource.group
     target_group = Util::User.group_to_gid(@resource.group)
-    current_group = Util::File.file_group(@resource.group)
+    current_group = Util::File.file_group(@resource.name)
     current_group == target_group
   end
 
