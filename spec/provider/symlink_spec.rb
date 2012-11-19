@@ -68,15 +68,6 @@ describe Wright::Provider::Symlink do
       assert link.updated?
     end
 
-    it 'should return the update status if a link was not changed' do
-      FakeFS do
-        link = Wright::Provider::Symlink.new(@link_resource)
-        FileUtils.ln_sf(@link_resource.to, @link_resource.name)
-        link.create!
-        assert !link.updated?
-      end
-    end
-
     it 'should return the update status if a link was removed' do
       link = Wright::Provider::Symlink.new(@link_resource)
       proc do
