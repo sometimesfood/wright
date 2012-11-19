@@ -26,19 +26,19 @@ class Wright::Provider::Symlink < Wright::Provider
   # Returns nothing.
   def remove!
     if File.exist?(@resource.name) && !File.symlink?(@resource.name)
-      raise RuntimeError, "#{@resource.name} is not a symlink"
+      raise RuntimeError, "'#{@resource.name}' is not a symlink"
     end
 
     if File.symlink?(@resource.name)
       if Wright.dry_run?
-        Wright.log.info "(would) remove symlink: #{@resource.name}"
+        Wright.log.info "(would) remove symlink: '#{@resource.name}'"
       else
-        Wright.log.info "remove symlink: #{@resource.name}"
+        Wright.log.info "remove symlink: '#{@resource.name}'"
         FileUtils.rm(@resource.name)
       end
       @updated = true
     else
-      Wright.log.debug "symlink already removed: #{@resource.name}"
+      Wright.log.debug "symlink already removed: '#{@resource.name}'"
     end
   end
 
@@ -73,6 +73,6 @@ class Wright::Provider::Symlink < Wright::Provider
   end
 
   def symlink_to_s(link_name, target)
-    "#{link_name} -> #{target}"
+    "'#{link_name}' -> '#{target}'"
   end
 end

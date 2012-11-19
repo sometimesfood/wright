@@ -13,13 +13,13 @@ describe Wright::Provider::Symlink do
 
     name = @link_resource.name
     to = @link_resource.to
-    symlink_to_s = "#{name} -> #{to}"
+    symlink_to_s = "'#{name}' -> '#{to}'"
     @create_message = "INFO: create symlink: #{symlink_to_s}\n"
     @create_message_dry = "INFO: (would) create symlink: #{symlink_to_s}\n"
     @create_message_debug = "DEBUG: symlink already created: #{symlink_to_s}\n"
-    @remove_message = "INFO: remove symlink: #{name}\n"
-    @remove_message_dry = "INFO: (would) remove symlink: #{name}\n"
-    @remove_message_debug = "DEBUG: symlink already removed: #{name}\n"
+    @remove_message = "INFO: remove symlink: '#{name}'\n"
+    @remove_message_dry = "INFO: (would) remove symlink: '#{name}'\n"
+    @remove_message_debug = "DEBUG: symlink already removed: '#{name}'\n"
   end
 
   after(:each) do
