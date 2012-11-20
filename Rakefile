@@ -11,3 +11,9 @@ RDoc::Task.new do |t|
   t.rdoc_files.include('lib/**/*.rb')
   t.options << '--markup=tomdoc'
 end
+
+desc 'Start wright IRB session'
+task :console do
+  ENV['RUBYLIB'] = File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
+  exec 'irb -r wright -r wright/resource/symlink -r wright/resource/directory'
+end
