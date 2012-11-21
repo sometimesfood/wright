@@ -39,6 +39,8 @@ To start up wright IRB session, simply run:
 
 In order to create some resources using the wright DSL:
 
+    include Wright::DSL
+    
     foo_dir = directory '/tmp/foo'
     fstab = symlink '/tmp/foo/fstab' do |s|
       s.to = '/etc/fstab'
