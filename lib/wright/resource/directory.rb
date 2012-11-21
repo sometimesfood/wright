@@ -26,9 +26,6 @@ class Wright::Resource::Directory < Wright::Resource
   # Public: Gets the directory's owner.
   attr_reader :owner
 
-  # Public: Gets/Sets the directory's group.
-  attr_accessor :group
-
   # Public: Sets the directory's owner.
   def owner=(owner)
     if owner.is_a?(String)
@@ -37,6 +34,14 @@ class Wright::Resource::Directory < Wright::Resource
       @group = Wright::Util::User.group_to_gid(group) unless group.nil?
     end
     @owner = Wright::Util::User.user_to_uid(owner)
+  end
+
+  # Public: Gets the directory's group.
+  attr_reader :group
+
+  # Public: Sets the directory's group
+  def group=(group)
+    @group = Wright::Util::User.group_to_gid(group)
   end
 
   # Public: Create or update the directory.
