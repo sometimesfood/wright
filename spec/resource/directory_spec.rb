@@ -75,6 +75,19 @@ describe Wright::Resource::Directory do
       end
     end
 
+    it 'should support owner:group notation' do
+      FakeFS do
+        FileUtils.mkdir_p(@dirname)
+        FileUtils.chown(23, 45, @dirname)
+        owner = Etc.getpwuid(Process.uid).name
+        group = Etc.getgrgid(Process.gid).name
+        dir = Wright::Resource::Directory.new(@dirname)
+        dir.owner = "#{owner}:#{group}"
+        dir.create!
+        Wright::Util::File.file_owner(@dirname).must_equal Process.uid
+        Wright::Util::File.file_group(@dirname).must_equal Process.gid
+      end
+    end
 
     it 'should raise an exception if there is a regular file at path' do
       FakeFS do
