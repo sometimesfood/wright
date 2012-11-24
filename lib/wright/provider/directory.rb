@@ -50,22 +50,22 @@ class Wright::Provider::Directory < Wright::Provider
 
   def mode_uptodate?
     return true unless @resource.mode
-    target_mode = Util::File.file_mode_to_i(@resource.mode, @resource.name)
-    current_mode = Util::File.file_mode(@resource.name)
+    target_mode = Wright::Util::File.file_mode_to_i(@resource.mode, @resource.name)
+    current_mode = Wright::Util::File.file_mode(@resource.name)
     current_mode == target_mode
   end
 
   def owner_uptodate?
     return true unless @resource.owner
-    target_owner = Util::User.user_to_uid(@resource.owner)
-    current_owner = Util::File.file_owner(@resource.name)
+    target_owner = Wright::Util::User.user_to_uid(@resource.owner)
+    current_owner = Wright::Util::File.file_owner(@resource.name)
     current_owner == target_owner
   end
 
   def group_uptodate?
     return true unless @resource.group
-    target_group = Util::User.group_to_gid(@resource.group)
-    current_group = Util::File.file_group(@resource.name)
+    target_group = Wright::Util::User.group_to_gid(@resource.group)
+    current_group = Wright::Util::File.file_group(@resource.name)
     current_group == target_group
   end
 
