@@ -14,7 +14,7 @@ class Wright::Provider::Symlink < Wright::Provider
       return
     end
 
-    if File.exist?(@resource.name) && !File.symlink?(@resource.name)
+    if ::File.exist?(@resource.name) && !::File.symlink?(@resource.name)
       raise Errno::EEXIST, @resource.name
     end
     ln_sfn(@resource.to, @resource.name)
@@ -25,11 +25,11 @@ class Wright::Provider::Symlink < Wright::Provider
   #
   # Returns nothing.
   def remove!
-    if File.exist?(@resource.name) && !File.symlink?(@resource.name)
+    if ::File.exist?(@resource.name) && !::File.symlink?(@resource.name)
       raise RuntimeError, "'#{@resource.name}' is not a symlink"
     end
 
-    if File.symlink?(@resource.name)
+    if ::File.symlink?(@resource.name)
       if Wright.dry_run?
         Wright.log.info "(would) remove symlink: '#{@resource.name}'"
       else
@@ -48,8 +48,8 @@ class Wright::Provider::Symlink < Wright::Provider
   # Returns true if the link exists and points to the specified target
   # and false otherwise.
   def exist? #:doc:
-    File.symlink?(@resource.name) &&
-      File.readlink(@resource.name) == @resource.to
+    ::File.symlink?(@resource.name) &&
+      ::File.readlink(@resource.name) == @resource.to
   end
 
   # Internal: Creates a link named link_name to target.
@@ -65,7 +65,7 @@ class Wright::Provider::Symlink < Wright::Provider
       Wright.log.info "(would) create symlink: #{symlink}"
     else
       Wright.log.info "create symlink: #{symlink}"
-      if File.symlink?(link_name) && File.directory?(link_name)
+      if ::File.symlink?(link_name) && ::File.directory?(link_name)
         FileUtils.rm(link_name)
       end
       FileUtils.ln_sf(target, link_name)

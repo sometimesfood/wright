@@ -10,7 +10,7 @@ class Wright::Provider::Directory < Wright::Provider
   #
   # Returns nothing.
   def create!
-    if File.directory?(@resource.name) &&
+    if ::File.directory?(@resource.name) &&
         mode_uptodate? &&
         owner_uptodate? &&
         group_uptodate?
@@ -18,7 +18,7 @@ class Wright::Provider::Directory < Wright::Provider
       return
     end
 
-    if File.exist?(@resource.name) && !File.directory?(@resource.name)
+    if ::File.exist?(@resource.name) && !::File.directory?(@resource.name)
       raise Errno::EEXIST, @resource.name
     end
     create_directory
@@ -29,11 +29,11 @@ class Wright::Provider::Directory < Wright::Provider
   #
   # Returns nothing.
   def remove!
-    if File.exist?(@resource.name) && !File.directory?(@resource.name)
+    if ::File.exist?(@resource.name) && !::File.directory?(@resource.name)
       raise RuntimeError, "'#{@resource.name}' exists but is not a directory"
     end
 
-    if File.directory?(@resource.name)
+    if ::File.directory?(@resource.name)
       if Wright.dry_run?
         Wright.log.info "(would) remove directory: '#{@resource.name}'"
       else
