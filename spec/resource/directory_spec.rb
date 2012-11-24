@@ -1,7 +1,6 @@
 require_relative '../spec_helper'
 
 require 'wright/resource/directory'
-require 'wright/provider/directory'
 require 'fileutils'
 
 describe Wright::Resource::Directory do

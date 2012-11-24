@@ -1,7 +1,6 @@
 require_relative '../spec_helper'
 
 require 'wright/resource/symlink'
-require 'wright/provider/symlink'
 require 'fileutils'
 
 describe Wright::Resource::Symlink do
