@@ -17,5 +17,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'rdoc'
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'fakefs'
+  gem.add_development_dependency 'fakefs', '~> 0.4.2'
 end
