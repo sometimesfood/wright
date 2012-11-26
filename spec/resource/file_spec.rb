@@ -94,6 +94,15 @@ describe Wright::Resource::File do
       end
     end
 
+    it 'should throw an exception if target is a directory' do
+      FakeFS do
+        FileUtils.mkdir_p(@filename)
+        file = Wright::Resource::File.new(@filename)
+        proc { file.create! }.must_raise Errno::EISDIR
+        assert File.directory?(@filename)
+      end
+    end
+
     # it 'should support owner:group notation' do
     #   FakeFS do
     #     FileUtils.mkdir_p(@dirname)
