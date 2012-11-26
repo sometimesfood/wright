@@ -18,7 +18,7 @@ class Wright::Provider::File < Wright::Provider
     end
 
     if uptodate?
-      Wright.log.debug "file already created: #{@resource.name}"
+      Wright.log.debug "file already created: '#{@resource.name}'"
       return
     end
 
