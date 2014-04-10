@@ -19,7 +19,7 @@ class Wright::Resource::Symlink < Wright::Resource
     @action = :create
   end
 
-  # Public: Gets/Sets the link's target.
+  # Public: Get/Set the link's target.
   attr_accessor :to
 
   # Public: Create or update the Symlink.

@@ -20,13 +20,13 @@ class Wright::Resource::Directory < Wright::Resource
     @action = :create
   end
 
-  # Public: Gets/Sets the directory's mode.
+  # Public: Get/Set the directory's mode.
   attr_accessor :mode
 
-  # Public: Gets the directory's owner.
+  # Public: Get the directory's owner.
   attr_reader :owner
 
-  # Public: Sets the directory's owner.
+  # Public: Set the directory's owner.
   def owner=(owner)
     if owner.is_a?(String)
       raise ArgumentError, "Invalid owner: '#{owner}'" if owner.count(':') > 1
@@ -36,10 +36,10 @@ class Wright::Resource::Directory < Wright::Resource
     @owner = Util::User.user_to_uid(owner)
   end
 
-  # Public: Gets the directory's group.
+  # Public: Get the directory's group.
   attr_reader :group
 
-  # Public: Sets the directory's group
+  # Public: Set the directory's group
   def group=(group)
     @group = Util::User.group_to_gid(group)
   end

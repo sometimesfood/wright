@@ -65,7 +65,7 @@ module Wright
   end
 
   class << self
-    # Public: Gets/Sets Wright's Logger.
+    # Public: Get/Set Wright's Logger.
     attr_accessor :log
   end
   @log = Wright::Logger.new

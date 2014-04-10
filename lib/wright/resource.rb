@@ -20,13 +20,13 @@ module Wright
       @ignore_failure = false
     end
 
-    # Public: Gets/Sets the name Symbol of the method to be run by run_action.
+    # Public: Get/Set the name Symbol of the method to be run by run_action.
     attr_accessor :action
 
-    # Public: Gets/Sets the ignore_failure attribute.
+    # Public: Get/Set the ignore_failure attribute.
     attr_accessor :ignore_failure
 
-    # Public: Gets/Sets the resource's name attribute.
+    # Public: Get/Set the resource's name attribute.
     #
     # Examples
     #
