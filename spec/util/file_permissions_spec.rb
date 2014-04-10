@@ -12,6 +12,8 @@ describe FilePermissions do
     @dir_permissions = FilePermissions.new(@filename, :directory)
   end
 
+  after(:each) { FakeFS::FileSystem.clear }
+
   describe 'initialize' do
     it 'should raise exceptions for incorrect file types' do
       proc do
@@ -48,6 +50,14 @@ describe FilePermissions do
       @file_permissions.owner = 'owner:group'
       @file_permissions.owner.must_equal 'owner'
       @file_permissions.group.must_equal 'group'
+    end
+  end
+
+  describe '#uptodate?' do
+    it 'should return false for inexistent files' do
+      FakeFS do
+        @file_permissions.uptodate?.must_equal false
+      end
     end
   end
 end

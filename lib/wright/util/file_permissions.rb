@@ -25,6 +25,14 @@ module Wright
         end
       end
 
+      def uptodate?
+        if File.exist?(@filename)
+          owner_uptodate? && group_uptodate? && mode_uptodate?
+        else
+          false
+        end
+      end
+
       def update
         # Util::User.group_to_gid(group) unless group.nil?
         # Util::User.user_to_uid(owner)
@@ -37,6 +45,17 @@ module Wright
         when :directory
           ~::File.umask & 0777
         end
+      end
+
+      private
+
+      def owner_uptodate?
+      end
+
+      def group_uptodate?
+      end
+
+      def mode_uptodate?
       end
     end
   end
