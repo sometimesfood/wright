@@ -220,6 +220,27 @@ module Wright
         end
         mode_i
       end
+
+      def self.mode_uptodate?(filename, target_mode)
+        return true unless target_mode
+        target_mode_i = Util::File.file_mode_to_i(target_mode, filename)
+        current_mode_i = Util::File.file_mode(filename)
+        current_mode_i == target_mode_i
+      end
+
+      def self.owner_uptodate?(filename, target_owner)
+        return true unless target_owner
+        target_owner_i = Util::User.user_to_uid(target_owner)
+        current_owner_i = Util::File.file_owner(filename)
+        current_owner_i == target_owner_i
+      end
+
+      def self.group_uptodate?(filename, target_group)
+        return true unless target_group
+        target_group_i = Util::User.group_to_gid(target_group)
+        current_group_i = Util::File.file_group(filename)
+        current_group_i == target_group_i
+      end
     end
   end
 end

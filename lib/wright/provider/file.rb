@@ -71,28 +71,7 @@ class Wright::Provider::File < Wright::Provider
     end
   end
 
-  # oh noes, copy and paste!
-  def mode_uptodate?
-    return true unless @resource.mode
-    target_mode = Util::File.file_mode_to_i(@resource.mode, @resource.name)
-    current_mode = Util::File.file_mode(@resource.name)
-    current_mode == target_mode
-  end
-
-  def owner_uptodate?
-    return true unless @resource.owner
-    target_owner = Util::User.user_to_uid(@resource.owner)
-    current_owner = Util::File.file_owner(@resource.name)
-    current_owner == target_owner
-  end
-
-  def group_uptodate?
-    return true unless @resource.group
-    target_group = Util::User.group_to_gid(@resource.group)
-    current_group = Util::File.file_group(@resource.name)
-    current_group == target_group
-  end
-  ###################
+  private
 
   def checksum(content)
     Digest::SHA256.hexdigest(content)
@@ -108,8 +87,8 @@ class Wright::Provider::File < Wright::Provider
 
   def uptodate?
     content_uptodate? &&
-      mode_uptodate? &&
-      owner_uptodate? &&
-      group_uptodate?
+      Util::File.mode_uptodate?(@resource.name, @mode) &&
+      Util::File.owner_uptodate?(@resource.name, @owner) &&
+      Util::File.group_uptodate?(@resource.name, @group)
   end
 end

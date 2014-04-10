@@ -11,9 +11,9 @@ class Wright::Provider::Directory < Wright::Provider
   # Returns nothing.
   def create!
     if ::File.directory?(@resource.name) &&
-        mode_uptodate? &&
-        owner_uptodate? &&
-        group_uptodate?
+        Util::File.mode_uptodate?(@resource.name, @resource.mode) &&
+        Util::File.owner_uptodate?(@resource.name, @resource.owner) &&
+        Util::File.group_uptodate?(@resource.name, @resource.group)
       Wright.log.debug "directory already created: '#{@resource.name}'"
       return
     end
@@ -47,27 +47,6 @@ class Wright::Provider::Directory < Wright::Provider
   end
 
   private
-
-  def mode_uptodate?
-    return true unless @resource.mode
-    target_mode = Wright::Util::File.file_mode_to_i(@resource.mode, @resource.name)
-    current_mode = Wright::Util::File.file_mode(@resource.name)
-    current_mode == target_mode
-  end
-
-  def owner_uptodate?
-    return true unless @resource.owner
-    target_owner = Wright::Util::User.user_to_uid(@resource.owner)
-    current_owner = Wright::Util::File.file_owner(@resource.name)
-    current_owner == target_owner
-  end
-
-  def group_uptodate?
-    return true unless @resource.group
-    target_group = Wright::Util::User.group_to_gid(@resource.group)
-    current_group = Wright::Util::File.file_group(@resource.name)
-    current_group == target_group
-  end
 
   def create_directory
     dirname = @resource.name
