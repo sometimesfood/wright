@@ -14,8 +14,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = Wright::VERSION
 
-  gem.add_development_dependency 'simplecov'
-  gem.add_development_dependency 'rdoc'
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'fakefs', '~> 0.4.2'
+  gem.add_development_dependency 'simplecov', '~> 0.7.1'
+  gem.add_development_dependency 'rdoc', '~> 4.1.1'
+  gem.add_development_dependency 'rake', '~> 10.2.2'
+  gem.add_development_dependency 'fakefs', '~> 0.5.2'
 end
