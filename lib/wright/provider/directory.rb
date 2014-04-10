@@ -50,7 +50,7 @@ class Wright::Provider::Directory < Wright::Provider
 
   def create_directory
     dirname = @resource.name
-    mode = Util::File.file_mode_to_i(@resource.mode, dirname)
+    mode = Util::File.dir_mode_to_i(@resource.mode, dirname)
     owner = @resource.owner
     group = @resource.group
 
