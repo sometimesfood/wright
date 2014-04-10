@@ -12,6 +12,17 @@ describe Wright::Resource::Directory do
     it 'should create directories' do
       FakeFS do
         dir = Wright::Resource::Directory.new(@dirname)
+        dir.create!
+        assert File.directory?(@dirname)
+        Wright::Util::File.file_mode(@dirname).must_equal ~::File.umask & 0777
+        Wright::Util::File.file_owner(@dirname).must_equal Process.uid
+        Wright::Util::File.file_group(@dirname).must_equal Process.gid
+      end
+    end
+
+    it 'should create directories with the given permissions' do
+      FakeFS do
+        dir = Wright::Resource::Directory.new(@dirname)
         dir.mode = '644'
         dir.owner = 23
         dir.group = 42
