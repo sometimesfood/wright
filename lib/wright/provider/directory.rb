@@ -71,7 +71,9 @@ class Wright::Provider::Directory < Wright::Provider
 
   def create_directory
     dirname = @resource.name
-    mode = Wright::Util::File.file_mode_to_i(@resource.mode, dirname)
+    mode = Util::File.file_mode_to_i(@resource.mode, dirname)
+    owner = @resource.owner
+    group = @resource.group
 
     if Wright.dry_run?
       Wright.log.info "(would) create directory: '#{dirname}'"
@@ -79,7 +81,9 @@ class Wright::Provider::Directory < Wright::Provider
       Wright.log.info "create directory: '#{dirname}'"
       FileUtils.mkdir_p(dirname)
       FileUtils.chmod(mode, dirname) if @resource.mode
-      FileUtils.chown(@resource.owner, @resource.group, dirname)
+      FileUtils.chown(Util::User.user_to_uid(owner),
+                      Util::User.group_to_gid(group),
+                      dirname)
     end
   end
 end
