@@ -1,0 +1,30 @@
+* Wright::Util::File.file_mode
+ - lib/wright/provider/file.rb
+ - spec/resource/directory_spec.rb
+ - spec/resource/file_spec.rb
+
+* Wright::Util::File.file_owner
+ - spec/resource/directory_spec.rb
+ - spec/resource/file_spec.rb
+
+* Wright::Util::File.file_group
+ - spec/resource/directory_spec.rb
+ - spec/resource/file_spec.rb
+
+* Wright::Util::File.file_mode_to_i
+ - lib/wright/provider/file.rb
+
+* Wright::Util::File.dir_mode_to_i
+ - lib/wright/provider/directory.rb
+
+* Wright::Util::File.mode_uptodate?
+ - lib/wright/provider/directory.rb
+ - lib/wright/provider/file.rb
+
+* Wright::Util::File.owner_uptodate?
+ - lib/wright/provider/directory.rb
+ - lib/wright/provider/file.rb
+
+* Wright::Util::File.group_uptodate?
+ - lib/wright/provider/directory.rb
+ - lib/wright/provider/file.rb
