@@ -103,19 +103,20 @@ describe Wright::Resource::File do
       end
     end
 
-    # it 'should support owner:group notation' do
-    #   FakeFS do
-    #     FileUtils.mkdir_p(@dirname)
-    #     FileUtils.chown(23, 45, @dirname)
-    #     owner = Etc.getpwuid(Process.uid).name
-    #     group = Etc.getgrgid(Process.gid).name
-    #     dir = Wright::Resource::Directory.new(@dirname)
-    #     dir.owner = "#{owner}:#{group}"
-    #     dir.create!
-    #     Wright::Util::File.file_owner(@dirname).must_equal Process.uid
-    #     Wright::Util::File.file_group(@dirname).must_equal Process.gid
-    #   end
-    # end
+    it 'should support owner:group notation' do
+      skip
+      FakeFS do
+        FileUtils.touch(@filename)
+        FileUtils.chown(23, 45, @filename)
+        owner = Etc.getpwuid(Process.uid).name
+        group = Etc.getgrgid(Process.gid).name
+        file = Wright::Resource::File.new(@filename)
+        file.owner = "#{owner}:#{group}"
+        file.create!
+        Wright::Util::File.file_owner(@filename).must_equal Process.uid
+        Wright::Util::File.file_group(@filename).must_equal Process.gid
+      end
+    end
 
     # it 'should raise an exception when setting invalid an owner/group' do
     #   dir = Wright::Resource::Directory.new(@dirname)
