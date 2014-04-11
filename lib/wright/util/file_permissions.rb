@@ -87,13 +87,10 @@ module Wright
 
         mode_i = Wright::Util::File.numeric_mode_to_i(@mode)
         unless mode_i
-          current_mode = if ::File.exist?(@filename)
-                           Wright::Util::File.file_mode(@filename)
-                         else
-                           default_mode
-                         end
+          current_mode_i =
+            ::File.exist?(@filename) ? current_mode : default_mode
           mode_i = Wright::Util::File.symbolic_modes_to_i(@mode,
-                                                          current_mode,
+                                                          current_mode_i,
                                                           @filetype)
         end
         mode_i
