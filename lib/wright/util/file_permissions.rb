@@ -1,3 +1,5 @@
+require 'wright/util/file'
+
 module Wright
   module Util
     class FilePermissions
@@ -12,7 +14,7 @@ module Wright
       end
 
       attr_accessor :group, :mode
-      attr_reader :owner
+      attr_reader :owner, :filename
 
       def owner=(owner)
         if owner.is_a?(String)
@@ -26,14 +28,18 @@ module Wright
       end
 
       def uptodate?
-        if File.exist?(@filename)
-          owner_uptodate? && group_uptodate? && mode_uptodate?
+        if ::File.exist?(@filename)
+          #owner_uptodate? && group_uptodate? && mode_uptodate?
+          mode_uptodate?
         else
           false
         end
       end
 
       def update
+        target_mode = mode_to_i
+        ::File.chmod(target_mode, @filename) if target_mode
+
         # Util::User.group_to_gid(group) unless group.nil?
         # Util::User.user_to_uid(owner)
       end
@@ -47,6 +53,56 @@ module Wright
         end
       end
 
+      # Internal: Convert file access modes to integer modes.
+      #
+      # mode - The mode to convert. Symbolic mode String, integer in a
+      #        String or integer mode.
+      #
+      # path - The file's path. Only used for relative modes
+      #        (eg. 'a+x', 'u=rw' etc.). If the file at the given path
+      #        does not exist, the current umask is used to determine
+      #        the base mode.
+      #
+      # Examples
+      #
+      #   Wright::Util::File.dir_mode_to_i(0644).to_s(8)
+      #   # => "644"
+      #
+      #   Wright::Util::File.dir_mode_to_i('644').to_s(8)
+      #   # => "644"
+      #
+      #   FileUtils.mkdir_p('foo')
+      #   FileUtils.chmod(0444, 'foo')
+      #   Wright::Util::File.dir_mode_to_i('u=wr,go+X', 'foo').to_s(8)
+      #   # => "655"
+      #
+      #   File.umask(000)
+      #   Wright::Util::File.dir_mode_to_i('go-w').to_s(8)
+      #   # => "755"
+      #
+      # Returns the file mode as an integer.
+      # Raises ArgumentError if mode is an invalid symbolic mode.
+      def mode_to_i
+        return nil if @mode.nil?
+
+        mode_i = Wright::Util::File.numeric_mode_to_i(@mode)
+        unless mode_i
+          current_mode = if ::File.exist?(@filename)
+                           Wright::Util::File.file_mode(@filename)
+                         else
+                           default_mode
+                         end
+          mode_i = Wright::Util::File.symbolic_modes_to_i(@mode,
+                                                          current_mode,
+                                                          @filetype)
+        end
+        mode_i
+      end
+
+      def current_mode
+        Wright::Util::File.file_mode(@filename)
+      end
+
       private
 
       def owner_uptodate?
@@ -56,6 +112,8 @@ module Wright
       end
 
       def mode_uptodate?
+        target_mode = mode_to_i
+        target_mode.nil? ? true : current_mode == target_mode
       end
     end
   end

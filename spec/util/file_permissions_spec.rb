@@ -6,10 +6,8 @@ include Wright::Util
 
 describe FilePermissions do
   before(:each) do
-    @filename = 'somefile'
-    @dirname = 'somedir'
-    @file_permissions = FilePermissions.new(@filename, :file)
-    @dir_permissions = FilePermissions.new(@filename, :directory)
+    @file_permissions = FilePermissions.new('somefile', :file)
+    @dir_permissions = FilePermissions.new('somedir', :directory)
   end
 
   after(:each) { FakeFS::FileSystem.clear }
@@ -57,6 +55,73 @@ describe FilePermissions do
     it 'should return false for inexistent files' do
       FakeFS do
         @file_permissions.uptodate?.must_equal false
+      end
+    end
+  end
+
+  describe '#mode_to_i' do
+    it 'should return nil if the mode has not been set' do
+      FakeFS do
+        @file_permissions.mode_to_i.must_be_nil
+
+        FileUtils.touch(@file_permissions.filename)
+        @file_permissions.mode_to_i.must_be_nil
+      end
+    end
+
+    it 'should return the default mode for missing files' do
+      @file_permissions.mode = 'ugo+'
+      FakeFS do
+        @file_permissions.mode_to_i.must_equal @file_permissions.default_mode
+      end
+    end
+
+    it 'should return the current mode for existing files' do
+      FakeFS do
+        FileUtils.touch(@file_permissions.filename)
+        FileUtils.chmod(0456, @file_permissions.filename)
+        @file_permissions.mode = 'ugo+'
+        @file_permissions.mode_to_i.must_equal 0456
+      end
+    end
+  end
+
+  describe '#uptodate?' do
+    it 'should foo' do
+      FakeFS do
+        FileUtils.touch(@file_permissions.filename)
+        FileUtils.chmod(0600, @file_permissions.filename)
+        @file_permissions.uptodate?.must_equal true
+
+        @file_permissions.mode = 0666
+        @file_permissions.uptodate?.must_equal false
+
+        @file_permissions.mode = 'ugo+'
+        @file_permissions.uptodate?.must_equal true
+
+        @file_permissions.mode = 'a+rwx'
+        @file_permissions.uptodate?.must_equal false
+      end
+    end
+  end
+
+  describe '#update' do
+    it 'should foo' do
+      FakeFS do
+        FileUtils.touch(@file_permissions.filename)
+
+        FileUtils.chmod(0600, @file_permissions.filename)
+        @file_permissions.mode = 0666
+        @file_permissions.update
+        @file_permissions.current_mode.must_equal 0666
+
+        FileUtils.chmod(0600, @file_permissions.filename)
+        @file_permissions.mode = 'ugo+'
+        @file_permissions.update
+        @file_permissions.current_mode.must_equal 0600
+
+        # @file_permissions.mode = 'a+rwx'
+        # @file_permissions.uptodate?.must_equal false
       end
     end
   end

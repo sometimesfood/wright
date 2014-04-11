@@ -43,7 +43,8 @@ module Wright
       end
       private_class_method :mode_mask
 
-      def self.symbolic_modes_to_i(modes, current_mode, is_directory)
+      def self.symbolic_modes_to_i(modes, current_mode, filetype = :file)
+        is_directory = (filetype == :directory)
         unless symbolic_mode?(modes)
           raise ArgumentError, "Invalid file mode \"#{modes}\""
         end
@@ -64,13 +65,13 @@ module Wright
           end
         end
       end
-      private_class_method :symbolic_modes_to_i
+      # private_class_method :symbolic_modes_to_i
 
       def self.numeric_mode_to_i(mode)
         return mode.to_i unless mode.is_a?(String)
         mode =~ /\A[0-7]{3,4}\Z/ ? mode.to_i(8) : nil
       end
-      private_class_method :numeric_mode_to_i
+      # private_class_method :numeric_mode_to_i
 
       def self.symbolic_mode?(mode_str)
         return true if mode_str.empty?
@@ -135,48 +136,6 @@ module Wright
       # exist.
       def self.file_group(path)
         ::File.exist?(path) ? ::File.stat(path).gid : nil
-      end
-
-      # Internal: Convert file access modes to integer modes.
-      #
-      # mode - The mode to convert. Symbolic mode String, integer in a
-      #        String or integer mode.
-      #
-      # path - The file's path. Only used for relative modes
-      #        (eg. 'a+x', 'u=rw' etc.). If the file at the given path
-      #        does not exist, the current umask is used to determine
-      #        the base mode.
-      #
-      # Examples
-      #
-      #   Wright::Util::File.dir_mode_to_i(0644).to_s(8)
-      #   # => "644"
-      #
-      #   Wright::Util::File.dir_mode_to_i('644').to_s(8)
-      #   # => "644"
-      #
-      #   FileUtils.mkdir_p('foo')
-      #   FileUtils.chmod(0444, 'foo')
-      #   Wright::Util::File.dir_mode_to_i('u=wr,go+X', 'foo').to_s(8)
-      #   # => "655"
-      #
-      #   File.umask(000)
-      #   Wright::Util::File.dir_mode_to_i('go-w').to_s(8)
-      #   # => "755"
-      #
-      # Returns the file mode as an integer.
-      # Raises ArgumentError if mode is an invalid symbolic mode.
-      def self.file_mode_to_i(mode, path = '')
-        mode_i = numeric_mode_to_i(mode)
-        unless mode_i
-          current_mode = if ::File.exist?(path)
-                           file_mode(path)
-                         else
-                           (~::File.umask & 0666)
-                         end
-          mode_i = symbolic_modes_to_i(mode, current_mode, false)
-        end
-        mode_i
       end
 
       # Internal: Convert directory access modes to integer modes.
