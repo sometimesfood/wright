@@ -120,8 +120,10 @@ describe FilePermissions do
         @file_permissions.update
         @file_permissions.current_mode.must_equal 0600
 
-        # @file_permissions.mode = 'a+rwx'
-        # @file_permissions.uptodate?.must_equal false
+        FileUtils.chmod(0600, @file_permissions.filename)
+        @file_permissions.mode = 'u=rwx,g+rx,o+rX'
+        @file_permissions.update
+        @file_permissions.current_mode.must_equal 0754
       end
     end
   end
