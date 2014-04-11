@@ -121,9 +121,19 @@ describe FilePermissions do
         @file_permissions.current_mode.must_equal 0600
 
         FileUtils.chmod(0600, @file_permissions.filename)
-        @file_permissions.mode = 'u=rwx,g+rx,o+rX'
+        @file_permissions.mode = 'u+rwx,g=rx,o=rX'
         @file_permissions.update
         @file_permissions.current_mode.must_equal 0754
+      end
+    end
+
+    it 'should foo for directories' do
+      FakeFS do
+        FileUtils.mkdir(@dir_permissions.filename)
+        FileUtils.chmod(0600, @dir_permissions.filename)
+        @dir_permissions.mode = 'u+rwx,g=rx,o=rX'
+        @dir_permissions.update
+        @dir_permissions.current_mode.must_equal 0755
       end
     end
   end
