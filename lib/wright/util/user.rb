@@ -45,6 +45,34 @@ module Wright
           group.is_a?(String) ? Etc.getgrnam(group).gid : group.to_i
         end
       end
+
+      # Internal: Split a colon-separated owner string into owner and
+      #           group.
+      #
+      # owner - The owner string
+      #
+      # Examples
+      #
+      #   Wright::Util::User.owner_to_owner_group('foo:bar')
+      #   # => ["foo", "bar"]
+      #
+      #   Wright::Util::User.owner_to_owner_group('foo')
+      #   # => ["foo", nil]
+      #
+      #   Wright::Util::User.owner_to_owner_group(23)
+      #   # => [23, nil]
+      #
+      # Returns the owner and group. Returns nil if no group was
+      #   specified. Non-string owners are returned unmodified.
+      # Raises ArgumentError if the owner string contains more than
+      #   one colon.
+      def self.owner_to_owner_group(owner)
+        group = nil
+        return [owner, group] unless owner.is_a?(String)
+
+        fail ArgumentError, "Invalid owner: '#{owner}'" if owner.count(':') > 1
+        owner, group = owner.split(':')
+      end
     end
   end
 end

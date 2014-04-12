@@ -103,9 +103,21 @@ describe Wright::Resource::Directory do
       dir = Wright::Resource::Directory.new(@dirname)
       user = 'this_user_doesnt_exist'
       group = 'this_group_doesnt_exist'
-      proc { dir.owner = user }.must_raise ArgumentError
-      proc { dir.group = group }.must_raise ArgumentError
-      proc { dir.owner = "#{user}:#{group}" }.must_raise ArgumentError
+
+      proc do
+        dir.owner = user
+        dir.create!
+      end.must_raise ArgumentError
+
+      proc do
+        dir.group = group
+        dir.create!
+      end.must_raise ArgumentError
+
+      proc do
+        dir.owner = "#{user}:#{group}"
+        dir.create!
+      end.must_raise ArgumentError
     end
 
     it 'should raise an exception if there is a regular file at path' do

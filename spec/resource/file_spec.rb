@@ -104,7 +104,6 @@ describe Wright::Resource::File do
     end
 
     it 'should support owner:group notation' do
-      skip
       FakeFS do
         FileUtils.touch(@filename)
         FileUtils.chown(23, 45, @filename)

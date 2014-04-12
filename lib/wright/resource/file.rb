@@ -10,6 +10,9 @@ require 'wright/dsl'
 #   file.create!
 class Wright::Resource::File < Wright::Resource
 
+  attr_accessor :content, :group, :mode
+  attr_reader :owner
+
   # Public: Initialize a File.
   #
   # name - The file's name.
@@ -22,7 +25,12 @@ class Wright::Resource::File < Wright::Resource
     @action = :create
   end
 
-  attr_accessor :content, :mode, :owner, :group
+  # Public: Set the file's owner.
+  def owner=(owner)
+    target_owner, target_group = Wright::Util::User.owner_to_owner_group(owner)
+    @owner = target_owner unless target_owner.nil?
+    @group = target_group unless target_group.nil?
+  end
 
   # Public: Create or update the File.
   #
