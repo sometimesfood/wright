@@ -4,6 +4,9 @@ require 'wright/util/user'
 module Wright
   module Util
     class FilePermissions
+      attr_accessor :group, :mode, :filename
+      attr_reader :owner
+
       VALID_FILETYPES = [:file, :directory]
 
       def initialize(filename, filetype)
@@ -13,9 +16,6 @@ module Wright
         @filename = filename
         @filetype = filetype
       end
-
-      attr_accessor :group, :mode, :filename
-      attr_reader :owner
 
       def owner=(owner)
         if owner.is_a?(String)
@@ -47,58 +47,6 @@ module Wright
         end
       end
 
-      def default_mode
-        case @filetype
-        when :file
-          ~::File.umask & 0666
-        when :directory
-          ~::File.umask & 0777
-        end
-      end
-
-      # Internal: Convert file access modes to integer modes.
-      #
-      # mode - The mode to convert. Symbolic mode String, integer in a
-      #        String or integer mode.
-      #
-      # path - The file's path. Only used for relative modes
-      #        (eg. 'a+x', 'u=rw' etc.). If the file at the given path
-      #        does not exist, the current umask is used to determine
-      #        the base mode.
-      #
-      # Examples
-      #
-      #   Wright::Util::File.dir_mode_to_i(0644).to_s(8)
-      #   # => "644"
-      #
-      #   Wright::Util::File.dir_mode_to_i('644').to_s(8)
-      #   # => "644"
-      #
-      #   FileUtils.mkdir_p('foo')
-      #   FileUtils.chmod(0444, 'foo')
-      #   Wright::Util::File.dir_mode_to_i('u=wr,go+X', 'foo').to_s(8)
-      #   # => "655"
-      #
-      #   File.umask(000)
-      #   Wright::Util::File.dir_mode_to_i('go-w').to_s(8)
-      #   # => "755"
-      #
-      # Returns the file mode as an integer.
-      # Raises ArgumentError if mode is an invalid symbolic mode.
-      def mode_to_i
-        return nil if @mode.nil?
-
-        mode_i = Wright::Util::File.numeric_mode_to_i(@mode)
-        unless mode_i
-          current_mode_i =
-            ::File.exist?(@filename) ? current_mode : default_mode
-          mode_i = Wright::Util::File.symbolic_modes_to_i(@mode,
-                                                          current_mode_i,
-                                                          @filetype)
-        end
-        mode_i
-      end
-
       def current_mode
         Wright::Util::File.file_mode(@filename)
       end
@@ -121,6 +69,22 @@ module Wright
         Util::User.group_to_gid(@group)
       end
 
+      # Internal: Convert file access mode to integer mode.
+      #
+      # Returns the file mode as an integer.
+      # Raises ArgumentError if mode is an invalid symbolic mode.
+      def mode_to_i
+        return nil if @mode.nil?
+
+        mode_i = File.numeric_mode_to_i(@mode)
+        unless mode_i
+          current_mode_i =
+            ::File.exist?(@filename) ? current_mode : default_mode
+          mode_i = File.symbolic_modes_to_i(@mode, current_mode_i, @filetype)
+        end
+        mode_i
+      end
+
       def owner_uptodate?
         target_owner = owner_to_i
         target_owner.nil? ? true : current_owner == target_owner
@@ -134,6 +98,15 @@ module Wright
       def mode_uptodate?
         target_mode = mode_to_i
         target_mode.nil? ? true : current_mode == target_mode
+      end
+
+      def default_mode
+        case @filetype
+        when :file
+          ~::File.umask & 0666
+        when :directory
+          ~::File.umask & 0777
+        end
       end
     end
   end

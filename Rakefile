@@ -14,6 +14,5 @@ end
 
 desc 'Start wright IRB session'
 task :console do
-  ENV['RUBYLIB'] = File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
-  exec 'irb -r wright -r wright/resource/symlink -r wright/resource/directory'
+  exec 'irb -I lib -r wright'
 end

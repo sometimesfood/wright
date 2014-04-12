@@ -20,18 +20,6 @@ describe FilePermissions do
     end
   end
 
-  describe '#default_mode' do
-    it 'should return the correct default mode for files' do
-      default_mode = ~::File.umask & 0666
-      @file_permissions.default_mode.must_equal default_mode
-    end
-
-    it 'should return the correct default mode for directories' do
-      default_mode = ~::File.umask & 0777
-      @dir_permissions.default_mode.must_equal default_mode
-    end
-  end
-
   describe '#owner=' do
     it 'should raise exceptions for invalid owner strings' do
       proc do
@@ -55,33 +43,6 @@ describe FilePermissions do
     it 'should return false for inexistent files' do
       FakeFS do
         @file_permissions.uptodate?.must_equal false
-      end
-    end
-  end
-
-  describe '#mode_to_i' do
-    it 'should return nil if the mode has not been set' do
-      FakeFS do
-        @file_permissions.mode_to_i.must_be_nil
-
-        FileUtils.touch(@file_permissions.filename)
-        @file_permissions.mode_to_i.must_be_nil
-      end
-    end
-
-    it 'should return the default mode for missing files' do
-      @file_permissions.mode = 'ugo+'
-      FakeFS do
-        @file_permissions.mode_to_i.must_equal @file_permissions.default_mode
-      end
-    end
-
-    it 'should return the current mode for existing files' do
-      FakeFS do
-        FileUtils.touch(@file_permissions.filename)
-        FileUtils.chmod(0456, @file_permissions.filename)
-        @file_permissions.mode = 'ugo+'
-        @file_permissions.mode_to_i.must_equal 0456
       end
     end
   end
