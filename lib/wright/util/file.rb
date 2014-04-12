@@ -138,6 +138,8 @@ module Wright
         ::File.exist?(path) ? ::File.stat(path).gid : nil
       end
 
+      # TODO: remove this method
+
       # Internal: Convert directory access modes to integer modes.
       #
       # mode - The mode to convert. Symbolic mode String, integer in a
