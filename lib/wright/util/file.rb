@@ -65,13 +65,11 @@ module Wright
           end
         end
       end
-      # private_class_method :symbolic_modes_to_i
 
       def self.numeric_mode_to_i(mode)
         return mode.to_i unless mode.is_a?(String)
         mode =~ /\A[0-7]{3,4}\Z/ ? mode.to_i(8) : nil
       end
-      # private_class_method :numeric_mode_to_i
 
       def self.symbolic_mode?(mode_str)
         return true if mode_str.empty?

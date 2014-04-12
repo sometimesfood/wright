@@ -1,30 +1,17 @@
-* Wright::Util::File.file_mode
- - lib/wright/provider/file.rb
- - spec/resource/directory_spec.rb
- - spec/resource/file_spec.rb
+  it 'should respect the current umask for relative modes' do
+    old_umask = File.umask
+    File.umask(0000)
+    Util::File.file_mode_to_i('o=').must_equal 0660
+    File.umask(0246)
+    Util::File.file_mode_to_i('o=').must_equal 0420
+    File.umask(old_umask)
+  end
 
-* Wright::Util::File.file_owner
- - spec/resource/directory_spec.rb
- - spec/resource/file_spec.rb
-
-* Wright::Util::File.file_group
- - spec/resource/directory_spec.rb
- - spec/resource/file_spec.rb
-
-* Wright::Util::File.file_mode_to_i
- - lib/wright/provider/file.rb
-
-* Wright::Util::File.dir_mode_to_i
- - lib/wright/provider/directory.rb
-
-* Wright::Util::File.mode_uptodate?
- - lib/wright/provider/directory.rb
- - lib/wright/provider/file.rb
-
-* Wright::Util::File.owner_uptodate?
- - lib/wright/provider/directory.rb
- - lib/wright/provider/file.rb
-
-* Wright::Util::File.group_uptodate?
- - lib/wright/provider/directory.rb
- - lib/wright/provider/file.rb
+  it 'should respect the current umask for relative modes' do
+    old_umask = File.umask
+    File.umask(0000)
+    Util::File.dir_mode_to_i('o=').must_equal 0770
+    File.umask(0246)
+    Util::File.dir_mode_to_i('o=').must_equal 0530
+    File.umask(old_umask)
+  end

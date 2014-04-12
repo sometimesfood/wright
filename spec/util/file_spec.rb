@@ -57,82 +57,56 @@ describe Util::File do
     end
   end
 
-  # TODO: remove these tests
-  # describe 'file_mode_to_i' do
-  #   it 'should not change octal integer modes' do
-  #     Util::File.file_mode_to_i(0644, 'nonexistent').must_equal 0644
-  #   end
+  describe 'numeric_mode_to_i' do
+    it 'should not change octal integer modes' do
+      Util::File.numeric_mode_to_i(0644).must_equal 0644
+    end
 
-  #   it 'should convert numeric string modes' do
-  #     Util::File.file_mode_to_i('0644', 'nonexistent').must_equal 0644
-  #     Util::File.file_mode_to_i( '644', 'nonexistent').must_equal 0644
-  #   end
+    it 'should convert numeric string modes' do
+      Util::File.numeric_mode_to_i('0644').must_equal 0644
+      Util::File.numeric_mode_to_i('644').must_equal 0644
+    end
 
-  #   it 'should convert symbolic modes' do
-  #     FakeFS do
-  #       FileUtils.touch(@file)
-  #       FileUtils.chmod(00644, @file)
-  #       Util::File.file_mode_to_i('u=rw,go=r', @file).must_equal 0644
-  #       Util::File.file_mode_to_i('u=r,go+w', @file).must_equal 0466
-  #       Util::File.file_mode_to_i('+x' , @file).must_equal  0755
-  #       Util::File.file_mode_to_i('+X' , @file).must_equal  0644
-  #       Util::File.file_mode_to_i('a-r', @file).must_equal  0200
-  #       Util::File.file_mode_to_i('+s' , @file).must_equal 06644
-  #       Util::File.file_mode_to_i('+t' , @file).must_equal 01644
-  #       FakeFS::FileSystem.clear
-  #     end
-  #   end
+    it 'should return nil for non-numeric mode strings' do
+      Util::File.numeric_mode_to_i('banana').must_equal nil
+    end
+  end
 
-  #   it 'should respect the current umask for relative modes' do
-  #     old_umask = File.umask
-  #     File.umask(0000)
-  #     Util::File.file_mode_to_i('o=').must_equal 0660
-  #     File.umask(0246)
-  #     Util::File.file_mode_to_i('o=').must_equal 0420
-  #     File.umask(old_umask)
-  #   end
+  describe 'symbolic_modes_to_i' do
+    it 'should convert symbolic modes for files' do
+      type = :file
+      mode = 00644
+      FakeFS do
+        FileUtils.touch(@file)
+        FileUtils.chmod(mode, @file)
+        Util::File.symbolic_modes_to_i('u=rw,go=r', mode, type).must_equal 0644
+        Util::File.symbolic_modes_to_i('u=r,go+w', mode, type).must_equal 0466
+        Util::File.symbolic_modes_to_i('+x' , mode, type).must_equal  0755
+        Util::File.symbolic_modes_to_i('+X' , mode, type).must_equal  0644
+        Util::File.symbolic_modes_to_i('a-r', mode, type).must_equal  0200
+        Util::File.symbolic_modes_to_i('+s' , mode, type).must_equal 06644
+        Util::File.symbolic_modes_to_i('+t' , mode, type).must_equal 01644
+        FakeFS::FileSystem.clear
+      end
+    end
 
-  #   it 'should raise an exception for invalid symbolic modes' do
-  #     proc do
-  #       Util::File.file_mode_to_i('this is not a mode string', @file)
-  #     end.must_raise ArgumentError
-  #   end
-  # end
+    it 'should convert symbolic modes for directories' do
+      type = :directory
+      mode = 00644
+      FakeFS do
+        FileUtils.mkdir(@dir)
+        FileUtils.chmod(mode, @dir)
+        Util::File.symbolic_modes_to_i('u=rw,go=r', mode, type).must_equal 0644
+        Util::File.symbolic_modes_to_i('+x', mode, type).must_equal 0755
+        Util::File.symbolic_modes_to_i('+X', mode, type).must_equal 0755
+        FakeFS::FileSystem.clear
+      end
+    end
 
-  # describe 'dir_mode_to_i' do
-  #   it 'should not change octal integer modes' do
-  #     Util::File.dir_mode_to_i(0644, 'nonexistent').must_equal 0644
-  #   end
-
-  #   it 'should convert numeric string modes' do
-  #     Util::File.dir_mode_to_i('0644', 'nonexistent').must_equal 0644
-  #     Util::File.dir_mode_to_i( '644', 'nonexistent').must_equal 0644
-  #   end
-
-  #   it 'should convert symbolic modes' do
-  #     FakeFS do
-  #       FileUtils.mkdir(@dir)
-  #       FileUtils.chmod(00644, @dir)
-  #       Util::File.dir_mode_to_i('u=rw,go=r', @dir).must_equal 0644
-  #       Util::File.dir_mode_to_i('+x' , @dir).must_equal 0755
-  #       Util::File.dir_mode_to_i('+X' , @dir).must_equal 0755
-  #       FakeFS::FileSystem.clear
-  #     end
-  #   end
-
-  #   it 'should respect the current umask for relative modes' do
-  #     old_umask = File.umask
-  #     File.umask(0000)
-  #     Util::File.dir_mode_to_i('o=').must_equal 0770
-  #     File.umask(0246)
-  #     Util::File.dir_mode_to_i('o=').must_equal 0530
-  #     File.umask(old_umask)
-  #   end
-
-  #   it 'should raise an exception for invalid symbolic modes' do
-  #     proc do
-  #       Util::File.dir_mode_to_i('this is not a mode string', @dir)
-  #     end.must_raise ArgumentError
-  #   end
-  # end
+    it 'should raise an exception for invalid symbolic modes' do
+      proc do
+        Util::File.symbolic_modes_to_i('this is not a mode string', nil, :file)
+      end.must_raise ArgumentError
+    end
+  end
 end
