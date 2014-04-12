@@ -4,8 +4,7 @@ require 'wright/util/user'
 module Wright
   module Util
     class FilePermissions
-      attr_accessor :group, :mode, :filename
-      attr_reader :owner
+      attr_accessor :filename, :owner, :group, :mode
 
       VALID_FILETYPES = [:file, :directory]
 
@@ -15,17 +14,6 @@ module Wright
         end
         @filename = filename
         @filetype = filetype
-      end
-
-      def owner=(owner)
-        if owner.is_a?(String)
-          if owner.count(':') > 1
-            fail ArgumentError, "Invalid owner: '#{owner}'"
-          end
-          @owner, @group = owner.split(':')
-        else
-          @owner = owner
-        end
       end
 
       def uptodate?

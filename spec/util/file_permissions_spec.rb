@@ -20,75 +20,53 @@ describe FilePermissions do
     end
   end
 
-  describe '#owner=' do
-    it 'should raise exceptions for invalid owner strings' do
-      proc do
-        @file_permissions.owner = 'foo:bar:baz'
-      end.must_raise ArgumentError
-    end
-
-    it 'should support integer uids' do
-      @file_permissions.owner = 1234
-      @file_permissions.owner.must_equal 1234
-    end
-
-    it 'should support owner:group notation' do
-      @file_permissions.owner = 'owner:group'
-      @file_permissions.owner.must_equal 'owner'
-      @file_permissions.group.must_equal 'group'
-    end
-  end
-
   describe '#uptodate?' do
-    it 'should return false for inexistent files' do
+    it 'should return false for non-existent files' do
       FakeFS do
-        @file_permissions.uptodate?.must_equal false
-      end
-    end
-  end
-
-  describe '#uptodate?' do
-    it 'should foo' do
-      FakeFS do
-        FileUtils.touch(@file_permissions.filename)
-        FileUtils.chmod(0600, @file_permissions.filename)
-        @file_permissions.uptodate?.must_equal true
-
-        @file_permissions.mode = 0666
-        @file_permissions.uptodate?.must_equal false
-
-        @file_permissions.mode = 'ugo+'
-        @file_permissions.uptodate?.must_equal true
-
-        @file_permissions.mode = 'a+rwx'
         @file_permissions.uptodate?.must_equal false
       end
     end
   end
 
   describe '#update' do
-    it 'should foo' do
+    it 'should update file modes when using integer modes' do
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
-
         FileUtils.chmod(0600, @file_permissions.filename)
+        @file_permissions.uptodate?.must_equal true
         @file_permissions.mode = 0666
+        @file_permissions.uptodate?.must_equal false
         @file_permissions.update
         @file_permissions.current_mode.must_equal 0666
-
-        FileUtils.chmod(0600, @file_permissions.filename)
-        @file_permissions.mode = 'ugo+'
-        @file_permissions.update
-        @file_permissions.current_mode.must_equal 0600
-
-        FileUtils.chmod(0600, @file_permissions.filename)
-        @file_permissions.mode = 'u+rwx,g=rx,o=rX'
-        @file_permissions.update
-        @file_permissions.current_mode.must_equal 0754
+        @file_permissions.uptodate?.must_equal true
       end
     end
 
-    it 'should foo for directories' do
+    it 'should not change file modes when using no-op mode strings' do
+      FakeFS do
+        FileUtils.touch(@file_permissions.filename)
+        FileUtils.chmod(0600, @file_permissions.filename)
+        @file_permissions.mode = 'ugo+'
+        @file_permissions.uptodate?.must_equal true
+        @file_permissions.update
+        @file_permissions.current_mode.must_equal 0600
+        @file_permissions.uptodate?.must_equal true
+      end
+    end
+
+    it 'shouldd update file modes when using symbolic mode strings' do
+      FakeFS do
+        FileUtils.touch(@file_permissions.filename)
+        FileUtils.chmod(0600, @file_permissions.filename)
+        @file_permissions.mode = 'u+rwx,g=rx,o=rX'
+        @file_permissions.uptodate?.must_equal false
+        @file_permissions.update
+        @file_permissions.current_mode.must_equal 0754
+        @file_permissions.uptodate?.must_equal true
+      end
+    end
+
+    it 'should update directory modes when using symbolic mode strings' do
       FakeFS do
         FileUtils.mkdir(@dir_permissions.filename)
         FileUtils.chmod(0600, @dir_permissions.filename)
@@ -98,33 +76,33 @@ describe FilePermissions do
       end
     end
 
-    it 'should TODO owners' do
-      uid_nobody = Etc.getpwnam('nobody').uid
-      uid_root = Etc.getpwnam('root').uid
+    it 'should update file owners' do
+      user1 = Etc.getpwent
+      user2 = Etc.getpwent
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
-        FileUtils.chown('nobody', nil, @file_permissions.filename)
-        @file_permissions.current_owner.must_equal uid_nobody
-        @file_permissions.owner = 'root'
+        FileUtils.chown(user1.name, nil, @file_permissions.filename)
+        @file_permissions.current_owner.must_equal user1.uid
+        @file_permissions.owner = user2.name
         @file_permissions.uptodate?.must_equal false
         @file_permissions.update
         @file_permissions.uptodate?.must_equal true
-        @file_permissions.current_owner.must_equal uid_root
+        @file_permissions.current_owner.must_equal user2.uid
       end
     end
 
-    it 'should TODO groups' do
-      gid_nogroup = Etc.getgrnam('nogroup').gid
-      gid_daemon = Etc.getgrnam('daemon').gid
+    it 'should update file groups' do
+      group1 = Etc.getgrent
+      group2 = Etc.getgrent
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
-        FileUtils.chown(nil, 'nogroup', @file_permissions.filename)
-        @file_permissions.current_group.must_equal gid_nogroup
-        @file_permissions.group = 'daemon'
+        FileUtils.chown(nil, group1.name, @file_permissions.filename)
+        @file_permissions.current_group.must_equal group1.gid
+        @file_permissions.group = group2.name
         @file_permissions.uptodate?.must_equal false
         @file_permissions.update
         @file_permissions.uptodate?.must_equal true
-        @file_permissions.current_group.must_equal gid_daemon
+        @file_permissions.current_group.must_equal group2.gid
       end
     end
   end

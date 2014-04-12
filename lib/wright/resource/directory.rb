@@ -26,7 +26,7 @@ class Wright::Resource::Directory < Wright::Resource
   # Public: Get the directory's owner.
   attr_reader :owner
 
-  # FIXME: move this to some kind of utility function
+  # REFACTOR: move this to some kind of utility function
   # Public: Set the directory's owner.
   def owner=(owner)
     if owner.is_a?(String)
