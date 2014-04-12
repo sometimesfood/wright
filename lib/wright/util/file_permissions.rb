@@ -1,4 +1,5 @@
 require 'wright/util/file'
+require 'wright/util/user'
 
 module Wright
   module Util
@@ -29,8 +30,7 @@ module Wright
 
       def uptodate?
         if ::File.exist?(@filename)
-          #owner_uptodate? && group_uptodate? && mode_uptodate?
-          mode_uptodate?
+          owner_uptodate? && mode_uptodate? # && group_uptodate?
         else
           false
         end
@@ -41,7 +41,11 @@ module Wright
         ::File.chmod(target_mode, @filename) if target_mode
 
         # Util::User.group_to_gid(group) unless group.nil?
-        # Util::User.user_to_uid(owner)
+        target_owner = owner_to_i
+        target_group = nil
+        if target_owner || target_group
+          ::File.chown(target_owner, target_group, @filename)
+        end
       end
 
       def default_mode
@@ -100,9 +104,23 @@ module Wright
         Wright::Util::File.file_mode(@filename)
       end
 
+      def current_owner
+        Wright::Util::File.file_owner(@filename)
+      end
+
+      def current_group
+        Wright::Util::File.file_group(@filename)
+      end
+
       private
 
+      def owner_to_i
+        Util::User.user_to_uid(@owner)
+      end
+
       def owner_uptodate?
+        target_owner = owner_to_i
+        target_owner.nil? ? true : current_owner == target_owner
       end
 
       def group_uptodate?

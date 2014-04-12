@@ -136,5 +136,20 @@ describe FilePermissions do
         @dir_permissions.current_mode.must_equal 0755
       end
     end
+
+    it 'should TODO owners' do
+      uid_nobody = Etc.getpwnam('nobody').uid
+      uid_root = Etc.getpwnam('root').uid
+      FakeFS do
+        FileUtils.touch(@file_permissions.filename)
+        FileUtils.chown('nobody', nil, @file_permissions.filename)
+        @file_permissions.current_owner.must_equal uid_nobody
+        @file_permissions.owner = 'root'
+        @file_permissions.uptodate?.must_equal false
+        @file_permissions.update
+        @file_permissions.uptodate?.must_equal true
+        @file_permissions.current_owner.must_equal uid_root
+      end
+    end
   end
 end
