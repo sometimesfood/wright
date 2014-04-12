@@ -151,5 +151,20 @@ describe FilePermissions do
         @file_permissions.current_owner.must_equal uid_root
       end
     end
+
+    it 'should TODO groups' do
+      gid_nogroup = Etc.getgrnam('nogroup').gid
+      gid_daemon = Etc.getgrnam('daemon').gid
+      FakeFS do
+        FileUtils.touch(@file_permissions.filename)
+        FileUtils.chown(nil, 'nogroup', @file_permissions.filename)
+        @file_permissions.current_group.must_equal gid_nogroup
+        @file_permissions.group = 'daemon'
+        @file_permissions.uptodate?.must_equal false
+        @file_permissions.update
+        @file_permissions.uptodate?.must_equal true
+        @file_permissions.current_group.must_equal gid_daemon
+      end
+    end
   end
 end

@@ -30,7 +30,7 @@ module Wright
 
       def uptodate?
         if ::File.exist?(@filename)
-          owner_uptodate? && mode_uptodate? # && group_uptodate?
+          owner_uptodate? && group_uptodate? && mode_uptodate?
         else
           false
         end
@@ -40,9 +40,8 @@ module Wright
         target_mode = mode_to_i
         ::File.chmod(target_mode, @filename) if target_mode
 
-        # Util::User.group_to_gid(group) unless group.nil?
         target_owner = owner_to_i
-        target_group = nil
+        target_group = group_to_i
         if target_owner || target_group
           ::File.chown(target_owner, target_group, @filename)
         end
@@ -118,12 +117,18 @@ module Wright
         Util::User.user_to_uid(@owner)
       end
 
+      def group_to_i
+        Util::User.group_to_gid(@group)
+      end
+
       def owner_uptodate?
         target_owner = owner_to_i
         target_owner.nil? ? true : current_owner == target_owner
       end
 
       def group_uptodate?
+        target_group = group_to_i
+        target_group.nil? ? true : current_group == target_group
       end
 
       def mode_uptodate?
