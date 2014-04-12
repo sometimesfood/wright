@@ -2,6 +2,7 @@ require 'fileutils'
 require 'wright/provider'
 require 'wright/util/file'
 require 'wright/util/user'
+require 'wright/util/file_permissions'
 
 # Public: Directory provider. Used as a Provider for Resource::Directory.
 class Wright::Provider::Directory < Wright::Provider
@@ -10,10 +11,8 @@ class Wright::Provider::Directory < Wright::Provider
   #
   # Returns nothing.
   def create!
-    if ::File.directory?(@resource.name) &&
-        Util::File.mode_uptodate?(@resource.name, @resource.mode) &&
-        Util::File.owner_uptodate?(@resource.name, @resource.owner) &&
-        Util::File.group_uptodate?(@resource.name, @resource.group)
+    if ::File.directory?(@resource.name) && permissions.uptodate?
+
       Wright.log.debug "directory already created: '#{@resource.name}'"
       return
     end
@@ -48,21 +47,24 @@ class Wright::Provider::Directory < Wright::Provider
 
   private
 
+  def permissions
+    # TODO: maybe add a create_from_resource class function
+    permissions = Wright::Util::FilePermissions.new(@resource.name, :directory)
+    permissions.owner = @resource.owner
+    permissions.group = @resource.group
+    permissions.mode = @resource.mode
+    permissions
+  end
+
   def create_directory
     dirname = @resource.name
-    mode = Util::File.dir_mode_to_i(@resource.mode, dirname)
-    owner = @resource.owner
-    group = @resource.group
 
     if Wright.dry_run?
       Wright.log.info "(would) create directory: '#{dirname}'"
     else
       Wright.log.info "create directory: '#{dirname}'"
       FileUtils.mkdir_p(dirname)
-      FileUtils.chmod(mode, dirname) if @resource.mode
-      FileUtils.chown(Util::User.user_to_uid(owner),
-                      Util::User.group_to_gid(group),
-                      dirname)
+      permissions.update
     end
   end
 end

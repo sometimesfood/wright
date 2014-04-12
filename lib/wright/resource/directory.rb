@@ -26,14 +26,15 @@ class Wright::Resource::Directory < Wright::Resource
   # Public: Get the directory's owner.
   attr_reader :owner
 
+  # FIXME: move this to some kind of utility function
   # Public: Set the directory's owner.
   def owner=(owner)
     if owner.is_a?(String)
       raise ArgumentError, "Invalid owner: '#{owner}'" if owner.count(':') > 1
       owner, group = owner.split(':')
-      @group = Util::User.group_to_gid(group) unless group.nil?
+      @group = Wright::Util::User.group_to_gid(group) unless group.nil?
     end
-    @owner = Util::User.user_to_uid(owner)
+    @owner = Wright::Util::User.user_to_uid(owner)
   end
 
   # Public: Get the directory's group.
@@ -41,7 +42,7 @@ class Wright::Resource::Directory < Wright::Resource
 
   # Public: Set the directory's group
   def group=(group)
-    @group = Util::User.group_to_gid(group)
+    @group = Wright::Util::User.group_to_gid(group)
   end
 
   # Public: Create or update the directory.

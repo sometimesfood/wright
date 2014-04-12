@@ -14,8 +14,8 @@ module Wright
         @filetype = filetype
       end
 
-      attr_accessor :group, :mode
-      attr_reader :owner, :filename
+      attr_accessor :group, :mode, :filename
+      attr_reader :owner
 
       def owner=(owner)
         if owner.is_a?(String)

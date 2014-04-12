@@ -63,15 +63,20 @@ class Wright::Provider::File < Wright::Provider
       else
         file.unlink
       end
-      mode = Util::File.file_mode_to_i(@resource.mode, @resource.name)
-      FileUtils.chmod(mode, @resource.name) if @resource.mode
-      FileUtils.chown(Util::User.user_to_uid(@resource.owner),
-                      Util::User.group_to_gid(@resource.group),
-                      @resource.name)
+      permissions.update
     end
   end
 
   private
+
+  def permissions
+    # TODO: maybe add a create_from_resource class function
+    permissions = Wright::Util::FilePermissions.new(@resource.name, :file)
+    permissions.owner = @resource.owner
+    permissions.group = @resource.group
+    permissions.mode = @resource.mode
+    permissions
+  end
 
   def checksum(content)
     Digest::SHA256.hexdigest(content)
@@ -86,9 +91,6 @@ class Wright::Provider::File < Wright::Provider
   end
 
   def uptodate?
-    content_uptodate? &&
-      Util::File.mode_uptodate?(@resource.name, @mode) &&
-      Util::File.owner_uptodate?(@resource.name, @owner) &&
-      Util::File.group_uptodate?(@resource.name, @group)
+    content_uptodate? && permissions.uptodate?
   end
 end
