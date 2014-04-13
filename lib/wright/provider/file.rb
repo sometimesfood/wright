@@ -70,12 +70,7 @@ class Wright::Provider::File < Wright::Provider
   private
 
   def permissions
-    # TODO: maybe add a create_from_resource class function
-    permissions = Wright::Util::FilePermissions.new(@resource.name, :file)
-    permissions.owner = @resource.owner
-    permissions.group = @resource.group
-    permissions.mode = @resource.mode
-    permissions
+    Wright::Util::FilePermissions.create_from_resource(@resource, :file)
   end
 
   def checksum(content)

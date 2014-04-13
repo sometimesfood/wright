@@ -4,6 +4,14 @@ require 'wright/util/user'
 module Wright
   module Util
     class FilePermissions
+      def self.create_from_resource(resource, filetype)
+        p = Wright::Util::FilePermissions.new(resource.name, filetype)
+        p.owner = resource.owner
+        p.group = resource.group
+        p.mode = resource.mode
+        p
+      end
+
       attr_accessor :filename, :owner, :group, :mode
 
       VALID_FILETYPES = [:file, :directory]
