@@ -7,7 +7,7 @@ Wright::Util::RecursiveAutoloader.add_autoloads(BASEDIR, 'Wright')
 
 describe Wright::Util::RecursiveAutoloader do
   it 'should not load files prematurely' do
-    proc { Wright::RaisesException }.must_raise(RuntimeError)
+    lambda { Wright::RaisesException }.must_raise(RuntimeError)
   end
 
   it 'should load files when needed' do
@@ -23,7 +23,7 @@ describe Wright::Util::RecursiveAutoloader do
  end
 
   it 'should throw exceptions for unknown base classes' do
-    proc do
+    lambda do
       baseclass = 'This::Class::Does::Not::Exist'
       Wright::Util::RecursiveAutoloader.add_autoloads(BASEDIR, baseclass)
     end.must_raise(ArgumentError)

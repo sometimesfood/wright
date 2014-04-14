@@ -35,7 +35,7 @@ describe Wright::Resource do
     @config = Wright::Config.dump
     Wright::Config.clear
     @hello = 'Hello world'
-    @say_hello = proc { print @hello }
+    @say_hello = lambda { print @hello }
   end
 
   after(:each) do
@@ -63,7 +63,7 @@ describe Wright::Resource do
   it 'should display warnings for nonexistent providers' do
     class NonExistent < Wright::Resource; end
     output = "WARN: Could not find a provider for resource NonExistent\n"
-    proc do
+    lambda do
       reset_logger
       NonExistent.new
     end.must_output(output)
@@ -73,7 +73,7 @@ describe Wright::Resource do
     provider = Wright::Provider::AlwaysUpdated
     Wright::Config[:resources] = { updater: { provider: provider.name } }
     resource = Updater.new
-    proc do
+    lambda do
       resource.on_update = @say_hello
       assert resource.do_something
     end.must_output @hello
@@ -83,7 +83,7 @@ describe Wright::Resource do
     provider = Wright::Provider::NeverUpdated
     Wright::Config[:resources] = { updater: { provider: provider.name } }
     resource = Updater.new
-    proc do
+    lambda do
       resource.on_update = @say_hello
       assert !resource.do_something
     end.must_be_silent
@@ -97,7 +97,7 @@ describe Wright::Resource do
       resource = Updater.new(name)
       resource_info = "#{resource.resource_name} '#{name}'"
       output = "INFO: Would trigger update action for #{resource_info}\n"
-      proc do
+      lambda do
         reset_logger
         resource.on_update = @say_hello
         assert resource.do_something
@@ -107,9 +107,9 @@ describe Wright::Resource do
 
   it 'should raise an ArgumentError if on_update is not callable' do
     resource = Sample.new
-    proc { resource.on_update = "I'm a string" }.must_raise ArgumentError
-    proc { resource.on_update = Proc.new {} }.must_be_silent
-    proc { resource.on_update = nil }.must_be_silent
+    lambda { resource.on_update = "I'm a string" }.must_raise ArgumentError
+    lambda { resource.on_update = Proc.new {} }.must_be_silent
+    lambda { resource.on_update = nil }.must_be_silent
   end
 
   it 'should run actions' do
@@ -120,15 +120,15 @@ describe Wright::Resource do
     end
     Wright::Config[:resources] = { ni_sayer: { provider: 'Sample' } }
     ni_sayer = NiSayer.new
-    proc do
+    lambda do
       ni_sayer.action = :say
       ni_sayer.run_action
     end.must_output 'Ni!'
-    proc do
+    lambda do
       ni_sayer.action = :shout
       ni_sayer.run_action
     end.must_output 'NI!'
-    proc do
+    lambda do
       ni_sayer.action = nil
       ni_sayer.run_action
     end.must_be_silent
@@ -144,13 +144,13 @@ describe Wright::Resource do
 
     resource = RaisesExceptions.new('fake_name')
 
-    proc do
+    lambda do
       resource.ignore_failure = true
       reset_logger
       resource.raise_hell
     end.must_output "ERROR: raises_exceptions 'fake_name': hell\n"
 
-    proc do
+    lambda do
       resource.ignore_failure = false
       resource.raise_hell
     end.must_raise(RuntimeError)

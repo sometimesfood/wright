@@ -49,7 +49,8 @@ describe Wright::Logger do
                  else
                    log_entry
                  end
-        proc do
+
+        lambda do
           stdout = $stdout.dup
           def stdout.tty?; true; end
           logger = Wright::Logger.new(stdout)

@@ -105,19 +105,19 @@ describe Wright::Resource::Directory do
       group = 'this_group_doesnt_exist'
 
       FakeFS do
-        proc do
+        lambda do
           dir.owner = user
           dir.create!
         end.must_raise ArgumentError
         Dir.exist?(@dirname).must_equal false
 
-        proc do
+        lambda do
           dir.group = group
             dir.create!
         end.must_raise ArgumentError
         Dir.exist?(@dirname).must_equal false
 
-        proc do
+        lambda do
           dir.owner = "#{user}:#{group}"
           dir.create!
         end.must_raise ArgumentError
@@ -129,7 +129,7 @@ describe Wright::Resource::Directory do
       FakeFS do
         FileUtils.touch(@dirname)
         dir = Wright::Resource::Directory.new(@dirname)
-        proc { dir.create! }.must_raise Errno::EEXIST
+        lambda { dir.create! }.must_raise Errno::EEXIST
       end
     end
   end
@@ -149,7 +149,7 @@ describe Wright::Resource::Directory do
         FileUtils.mkdir_p(@dirname)
         FileUtils.touch(File.join(@dirname, 'somefile'))
         dir = Wright::Resource::Directory.new(@dirname)
-        proc { dir.remove! }.must_raise Errno::ENOTEMPTY
+        lambda { dir.remove! }.must_raise Errno::ENOTEMPTY
         assert File.directory?(@dirname)
       end
     end
@@ -158,7 +158,7 @@ describe Wright::Resource::Directory do
       FakeFS do
         FileUtils.touch(@dirname)
         dir = Wright::Resource::Directory.new(@dirname)
-        proc { dir.remove! }.must_raise RuntimeError
+        lambda { dir.remove! }.must_raise RuntimeError
         assert File.exist?(@dirname)
       end
     end

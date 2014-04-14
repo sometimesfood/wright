@@ -14,7 +14,7 @@ describe FilePermissions do
 
   describe 'initialize' do
     it 'should raise exceptions for incorrect file types' do
-      proc do
+      lambda do
         FilePermissions.new(@filename, :invalid_file_type)
       end.must_raise ArgumentError
     end

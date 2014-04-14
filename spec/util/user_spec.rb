@@ -38,7 +38,7 @@ describe Util::User do
     end
 
     it 'should raise exceptions for invalid owner strings' do
-      proc do
+      lambda do
         Util::User.owner_to_owner_group('foo:bar:baz')
       end.must_raise ArgumentError
     end

@@ -32,7 +32,7 @@ describe Wright::Provider::Directory do
   describe '#updated?' do
     it 'should return the update status if a directory was created' do
       dir = Wright::Provider::Directory.new(@dir_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS { dir.create! }
       end.must_output @create_message
@@ -41,7 +41,7 @@ describe Wright::Provider::Directory do
 
     it 'should return the update status if a directory was not created' do
       dir = Wright::Provider::Directory.new(@dir_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS do
           create_target_dir
@@ -53,7 +53,7 @@ describe Wright::Provider::Directory do
 
     it 'should return the update status if a directory was changed' do
       dir = Wright::Provider::Directory.new(@dir_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS do
           create_target_dir
@@ -66,7 +66,7 @@ describe Wright::Provider::Directory do
 
     it 'should return the update status if a directory was removed' do
       dir = Wright::Provider::Directory.new(@dir_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS do
           create_target_dir
@@ -78,7 +78,7 @@ describe Wright::Provider::Directory do
 
     it 'should return the update status if a directory was not removed' do
       dir = Wright::Provider::Directory.new(@dir_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS { dir.remove! }
         assert !dir.updated?
@@ -90,7 +90,7 @@ describe Wright::Provider::Directory do
     it 'should not actually create directories' do
       dir = Wright::Provider::Directory.new(@dir_resource)
       Wright.dry_run do
-        proc do
+        lambda do
           reset_logger
           FakeFS { dir.create! }
         end.must_output @create_message_dry
@@ -101,7 +101,7 @@ describe Wright::Provider::Directory do
     it 'should not actually remove directories' do
       dir = Wright::Provider::Directory.new(@dir_resource)
       Wright.dry_run do
-        proc do
+        lambda do
           reset_logger
           FakeFS do
             create_target_dir

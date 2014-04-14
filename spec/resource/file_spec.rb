@@ -99,7 +99,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.mkdir_p(@filename)
         file = Wright::Resource::File.new(@filename)
-        proc { file.create! }.must_raise Errno::EISDIR
+        lambda { file.create! }.must_raise Errno::EISDIR
         assert File.directory?(@filename)
       end
     end
@@ -124,21 +124,21 @@ describe Wright::Resource::File do
       group = 'this_group_doesnt_exist'
 
       FakeFS do
-        proc do
+        lambda do
           file.owner = user
           file.create!
         end.must_raise ArgumentError
         File.exist?(@filename).must_equal false
 
         file.owner = nil
-        proc do
+        lambda do
           file.group = group
           file.create!
         end.must_raise ArgumentError
         File.exist?(@filename).must_equal false
 
         file.group = nil
-        proc do
+        lambda do
           file.owner = "#{user}:#{group}"
           file.create!
         end.must_raise ArgumentError
@@ -150,7 +150,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.touch(@filename)
         dir = Wright::Resource::Directory.new(@filename)
-        proc { dir.create! }.must_raise Errno::EEXIST
+        lambda { dir.create! }.must_raise Errno::EEXIST
       end
     end
   end
@@ -169,7 +169,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.mkdir_p(@filename)
         file = Wright::Resource::File.new(@filename)
-        proc { file.remove! }.must_raise Errno::EISDIR
+        lambda { file.remove! }.must_raise Errno::EISDIR
         assert File.directory?(@filename)
       end
     end

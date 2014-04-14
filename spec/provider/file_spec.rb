@@ -35,7 +35,7 @@ describe Wright::Provider::File do
   describe '#updated?' do
     it 'should return the update status if a file was created' do
       file = Wright::Provider::File.new(@file_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS { file.create! }
       end.must_output @create_message
@@ -44,7 +44,7 @@ describe Wright::Provider::File do
 
     it 'should return the update status if a file was not created' do
       file = Wright::Provider::File.new(@file_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS do
           create_target_file
@@ -56,7 +56,7 @@ describe Wright::Provider::File do
 
     it 'should return the update status if permissions were changed' do
       file = Wright::Provider::File.new(@file_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS do
           create_target_file
@@ -69,7 +69,7 @@ describe Wright::Provider::File do
 
     it 'should return the update status if a file was changed' do
       file = Wright::Provider::File.new(@file_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS do
           create_target_file
@@ -82,7 +82,7 @@ describe Wright::Provider::File do
 
     it 'should return the update status if a file was removed' do
       file = Wright::Provider::File.new(@file_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS do
           create_target_file
@@ -94,7 +94,7 @@ describe Wright::Provider::File do
 
     it 'should return the update status if a file was not removed' do
       file = Wright::Provider::File.new(@file_resource)
-      proc do
+      lambda do
         reset_logger
         FakeFS { file.remove! }
         assert !file.updated?
@@ -106,7 +106,7 @@ describe Wright::Provider::File do
     it 'should not actually create files' do
       file = Wright::Provider::File.new(@file_resource)
       Wright.dry_run do
-        proc do
+        lambda do
           reset_logger
           FakeFS { file.create! }
         end.must_output @create_message_dry
@@ -117,7 +117,7 @@ describe Wright::Provider::File do
     it 'should not actually remove files' do
       file = Wright::Provider::File.new(@file_resource)
       Wright.dry_run do
-        proc do
+        lambda do
           reset_logger
           FakeFS do
             create_target_file

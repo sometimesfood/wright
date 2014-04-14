@@ -104,7 +104,7 @@ describe Util::File do
     end
 
     it 'should raise an exception for invalid symbolic modes' do
-      proc do
+      lambda do
         Util::File.symbolic_modes_to_i('this is not a mode string', nil, :file)
       end.must_raise ArgumentError
     end
