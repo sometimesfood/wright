@@ -72,6 +72,7 @@ module Wright
 
         fail ArgumentError, "Invalid owner: '#{owner}'" if owner.count(':') > 1
         owner, group = owner.split(':')
+        [owner, group]
       end
     end
   end

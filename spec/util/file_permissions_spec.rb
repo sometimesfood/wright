@@ -54,7 +54,7 @@ describe FilePermissions do
       end
     end
 
-    it 'shouldd update file modes when using symbolic mode strings' do
+    it 'should update file modes when using symbolic mode strings' do
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
         FileUtils.chmod(0600, @file_permissions.filename)
@@ -103,6 +103,38 @@ describe FilePermissions do
         @file_permissions.update
         @file_permissions.uptodate?.must_equal true
         @file_permissions.current_group.must_equal group2.gid
+      end
+    end
+
+    it 'should respect the current umask for relative file modes' do
+      begin
+        old_umask = File.umask
+
+        File.umask(0000)
+        @file_permissions.mode = 'o='
+        @file_permissions.mode.must_equal 0660
+
+        File.umask(0246)
+        @file_permissions.mode = 'o='
+        @file_permissions.mode.must_equal 0420
+      ensure
+        File.umask(old_umask)
+      end
+    end
+
+    it 'should respect the current umask for relative directory modes' do
+      begin
+        old_umask = File.umask
+
+        File.umask(0000)
+        @dir_permissions.mode = 'o='
+        @dir_permissions.mode.must_equal 0770
+
+        File.umask(0246)
+        @dir_permissions.mode = 'o='
+        @dir_permissions.mode.must_equal 0530
+      ensure
+        File.umask(old_umask)
       end
     end
   end
