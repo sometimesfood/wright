@@ -14,11 +14,11 @@ describe Wright::Provider::File do
 
     file = "'#{@file_resource.name}'"
     @create_message = "INFO: create file: #{file}\n"
-    # @create_message_dry = "INFO: (would) create file: #{file}\n"
+    @create_message_dry = "INFO: (would) create file: #{file}\n"
     @create_message_debug = "DEBUG: file already created: #{file}\n"
-    # @remove_message = "INFO: remove file: #{file}\n"
-    # @remove_message_dry = "INFO: (would) remove file: #{file}\n"
-    # @remove_message_debug = "DEBUG: file already removed: #{file}\n"
+    @remove_message = "INFO: remove file: #{file}\n"
+    @remove_message_dry = "INFO: (would) remove file: #{file}\n"
+    @remove_message_debug = "DEBUG: file already removed: #{file}\n"
 
     FakeFS { FileUtils.mkdir_p Dir.tmpdir }
   end
@@ -52,6 +52,19 @@ describe Wright::Provider::File do
         end
         assert !file.updated?
       end.must_output @create_message_debug
+    end
+
+    it 'should return the update status if permissions were changed' do
+      file = Wright::Provider::File.new(@file_resource)
+      proc do
+        reset_logger
+        FakeFS do
+          create_target_file
+          File.chmod(0111, @file_resource.name)
+          file.create!
+        end
+        assert file.updated?
+      end.must_output @create_message
     end
 
     it 'should return the update status if a file was changed' do
