@@ -2,10 +2,8 @@ require 'etc'
 
 module Wright
   module Util
-
     # Internal: Various user utility functions.
     module User
-
       # Internal: Get a user's uid.
       #
       # user - The user name or uid.
@@ -21,9 +19,8 @@ module Wright
       # Returns the integer uid of the given user or nil if user was
       # nil.
       def self.user_to_uid(user)
-        if user
-          user.is_a?(String) ? Etc.getpwnam(user).uid : user.to_i
-        end
+        return nil if user.nil?
+        user.is_a?(String) ? Etc.getpwnam(user).uid : user.to_i
       end
 
       # Internal: Get a group's gid.
@@ -41,9 +38,8 @@ module Wright
       # Returns the integer gid of the given group or nil if group was
       # nil.
       def self.group_to_gid(group)
-        if group
-          group.is_a?(String) ? Etc.getgrnam(group).gid : group.to_i
-        end
+        return nil if group.nil?
+        group.is_a?(String) ? Etc.getgrnam(group).gid : group.to_i
       end
 
       # Internal: Split a colon-separated owner string into owner and

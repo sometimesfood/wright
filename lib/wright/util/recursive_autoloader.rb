@@ -2,11 +2,9 @@ require 'wright/util'
 
 module Wright
   module Util
-
     # Internal: Recursive autoloader, recursively adds autoloads for
     # all files in a directory.
     module RecursiveAutoloader
-
       # Internal: Adds autoloads for all files in a directory to a
       # parent class.
       #
@@ -47,7 +45,7 @@ module Wright
       # Returns nothing.
       # Raises ArgumentError if the parent class cannot be resolved.
       def self.add_autoloads(directory, parent_class)
-        unless class_exists(parent_class)
+        unless class_exists?(parent_class)
           fail ArgumentError, "Can't resolve parent_class #{parent_class}"
         end
         add_autoloads_unsafe(directory, parent_class)
@@ -64,16 +62,16 @@ module Wright
 
       def self.ensure_subclass_exists(classname, subclass)
         complete_classname = "#{classname}::#{subclass}"
-        return true if class_exists(complete_classname)
+        return true if class_exists?(complete_classname)
         klass = Wright::Util::ActiveSupport.constantize(classname)
         klass.const_set(subclass, Class.new)
       end
       private_class_method :ensure_subclass_exists
 
-      def self.class_exists(classname)
+      def self.class_exists?(classname)
         !Wright::Util::ActiveSupport.safe_constantize(classname).nil?
       end
-      private_class_method :class_exists
+      private_class_method :class_exists?
 
       def self.add_autoloads_unsafe(directory, parent_class)
         Dir.chdir(directory) do

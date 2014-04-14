@@ -58,7 +58,7 @@ module Wright
 
       def update
         ::File.chmod(@mode, @filename) if @mode
-        ::File.chown(@owner, @group, @filename) if (@owner || @group)
+        ::File.chown(@owner, @group, @filename) if @owner || @group
       end
 
       def current_mode
