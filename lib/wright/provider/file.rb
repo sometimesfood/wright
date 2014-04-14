@@ -1,5 +1,5 @@
 require 'wright/provider'
-require 'wright/util/file'
+require 'wright/util/file_permissions'
 require 'wright/util/user'
 require 'fileutils'
 require 'digest'
@@ -51,6 +51,8 @@ class Wright::Provider::File < Wright::Provider
   private
 
   def create_file
+    file_permissions = permissions
+
     if Wright.dry_run?
       Wright.log.info "(would) create file: '#{@resource.name}'"
     else
@@ -63,11 +65,9 @@ class Wright::Provider::File < Wright::Provider
       else
         file.unlink
       end
-      permissions.update
+      file_permissions.update
     end
   end
-
-  private
 
   def permissions
     Wright::Util::FilePermissions.create_from_resource(@resource, :file)

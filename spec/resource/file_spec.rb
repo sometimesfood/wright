@@ -1,6 +1,7 @@
 require_relative '../spec_helper'
 
 require 'wright/resource/file'
+require 'wright/provider/file'
 require 'fileutils'
 
 describe Wright::Resource::File do
@@ -41,8 +42,8 @@ describe Wright::Resource::File do
         file.create!
         assert File.file?(@filename)
         File.read(@filename).must_equal 'hello world'
-        Util::File.file_owner(@filename).must_equal 23
-        Util::File.file_group(@filename).must_equal 42
+        Wright::Util::File.file_owner(@filename).must_equal 23
+        Wright::Util::File.file_group(@filename).must_equal 42
       end
     end
 
@@ -117,14 +118,33 @@ describe Wright::Resource::File do
       end
     end
 
-    # it 'should raise an exception when setting invalid an owner/group' do
-    #   dir = Wright::Resource::Directory.new(@dirname)
-    #   user = 'this_user_doesnt_exist'
-    #   group = 'this_group_doesnt_exist'
-    #   proc { dir.owner = user }.must_raise ArgumentError
-    #   proc { dir.group = group }.must_raise ArgumentError
-    #   proc { dir.owner = "#{user}:#{group}" }.must_raise ArgumentError
-    # end
+    it 'should raise an exception when setting invalid an owner/group' do
+      file = Wright::Resource::File.new(@filename)
+      user = 'this_user_doesnt_exist'
+      group = 'this_group_doesnt_exist'
+
+      FakeFS do
+        proc do
+          file.owner = user
+          file.create!
+        end.must_raise ArgumentError
+        File.exist?(@filename).must_equal false
+
+        file.owner = nil
+        proc do
+          file.group = group
+          file.create!
+        end.must_raise ArgumentError
+        File.exist?(@filename).must_equal false
+
+        file.group = nil
+        proc do
+          file.owner = "#{user}:#{group}"
+          file.create!
+        end.must_raise ArgumentError
+        File.exist?(@filename).must_equal false
+      end
+    end
 
     # it 'should raise an exception if there is a regular file at path' do
     #   FakeFS do

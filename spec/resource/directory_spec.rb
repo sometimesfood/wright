@@ -99,25 +99,30 @@ describe Wright::Resource::Directory do
       end
     end
 
-    it 'should raise an exception when setting invalid an owner/group' do
+    it 'should raise an exception when setting an invalid owner or group' do
       dir = Wright::Resource::Directory.new(@dirname)
       user = 'this_user_doesnt_exist'
       group = 'this_group_doesnt_exist'
 
-      proc do
-        dir.owner = user
-        dir.create!
-      end.must_raise ArgumentError
+      FakeFS do
+        proc do
+          dir.owner = user
+          dir.create!
+        end.must_raise ArgumentError
+        Dir.exist?(@dirname).must_equal false
 
-      proc do
-        dir.group = group
-        dir.create!
-      end.must_raise ArgumentError
+        proc do
+          dir.group = group
+            dir.create!
+        end.must_raise ArgumentError
+        Dir.exist?(@dirname).must_equal false
 
-      proc do
-        dir.owner = "#{user}:#{group}"
-        dir.create!
-      end.must_raise ArgumentError
+        proc do
+          dir.owner = "#{user}:#{group}"
+          dir.create!
+        end.must_raise ArgumentError
+        Dir.exist?(@dirname).must_equal false
+      end
     end
 
     it 'should raise an exception if there is a regular file at path' do

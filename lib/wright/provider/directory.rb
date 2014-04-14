@@ -53,13 +53,14 @@ class Wright::Provider::Directory < Wright::Provider
 
   def create_directory
     dirname = @resource.name
+    dir_permissions = permissions
 
     if Wright.dry_run?
       Wright.log.info "(would) create directory: '#{dirname}'"
     else
       Wright.log.info "create directory: '#{dirname}'"
       FileUtils.mkdir_p(dirname)
-      permissions.update
+      dir_permissions.update
     end
   end
 end

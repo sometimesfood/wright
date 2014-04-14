@@ -12,7 +12,8 @@ module Wright
         p
       end
 
-      attr_accessor :filename, :owner, :group, :mode
+      attr_accessor :filename, :group, :mode
+      attr_reader :owner
 
       VALID_FILETYPES = [:file, :directory]
 
@@ -24,6 +25,29 @@ module Wright
         @filetype = filetype
       end
 
+      def owner=(owner)
+        @owner = Util::User.user_to_uid(owner)
+      end
+
+      def group=(group)
+        @group = Util::User.group_to_gid(group)
+      end
+
+      def mode=(mode)
+        if mode.nil?
+          @mode = nil
+          return
+        end
+
+        mode_i = File.numeric_mode_to_i(mode)
+        unless mode_i
+          current_mode_i =
+            ::File.exist?(@filename) ? current_mode : default_mode
+          mode_i = File.symbolic_modes_to_i(mode, current_mode_i, @filetype)
+        end
+        @mode = mode_i
+      end
+
       def uptodate?
         if ::File.exist?(@filename)
           owner_uptodate? && group_uptodate? && mode_uptodate?
@@ -33,14 +57,8 @@ module Wright
       end
 
       def update
-        target_mode = mode_to_i
-        ::File.chmod(target_mode, @filename) if target_mode
-
-        target_owner = owner_to_i
-        target_group = group_to_i
-        if target_owner || target_group
-          ::File.chown(target_owner, target_group, @filename)
-        end
+        ::File.chmod(@mode, @filename) if @mode
+        ::File.chown(@owner, @group, @filename) if (@owner || @group)
       end
 
       def current_mode
@@ -57,43 +75,16 @@ module Wright
 
       private
 
-      def owner_to_i
-        Util::User.user_to_uid(@owner)
-      end
-
-      def group_to_i
-        Util::User.group_to_gid(@group)
-      end
-
-      # Internal: Convert file access mode to integer mode.
-      #
-      # Returns the file mode as an integer.
-      # Raises ArgumentError if mode is an invalid symbolic mode.
-      def mode_to_i
-        return nil if @mode.nil?
-
-        mode_i = File.numeric_mode_to_i(@mode)
-        unless mode_i
-          current_mode_i =
-            ::File.exist?(@filename) ? current_mode : default_mode
-          mode_i = File.symbolic_modes_to_i(@mode, current_mode_i, @filetype)
-        end
-        mode_i
-      end
-
       def owner_uptodate?
-        target_owner = owner_to_i
-        target_owner.nil? ? true : current_owner == target_owner
+        @owner.nil? || current_owner == @owner
       end
 
       def group_uptodate?
-        target_group = group_to_i
-        target_group.nil? ? true : current_group == target_group
+        @group.nil? || current_group == @group
       end
 
       def mode_uptodate?
-        target_mode = mode_to_i
-        target_mode.nil? ? true : current_mode == target_mode
+        @mode.nil? || current_mode == @mode
       end
 
       def default_mode
