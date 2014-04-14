@@ -95,7 +95,7 @@ describe Wright::Resource::File do
       end
     end
 
-    it 'should throw an exception if target is a directory' do
+    it 'should throw an exception when the target is a directory' do
       FakeFS do
         FileUtils.mkdir_p(@filename)
         file = Wright::Resource::File.new(@filename)
@@ -146,13 +146,13 @@ describe Wright::Resource::File do
       end
     end
 
-    # it 'should raise an exception if there is a regular file at path' do
-    #   FakeFS do
-    #     FileUtils.touch(@dirname)
-    #     dir = Wright::Resource::Directory.new(@dirname)
-    #     proc { dir.create! }.must_raise Errno::EEXIST
-    #   end
-    # end
+    it 'should raise an exception if there is a regular file at path' do
+      FakeFS do
+        FileUtils.touch(@filename)
+        dir = Wright::Resource::Directory.new(@filename)
+        proc { dir.create! }.must_raise Errno::EEXIST
+      end
+    end
   end
 
   describe '#remove!' do
