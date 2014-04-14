@@ -3,11 +3,9 @@ require 'logger'
 require 'wright/config'
 require 'wright/util/color'
 
-module Wright
-
+module Wright # rubocop:disable Documentation
   # Public: Default logger for Wright.
   class Logger < ::Logger
-
     # Public: Default formatter for Wright log messages.
     class Formatter < ::Logger::Formatter
       # Internal: Called by Wright::Logger to format log messages.
@@ -28,6 +26,7 @@ module Wright
       end
 
       private
+
       # Internal: ANSI-Colorize a log message according to its
       # severity.
       #

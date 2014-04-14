@@ -1,4 +1,4 @@
-module Wright
+module Wright # rubocop:disable Documentation
   @dry_run = false
 
   # Public: Checks if dry-run mode is currently active.

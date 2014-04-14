@@ -4,10 +4,8 @@ require 'wright/logger'
 require 'wright/dry_run'
 
 module Wright
-
   # Public: Resource base class.
   class Resource
-
     # Public: Initialize a Resource.
     #
     # name - The resource's name.
@@ -60,7 +58,7 @@ module Wright
       if on_update.respond_to?(:call) || on_update.nil?
         @on_update = on_update
       else
-        raise ArgumentError.new("#{on_update} is not callable")
+        fail ArgumentError, "#{on_update} is not callable"
       end
     end
 
@@ -80,6 +78,7 @@ module Wright
     end
 
     private
+
     # Public: This is not documented yet.
     #
     # Returns true if the provider was updated and false otherwise.
@@ -113,7 +112,7 @@ module Wright
     end
 
     def provider_name
-      if Wright::Config.has_nested_key?(:resources, @resource_name, :provider)
+      if Wright::Config.nested_key?(:resources, @resource_name, :provider)
         Wright::Config[:resources][@resource_name][:provider]
       else
         "Wright::Provider::#{resource_class}"

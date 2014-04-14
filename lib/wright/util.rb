@@ -1,10 +1,8 @@
 require 'wright/util/stolen_from_activesupport'
 
 module Wright
-
   # Internal: Various utility functions.
   module Util
-
     # Internal: Get the resource name corresponding to a class.
     #
     # klass - The class constant for which to get the resource name.

@@ -1,6 +1,5 @@
 module Wright
   module Util
-
     # Internal: Various file methods.
     module File
       def self.user_mask(target)

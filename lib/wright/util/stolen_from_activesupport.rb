@@ -1,10 +1,8 @@
 module Wright
   module Util
-
     # Internal: Various methods copied verbatim from ActiveSupport in
     # order to keep dependencies to a minimum.
     module ActiveSupport
-
       # Internal: Convert a CamelCased String to underscored, lowercase
       # form.
       #
@@ -30,8 +28,8 @@ module Wright
       def self.underscore(camel_cased_word)
         word = camel_cased_word.to_s.dup
         word.gsub!(/::/, '/')
-        word.gsub!(/([A-Z\d]+)([A-Z][a-z])/,'\1_\2')
-        word.gsub!(/([a-z\d])([A-Z])/,'\1_\2')
+        word.gsub!(/([A-Z\d]+)([A-Z][a-z])/, '\1_\2')
+        word.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
         word.tr!("-", "_")
         word.downcase!
         word
@@ -153,12 +151,10 @@ module Wright
       # Returns the constant or nil if the name is not in CamelCase or
       #   the constant is unknown.
       def self.safe_constantize(camel_cased_word)
-        begin
-          constantize(camel_cased_word)
-        rescue NameError => e
-          raise unless e.message =~ /(uninitialized constant|wrong constant name) #{const_regexp(camel_cased_word)}$/ ||
-            e.name.to_s == camel_cased_word.to_s
-        end
+        constantize(camel_cased_word)
+      rescue NameError => e
+        raise unless e.message =~ /(uninitialized constant|wrong constant name) #{const_regexp(camel_cased_word)}$/ ||
+          e.name.to_s == camel_cased_word.to_s
       end
 
       # Internal: Construct a regular expression that will match a

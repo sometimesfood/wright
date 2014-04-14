@@ -3,6 +3,6 @@ require 'wright/dsl'
 require 'wright/provider'
 require 'wright/resource'
 
-# Public
+# Public: TODO: Add some documentation
 module Wright
 end

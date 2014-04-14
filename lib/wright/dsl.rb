@@ -1,7 +1,6 @@
 require 'wright/util'
 
 module Wright
-
   # Public: Includable Wright script DSL.
   #
   # Contains resource methods for all registered resources.
@@ -29,7 +28,6 @@ module Wright
   #   a_sink_to_remember.class
   #   # => KitchenSink
   module DSL
-
     # Public: Register a class as a resource.
     #
     # Creates a resource method in the DSL module. Uses the
