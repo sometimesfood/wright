@@ -7,12 +7,20 @@ Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
 end
 
-RDoc::Task.new do |t|
+desc 'Start wright IRB session'
+task :console do
+  exec 'irb -I lib -r wright'
+end
+
+RDoc::Task.new(clobber_rdoc: 'rdoc:clobber',
+               rerdoc: 'rdoc:force') do |t|
   t.rdoc_files.include('lib/**/*.rb')
   t.options << '--markup=tomdoc'
 end
 
-desc 'Start wright IRB session'
-task :console do
-  exec 'irb -I lib -r wright'
+namespace :rdoc do
+  desc 'Show RDoc coverage report'
+  task :coverage do
+    exec 'rdoc --markup=tomdoc --coverage-report lib/'
+  end
 end
