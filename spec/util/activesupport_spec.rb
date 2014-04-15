@@ -6,8 +6,7 @@ include Wright
 
 describe Util::ActiveSupport do
   it 'should camelize underscored words' do
-    Util::ActiveSupport.camelize('foo_bar'       ).must_equal 'FooBar'
-    Util::ActiveSupport.camelize('foo_bar', false).must_equal 'fooBar'
+    Util::ActiveSupport.camelize('foo_bar').must_equal 'FooBar'
   end
 
   it 'should underscore CamelCase words' do
