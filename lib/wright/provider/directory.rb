@@ -34,12 +34,7 @@ module Wright
         end
 
         if ::File.directory?(@resource.name)
-          if Wright.dry_run?
-            Wright.log.info "(would) remove directory: '#{@resource.name}'"
-          else
-            Wright.log.info "remove directory: '#{@resource.name}'"
-            FileUtils.rmdir(@resource.name)
-          end
+          remove_directory
           @updated = true
         else
           Wright.log.debug "directory already removed: '#{@resource.name}'"
@@ -63,6 +58,15 @@ module Wright
           Wright.log.info "create directory: '#{dirname}'"
           FileUtils.mkdir_p(dirname)
           dir_permissions.update
+        end
+      end
+
+      def remove_directory
+        if Wright.dry_run?
+          Wright.log.info "(would) remove directory: '#{@resource.name}'"
+        else
+          Wright.log.info "remove directory: '#{@resource.name}'"
+          FileUtils.rmdir(@resource.name)
         end
       end
     end

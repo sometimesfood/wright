@@ -31,12 +31,7 @@ module Wright
         end
 
         if ::File.symlink?(@resource.name)
-          if Wright.dry_run?
-            Wright.log.info "(would) remove symlink: '#{@resource.name}'"
-          else
-            Wright.log.info "remove symlink: '#{@resource.name}'"
-            FileUtils.rm(@resource.name)
-          end
+          remove_symlink
           @updated = true
         else
           Wright.log.debug "symlink already removed: '#{@resource.name}'"
@@ -76,6 +71,15 @@ module Wright
 
       def symlink_to_s(link_name, target)
         "'#{link_name}' -> '#{target}'"
+      end
+
+      def remove_symlink
+        if Wright.dry_run?
+          Wright.log.info "(would) remove symlink: '#{@resource.name}'"
+        else
+          Wright.log.info "remove symlink: '#{@resource.name}'"
+          FileUtils.rm(@resource.name)
+        end
       end
     end
   end

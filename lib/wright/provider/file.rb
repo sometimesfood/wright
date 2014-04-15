@@ -29,16 +29,12 @@ module Wright
       #
       # Returns nothing.
       def remove!
-        fail Errno::EISDIR, @resource.name if ::File.directory?(@resource.name)
-
         file = @resource.name
+
+        fail Errno::EISDIR, file if ::File.directory?(file)
+
         if ::File.exist?(file) || ::File.symlink?(file)
-          if Wright.dry_run?
-            Wright.log.info "(would) remove file: '#{file}'"
-          else
-            Wright.log.info "remove file: '#{file}'"
-            FileUtils.rm(file)
-          end
+          remove_file
           @updated = true
         else
           Wright.log.debug "file already removed: '#{file}'"
@@ -54,15 +50,29 @@ module Wright
           Wright.log.info "(would) create file: '#{@resource.name}'"
         else
           Wright.log.info "create file: '#{@resource.name}'"
-          file = Tempfile.new(::File.basename(@resource.name))
-          file.write(@resource.content) if @resource.content
-          file.close
-          if @resource.content || !::File.exist?(@resource.name)
-            FileUtils.mv(file.path, @resource.name)
-          else
-            file.unlink
-          end
+          write_content_to_file
           file_permissions.update
+        end
+      end
+
+      def write_content_to_file
+        file = Tempfile.new(::File.basename(@resource.name))
+        file.write(@resource.content) if @resource.content
+        file.close
+        if @resource.content || !::File.exist?(@resource.name)
+          FileUtils.mv(file.path, @resource.name)
+        else
+          file.unlink
+        end
+      end
+
+      def remove_file
+        file = @resource.name
+        if Wright.dry_run?
+          Wright.log.info "(would) remove file: '#{file}'"
+        else
+          Wright.log.info "remove file: '#{file}'"
+          FileUtils.rm(file)
         end
       end
 
