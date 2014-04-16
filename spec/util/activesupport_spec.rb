@@ -18,7 +18,7 @@ describe Util::ActiveSupport do
     nonexistent = 'ThisConstant::DoesNotExist'
 
     Util::ActiveSupport.constantize('Wright::Util').must_equal Wright::Util
-    lambda { Util::ActiveSupport.constantize(nonexistent) }.must_raise(NameError)
+    -> { Util::ActiveSupport.constantize(nonexistent) }.must_raise(NameError)
     Util::ActiveSupport.safe_constantize(nonexistent).must_be_nil
   end
 end

@@ -35,7 +35,7 @@ describe Wright::Resource do
     @config = Wright::Config.dump
     Wright::Config.clear
     @hello = 'Hello world'
-    @say_hello = lambda { print @hello }
+    @say_hello = -> { print @hello }
   end
 
   after(:each) do
@@ -107,9 +107,9 @@ describe Wright::Resource do
 
   it 'should raise an ArgumentError if on_update is not callable' do
     resource = Sample.new
-    lambda { resource.on_update = "I'm a string" }.must_raise ArgumentError
-    lambda { resource.on_update = Proc.new {} }.must_be_silent
-    lambda { resource.on_update = nil }.must_be_silent
+    -> { resource.on_update = "I'm a string" }.must_raise ArgumentError
+    -> { resource.on_update = Proc.new {} }.must_be_silent
+    -> { resource.on_update = nil }.must_be_silent
   end
 
   it 'should run actions' do

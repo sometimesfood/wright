@@ -34,7 +34,7 @@ describe Wright::DSL do
     end
     @Wright_DSL.register_resource(resource_class)
     resource_name = Wright::Util.class_to_resource_name(resource_class)
-    lambda { @recipe.send(resource_name, 'world') }.must_output("Hello world\n")
+    -> { @recipe.send(resource_name, 'world') }.must_output("Hello world\n")
   end
 
   it 'should call blocks passed to a resource function' do
@@ -45,8 +45,8 @@ describe Wright::DSL do
     @Wright_DSL.register_resource(resource_class)
 
     resource_name = Wright::Util.class_to_resource_name(resource_class)
-    block = lambda { |resource| throw resource.class }
+    block = ->(resource) { throw resource.class }
 
-    lambda { @recipe.send(resource_name, nil, &block) }.must_throw resource_class
+    -> { @recipe.send(resource_name, nil, &block) }.must_throw resource_class
   end
 end

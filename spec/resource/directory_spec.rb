@@ -129,7 +129,7 @@ describe Wright::Resource::Directory do
       FakeFS do
         FileUtils.touch(@dirname)
         dir = Wright::Resource::Directory.new(@dirname)
-        lambda { dir.create! }.must_raise Errno::EEXIST
+        -> { dir.create! }.must_raise Errno::EEXIST
       end
     end
   end
@@ -149,7 +149,7 @@ describe Wright::Resource::Directory do
         FileUtils.mkdir_p(@dirname)
         FileUtils.touch(File.join(@dirname, 'somefile'))
         dir = Wright::Resource::Directory.new(@dirname)
-        lambda { dir.remove! }.must_raise Errno::ENOTEMPTY
+        -> { dir.remove! }.must_raise Errno::ENOTEMPTY
         assert File.directory?(@dirname)
       end
     end
@@ -158,7 +158,7 @@ describe Wright::Resource::Directory do
       FakeFS do
         FileUtils.touch(@dirname)
         dir = Wright::Resource::Directory.new(@dirname)
-        lambda { dir.remove! }.must_raise RuntimeError
+        -> { dir.remove! }.must_raise RuntimeError
         assert File.exist?(@dirname)
       end
     end

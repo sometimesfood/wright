@@ -50,7 +50,7 @@ describe Wright::Provider::Symlink do
       FakeFS do
         FileUtils.rm(@link_resource.name)
         FileUtils.touch(@link_resource.name)
-        lambda { link.create! }.must_raise Errno::EEXIST
+        -> { link.create! }.must_raise Errno::EEXIST
         assert !link.updated?
       end
     end
@@ -89,7 +89,7 @@ describe Wright::Provider::Symlink do
 
       FakeFS do
         FileUtils.touch(@link_resource.name)
-        lambda { link.remove! }.must_raise RuntimeError
+        -> { link.remove! }.must_raise RuntimeError
         assert !link.updated?
       end
     end

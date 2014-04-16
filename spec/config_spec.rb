@@ -22,7 +22,7 @@ describe Wright::Config do
   end
 
   it 'should handle nested key checks' do
-    Wright::Config[:foo] = { :bar => :baz }
+    Wright::Config[:foo] = { bar: :baz }
     Wright::Config.nested_key?(:foo, :bar).must_equal true
     Wright::Config.nested_key?(:foo, :bar, :qux).must_equal false
     Wright::Config.nested_key?(:nonexistent).must_equal false
@@ -30,7 +30,7 @@ describe Wright::Config do
   end
 
   it 'should return values for nested keys' do
-    Wright::Config[:foo] = { :bar => :baz }
+    Wright::Config[:foo] = { bar: :baz }
     Wright::Config.nested_value(:foo, :bar).must_equal :baz
     Wright::Config.nested_value(:im, :not, :there).must_be_nil
   end

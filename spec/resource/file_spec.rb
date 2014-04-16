@@ -99,7 +99,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.mkdir_p(@filename)
         file = Wright::Resource::File.new(@filename)
-        lambda { file.create! }.must_raise Errno::EISDIR
+        -> { file.create! }.must_raise Errno::EISDIR
         assert File.directory?(@filename)
       end
     end
@@ -150,7 +150,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.touch(@filename)
         dir = Wright::Resource::Directory.new(@filename)
-        lambda { dir.create! }.must_raise Errno::EEXIST
+        -> { dir.create! }.must_raise Errno::EEXIST
       end
     end
   end
@@ -169,7 +169,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.mkdir_p(@filename)
         file = Wright::Resource::File.new(@filename)
-        lambda { file.remove! }.must_raise Errno::EISDIR
+        -> { file.remove! }.must_raise Errno::EISDIR
         assert File.directory?(@filename)
       end
     end

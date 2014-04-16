@@ -55,7 +55,7 @@ describe Wright::Resource::Symlink do
         file_content = 'Hello world'
         File.write(@link_name, file_content)
         link = link_resource(@target, @link_name)
-        lambda { link.create! }.must_raise(Errno::EEXIST)
+        -> { link.create! }.must_raise(Errno::EEXIST)
         File.read(@link_name).must_equal(file_content)
       end
     end
@@ -81,7 +81,7 @@ describe Wright::Resource::Symlink do
         FileUtils.touch(@link_name)
         link = Wright::Resource::Symlink.new(@link_name)
         assert File.exist?(@link_name)
-        lambda { link.remove! }.must_raise RuntimeError
+        -> { link.remove! }.must_raise RuntimeError
         assert File.exist?(@link_name)
       end
     end

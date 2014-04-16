@@ -7,7 +7,7 @@ Wright::Util::RecursiveAutoloader.add_autoloads(BASEDIR, 'Wright')
 
 describe Wright::Util::RecursiveAutoloader do
   it 'should not load files prematurely' do
-    lambda { Wright::RaisesException }.must_raise(RuntimeError)
+    -> { Wright::RaisesException }.must_raise(RuntimeError)
   end
 
   it 'should load files when needed' do
