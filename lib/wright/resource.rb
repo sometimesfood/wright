@@ -80,7 +80,7 @@ module Wright
     private
 
     # Public: Mark a code block that might update a resource.
-    # 
+    #
     # Usually this method is called in the definition of a new
     # resource class in order to mark those methods that should be
     # able to trigger update actions. Runs the current update action
@@ -94,14 +94,14 @@ module Wright
     #       @updated = true
     #     end
     #   end
-    #   
+    #
     #   class Balloon < Wright::Resource
     #     def inflate
     #       might_update_resource { @provider.inflate }
     #     end
     #   end
     #   Wright::Config[:resources] = { balloon: { provider: 'BalloonAnimal' } }
-    #   
+    #
     #   balloon = Balloon.new.inflate
     #   # => true
     #
