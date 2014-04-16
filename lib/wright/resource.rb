@@ -47,7 +47,7 @@ module Wright
     #   # => :symlink
     attr_reader :resource_name
 
-    # Public: Sets an update action for a resource.
+    # Public: Set an update action for a resource.
     #
     # on_update - The block that is called if the resource is
     #             updated. Has to respond to :call.
@@ -62,7 +62,7 @@ module Wright
       end
     end
 
-    # Public: Runs the resource's current action.
+    # Public: Run the resource's current action.
     #
     # Examples
     #
@@ -79,7 +79,31 @@ module Wright
 
     private
 
-    # Public: This is not documented yet.
+    # Public: Mark a code block that might update a resource.
+    # 
+    # Usually this method is called in the definition of a new
+    # resource class in order to mark those methods that should be
+    # able to trigger update actions. Runs the current update action
+    # if the provider was updated by the block method.
+    #
+    # Examples
+    #
+    #   class BalloonAnimal < Wright::Provider
+    #     def inflate
+    #       puts "It's a giraffe!"
+    #       @updated = true
+    #     end
+    #   end
+    #   
+    #   class Balloon < Wright::Resource
+    #     def inflate
+    #       might_update_resource { @provider.inflate }
+    #     end
+    #   end
+    #   Wright::Config[:resources] = { balloon: { provider: 'BalloonAnimal' } }
+    #   
+    #   balloon = Balloon.new.inflate
+    #   # => true
     #
     # Returns true if the provider was updated and false otherwise.
     def might_update_resource #:doc:

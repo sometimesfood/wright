@@ -27,11 +27,11 @@
 #   OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #   SUCH DAMAGE.
 
-module Wright
+module Wright #:nodoc:
   module Util
     # Internal: Various file methods.
     module File
-      USER_MAP = {
+      USER_MAP = { #:nodoc:
         'u' => 04700,
         'g' => 02070,
         'o' => 01007,
@@ -44,7 +44,7 @@ module Wright
       end
       private_class_method :user_mask
 
-      MODE_MAP = {
+      MODE_MAP = { #:nodoc:
         'r' => 0444,
         'w' => 0222,
         'x' => 0111,
@@ -59,13 +59,15 @@ module Wright
       end
       private_class_method :mode_mask
 
-      # Internal: Convert a symbolic mode string to an integer mode.
+      # Internal: Convert a symbolic mode string to an integer mode
+      # value.
       #
       # mode - The symbolic mode string.
       # base_mode - The integer base mode.
       # filetype - The filetype. Defaults to :file.
       #
       # Examples
+      #
       #   Wright::Util::File.symbolic_mode_to_i('u=rw,go=r', 0400).to_s(8)
       #   # => "644"
       #
@@ -85,8 +87,8 @@ module Wright
         mode_i
       end
 
-      # Internal: Converts a single symbolic mode clause to an integer
-      #   mode.
+      # Internal: Convert a single symbolic mode clause to an integer
+      # mode value.
       #
       # mode_clause - The symbolic mode clause.
       # base_mode_i - The integer base mode.
@@ -124,6 +126,26 @@ module Wright
       end
       private_class_method :apply_user_mode_masks
 
+      # Internal: Convert a numeric mode string to an integer mode.
+      #
+      # mode - The numeric mode string.
+      #
+      # Examples
+      #
+      #   Wright::Util::File.numeric_mode_to_i('0600').to_s(8)
+      #   # => "600"
+      #
+      #   Wright::Util::File.numeric_mode_to_i('644').to_s(8)
+      #   # => "644"
+      #
+      #   Wright::Util::File.numeric_mode_to_i(0644).to_s(8)
+      #   # => "644"
+      #
+      #   Wright::Util::File.numeric_mode_to_i('invalid_mode').to_s(8)
+      #   # => nil
+      #
+      # Returns the mode in integer form or nil if the mode could not
+      # be converted.
       def self.numeric_mode_to_i(mode)
         return mode.to_i unless mode.is_a?(String)
         mode =~ /\A[0-7]{3,4}\Z/ ? mode.to_i(8) : nil

@@ -18,7 +18,7 @@ module Wright
     end
 
     # Public: Checks if the provider was updated since the last call
-    #         to updated?.
+    # to updated?.
     #
     # Returns true if the provider was updated and false otherwise.
     def updated?

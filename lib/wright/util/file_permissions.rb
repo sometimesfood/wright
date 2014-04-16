@@ -3,7 +3,14 @@ require 'wright/util/user'
 
 module Wright
   module Util
+    # Internal: Helper class to manage file permissions.
     class FilePermissions
+      # Internal: Create a FilePermissions from a Wright::Resource.
+      #
+      # resource - The resource object.
+      # filetype - The file's type, typically :file or :directory.
+      #
+      # Returns a Wright::Util::FilePermissions object.
       def self.create_from_resource(resource, filetype)
         p = Wright::Util::FilePermissions.new(resource.name, filetype)
         p.owner = resource.owner
@@ -12,11 +19,25 @@ module Wright
         p
       end
 
-      attr_accessor :filename, :group, :mode
+      # Internal: Get/Set the target file's name.
+      attr_accessor :filename
+
+      # Internal: Get/Set the file's target group.
+      attr_accessor :group
+
+      # Internal: Get/Set the file's target mode.
+      attr_accessor :mode
+
+      # Internal: Get the file's target owner.
       attr_reader :owner
 
+      # Internal: Supported filetypes.
       VALID_FILETYPES = [:file, :directory]
 
+      # Internal: Initialize a FilePermissions object.
+      #
+      # filename - The file's name.
+      # filetype - The file's type, typically :file or :directory.
       def initialize(filename, filetype)
         unless VALID_FILETYPES.include?(filetype)
           fail ArgumentError, "Invalid filetype '#{filetype}'"
@@ -25,14 +46,17 @@ module Wright
         @filetype = filetype
       end
 
+      # Internal: Set the file's owner.
       def owner=(owner)
         @owner = Util::User.user_to_uid(owner)
       end
 
+      # Internal: Set the file's group
       def group=(group)
         @group = Util::User.group_to_gid(group)
       end
 
+      # Internal: Set the file's mode.
       def mode=(mode)
         if mode.nil?
           @mode = nil
@@ -47,6 +71,7 @@ module Wright
         @mode = mode_i
       end
 
+      # Internal: Check if the file's owner, group and mode are up-to-date.
       def uptodate?
         if ::File.exist?(@filename)
           owner_uptodate? && group_uptodate? && mode_uptodate?
@@ -55,19 +80,23 @@ module Wright
         end
       end
 
+      # Internal: Update the file's owner, group and mode.
       def update
         ::File.chmod(@mode, @filename) if @mode
         ::File.chown(@owner, @group, @filename) if @owner || @group
       end
 
+      # Internal: Get the file's current mode.
       def current_mode
         Wright::Util::File.file_mode(@filename)
       end
 
+      # Internal: Get the file's current owner.
       def current_owner
         Wright::Util::File.file_owner(@filename)
       end
 
+      # Internal: Get the file's current group.
       def current_group
         Wright::Util::File.file_group(@filename)
       end

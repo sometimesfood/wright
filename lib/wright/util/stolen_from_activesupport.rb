@@ -25,7 +25,7 @@
 #   OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 #   WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-module Wright
+module Wright #:nodoc:
   module Util
     # Internal: Various methods copied verbatim from ActiveSupport in
     #   order to keep dependencies to a minimum.

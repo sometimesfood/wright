@@ -11,7 +11,16 @@ module Wright
     #   file.content = 'bar'
     #   file.create!
     class File < Wright::Resource
-      attr_accessor :content, :group, :mode
+      # Public: Get/Set the file's content.
+      attr_accessor :content
+
+      # Public: Get/Set the file's group.
+      attr_accessor :group
+
+      # Public: Get/Set the file's mode.
+      attr_accessor :mode
+
+      # Public: Get the file's owner.
       attr_reader :owner
 
       # Public: Initialize a File.
