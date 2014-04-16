@@ -8,7 +8,7 @@ module Wright # rubocop:disable Documentation
   #   puts 'Just a dry-run...' if Wright.dry_run?
   #
   # Returns true if dry-run mode is currently active and false otherwise.
-  def self.dry_run?
+  def self.dry_run? # rubocop:disable TrivialAccessors
     @dry_run
   end
 
