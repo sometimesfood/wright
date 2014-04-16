@@ -41,9 +41,8 @@ module Wright
 
         mode_i = File.numeric_mode_to_i(mode)
         unless mode_i
-          current_mode_i =
-            ::File.exist?(@filename) ? current_mode : default_mode
-          mode_i = File.symbolic_modes_to_i(mode, current_mode_i, @filetype)
+          base_mode_i = ::File.exist?(@filename) ? current_mode : default_mode
+          mode_i = File.symbolic_modes_to_i(mode, base_mode_i, @filetype)
         end
         @mode = mode_i
       end
