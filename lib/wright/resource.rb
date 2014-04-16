@@ -86,14 +86,18 @@ module Wright
       begin
         yield
       rescue => e
-        resource = "#{@resource_name}"
-        resource << " '#{@name}'" if @name
-        Wright.log.error "#{resource}: #{e}"
+        log_error(e)
         raise e unless @ignore_failure
       end
       updated = @provider.updated?
       run_update_action if updated
       updated
+    end
+
+    def log_error(exception)
+      resource = "#{@resource_name}"
+      resource << " '#{@name}'" if @name
+      Wright.log.error "#{resource}: #{exception}"
     end
 
     def run_update_action

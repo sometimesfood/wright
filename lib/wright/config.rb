@@ -58,11 +58,7 @@ module Wright
     #
     # Returns the configuration value or nil if the value is not set.
     def self.nested_value(*path)
-      if nested_key?(*path)
-        path.reduce(@config_hash) { |hash, key| hash[key] }
-      else
-        nil
-      end
+      nested_key?(*path) ? path.reduce(@config_hash) { |a, e| a[e] } : nil
     end
   end
 end

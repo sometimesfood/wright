@@ -30,43 +30,31 @@ module Wright
   module Util
     # Internal: Various file methods.
     module File
+      USER_MAP = {
+        'u' => 04700,
+        'g' => 02070,
+        'o' => 01007,
+        'a' => 07777
+      }
+      private_constant :USER_MAP
+
       def self.user_mask(target)
-        mask = 0
-        target.each_byte do |byte_chr|
-          case byte_chr.chr
-          when 'u'
-            mask |= 04700
-          when 'g'
-            mask |= 02070
-          when 'o'
-            mask |= 01007
-          when 'a'
-            mask |= 07777
-          end
-        end
-        mask
+        target.chars.reduce(0) { |a, e| a | USER_MAP[e] }
       end
       private_class_method :user_mask
 
+      MODE_MAP = {
+        'r' => 0444,
+        'w' => 0222,
+        'x' => 0111,
+        's' => 06000,
+        't' => 01000
+      }
+      private_constant :MODE_MAP
+
       def self.mode_mask(mode, is_directory)
-        mask = 0
-        mode.each_byte do |byte_chr|
-          case byte_chr.chr
-          when 'r'
-            mask |= 0444
-          when 'w'
-            mask |= 0222
-          when 'x'
-            mask |= 0111
-          when 'X'
-            mask |= 0111 if is_directory
-          when 's'
-            mask |= 06000
-          when 't'
-            mask |= 01000
-          end
-        end
-        mask
+        mode.gsub!('X', 'x') if is_directory
+        mode.chars.reduce(0) { |a, e| a | MODE_MAP[e].to_i }
       end
       private_class_method :mode_mask
 
