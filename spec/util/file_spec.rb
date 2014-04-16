@@ -72,20 +72,20 @@ describe Util::File do
     end
   end
 
-  describe 'symbolic_modes_to_i' do
+  describe 'symbolic_mode_to_i' do
     it 'should convert symbolic modes for files' do
       type = :file
       mode = 00644
       FakeFS do
         FileUtils.touch(@file)
         FileUtils.chmod(mode, @file)
-        Util::File.symbolic_modes_to_i('u=rw,go=r', mode, type).must_equal 0644
-        Util::File.symbolic_modes_to_i('u=r,go+w', mode, type).must_equal 0466
-        Util::File.symbolic_modes_to_i('+x' , mode, type).must_equal  0755
-        Util::File.symbolic_modes_to_i('+X' , mode, type).must_equal  0644
-        Util::File.symbolic_modes_to_i('a-r', mode, type).must_equal  0200
-        Util::File.symbolic_modes_to_i('+s' , mode, type).must_equal 06644
-        Util::File.symbolic_modes_to_i('+t' , mode, type).must_equal 01644
+        Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0644
+        Util::File.symbolic_mode_to_i('u=r,go+w', mode, type).must_equal 0466
+        Util::File.symbolic_mode_to_i('+x' , mode, type).must_equal  0755
+        Util::File.symbolic_mode_to_i('+X' , mode, type).must_equal  0644
+        Util::File.symbolic_mode_to_i('a-r', mode, type).must_equal  0200
+        Util::File.symbolic_mode_to_i('+s' , mode, type).must_equal 06644
+        Util::File.symbolic_mode_to_i('+t' , mode, type).must_equal 01644
         FakeFS::FileSystem.clear
       end
     end
@@ -96,16 +96,16 @@ describe Util::File do
       FakeFS do
         FileUtils.mkdir(@dir)
         FileUtils.chmod(mode, @dir)
-        Util::File.symbolic_modes_to_i('u=rw,go=r', mode, type).must_equal 0644
-        Util::File.symbolic_modes_to_i('+x', mode, type).must_equal 0755
-        Util::File.symbolic_modes_to_i('+X', mode, type).must_equal 0755
+        Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0644
+        Util::File.symbolic_mode_to_i('+x', mode, type).must_equal 0755
+        Util::File.symbolic_mode_to_i('+X', mode, type).must_equal 0755
         FakeFS::FileSystem.clear
       end
     end
 
     it 'should raise an exception for invalid symbolic modes' do
       lambda do
-        Util::File.symbolic_modes_to_i('this is not a mode string', nil, :file)
+        Util::File.symbolic_mode_to_i('this is not a mode string', nil, :file)
       end.must_raise ArgumentError
     end
   end

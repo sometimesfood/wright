@@ -68,7 +68,7 @@ Wright::DSL.register_resource Bla
 bla "lalala-23" do |b|
 #  b.provider = Wright::Provider::Bla.new(b)
 #  b.provider = Wright::Provider::Bla
-  b.on_update = Proc.new { puts "Oh yeah!" }
+  b.on_update = -> { puts "Oh yeah!" }
   b.action = :something_else
   b.ignore_failure = true
 end

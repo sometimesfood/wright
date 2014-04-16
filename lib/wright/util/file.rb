@@ -1,5 +1,6 @@
-# Most functions in this file are based on Ruby's FileUtils, more
-# specifically lib/fileutils.rb in Ruby 2.1.1.
+# The file mode conversion functions in this file are based on those
+# of Ruby's FileUtils, more specifically some methods found in
+# lib/fileutils.rb in MRI 2.1.1.
 #
 # The following is a verbatim copy of the original license:
 #
@@ -58,28 +59,70 @@ module Wright
       end
       private_class_method :mode_mask
 
-      def self.symbolic_modes_to_i(modes, current_mode, filetype = :file)
+      # Internal: Convert a symbolic mode string to an integer mode.
+      #
+      # mode - The symbolic mode string.
+      # base_mode - The integer base mode.
+      # filetype - The filetype. Defaults to :file.
+      #
+      # Examples
+      #   Wright::Util::File.symbolic_mode_to_i('u=rw,go=r', 0400).to_s(8)
+      #   # => "644"
+      #
+      #   Wright::Util::File.symbolic_mode_to_i('u=rw,g+r', 0200).to_s(8)
+      #   # => "640"
+      #
+      # Returns the integer mode.
+      def self.symbolic_mode_to_i(mode, base_mode, filetype = :file)
         is_directory = (filetype == :directory)
-        unless symbolic_mode?(modes)
-          fail ArgumentError, "Invalid file mode \"#{modes}\""
+        unless symbolic_mode?(mode)
+          fail ArgumentError, "Invalid file mode \"#{mode}\""
         end
-        modes.split(/,/).reduce(0) do |mode, mode_sym|
-          mode_sym = "a#{mode_sym}" if mode_sym =~ /\A[+-=]/
-          target, mode = mode_sym.split(/[+-=]/)
-          user_mask = user_mask(target)
-          mode_mask = mode_mask(mode ? mode : '', is_directory)
+        mode_i = base_mode
+        mode.split(/,/).each do |mode_clause|
+          mode_i = mode_clause_to_i(mode_clause, mode_i, is_directory)
+        end
+        mode_i
+      end
 
-          case mode_sym
-          when /=/
-            current_mode &= ~(user_mask)
-            current_mode |= user_mask & mode_mask
-          when /\+/
-            current_mode |= user_mask & mode_mask
-          when /-/
-            current_mode &= ~(user_mask & mode_mask)
-          end
+      # Internal: Converts a single symbolic mode clause to an integer
+      #   mode.
+      #
+      # mode_clause - The symbolic mode clause.
+      # base_mode_i - The integer base mode.
+      # is_directory - Denotes whether the mode_clause should be
+      #                treated as a symbolic directory mode clause.
+      #
+      # Examples
+      #
+      #   Wright::Util::File.mode_clause_to_i('g+r', 0600, false).to_s(8)
+      #   # => "640"
+      #
+      #   Wright::Util::File.mode_clause_to_i('+rw', 0600, false).to_s(8)
+      #   # => "666"
+      #
+      # Returns the mode clause as an integer.
+      def self.mode_clause_to_i(mode_clause, base_mode_i, is_directory)
+        mode_clause = "a#{mode_clause}" if mode_clause =~ /\A[+-=]/
+        who, op, perm = mode_clause.split(/([+-=])/)
+        perm ||= ''
+        user_mask = user_mask(who)
+        mode_mask = mode_mask(perm, is_directory)
+        apply_user_mode_masks(base_mode_i, user_mask, op, mode_mask)
+      end
+      private_class_method :mode_clause_to_i
+
+      def self.apply_user_mode_masks(base_mode_i, user_mask, op, mode_mask)
+        case op
+        when '='
+          (base_mode_i & ~user_mask) | (user_mask & mode_mask)
+        when '+'
+          base_mode_i | (user_mask & mode_mask)
+        when '-'
+          base_mode_i & ~(user_mask & mode_mask)
         end
       end
+      private_class_method :apply_user_mode_masks
 
       def self.numeric_mode_to_i(mode)
         return mode.to_i unless mode.is_a?(String)
