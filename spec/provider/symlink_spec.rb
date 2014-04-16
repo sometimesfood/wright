@@ -31,7 +31,7 @@ describe Wright::Provider::Symlink do
       link = Wright::Provider::Symlink.new(@link_resource)
       lambda do
         reset_logger
-        FakeFS { link.create! }
+        FakeFS { link.create }
       end.must_output @create_message
       assert link.updated?
     end
@@ -42,7 +42,7 @@ describe Wright::Provider::Symlink do
         FakeFS do
           reset_logger
           FileUtils.ln_sf(@link_resource.to, @link_resource.name)
-          link.create!
+          link.create
           assert !link.updated?
         end
       end.must_output @create_message_debug
@@ -50,7 +50,7 @@ describe Wright::Provider::Symlink do
       FakeFS do
         FileUtils.rm(@link_resource.name)
         FileUtils.touch(@link_resource.name)
-        -> { link.create! }.must_raise Errno::EEXIST
+        -> { link.create }.must_raise Errno::EEXIST
         assert !link.updated?
       end
     end
@@ -61,7 +61,7 @@ describe Wright::Provider::Symlink do
         reset_logger
         FakeFS do
           FileUtils.ln_sf('old-source', @link_resource.name)
-          link.create!
+          link.create
         end
       end.must_output @create_message
       assert link.updated?
@@ -73,7 +73,7 @@ describe Wright::Provider::Symlink do
         reset_logger
         FakeFS do
           FileUtils.ln_sf(@link_resource.to, @link_resource.name)
-          link.remove!
+          link.remove
         end
       end.must_output @remove_message
       assert link.updated?
@@ -83,13 +83,13 @@ describe Wright::Provider::Symlink do
       link = Wright::Provider::Symlink.new(@link_resource)
       lambda do
         reset_logger
-        FakeFS { link.remove! }
+        FakeFS { link.remove }
         assert !link.updated?
       end.must_output @remove_message_debug
 
       FakeFS do
         FileUtils.touch(@link_resource.name)
-        -> { link.remove! }.must_raise RuntimeError
+        -> { link.remove }.must_raise RuntimeError
         assert !link.updated?
       end
     end
@@ -101,7 +101,7 @@ describe Wright::Provider::Symlink do
       Wright.dry_run do
         lambda do
           reset_logger
-          FakeFS { link.create! }
+          FakeFS { link.create }
         end.must_output @create_message_dry
         FakeFS { assert !File.symlink?(@link_resource.name) }
       end
@@ -114,7 +114,7 @@ describe Wright::Provider::Symlink do
           reset_logger
           FakeFS do
             FileUtils.ln_sf(@link_resource.to, @link_resource.name)
-            link.remove!
+            link.remove
           end
         end.must_output @remove_message_dry
       end

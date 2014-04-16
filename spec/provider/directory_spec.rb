@@ -34,7 +34,7 @@ describe Wright::Provider::Directory do
       dir = Wright::Provider::Directory.new(@dir_resource)
       lambda do
         reset_logger
-        FakeFS { dir.create! }
+        FakeFS { dir.create }
       end.must_output @create_message
       assert dir.updated?
     end
@@ -45,7 +45,7 @@ describe Wright::Provider::Directory do
         reset_logger
         FakeFS do
           create_target_dir
-          dir.create!
+          dir.create
         end
         assert !dir.updated?
       end.must_output @create_message_debug
@@ -58,7 +58,7 @@ describe Wright::Provider::Directory do
         FakeFS do
           create_target_dir
           FileUtils.chown(0, 0, @dir_resource.name)
-          dir.create!
+          dir.create
         end
       end.must_output @create_message
       assert dir.updated?
@@ -70,7 +70,7 @@ describe Wright::Provider::Directory do
         reset_logger
         FakeFS do
           create_target_dir
-          dir.remove!
+          dir.remove
         end
         assert dir.updated?
       end.must_output @remove_message
@@ -80,7 +80,7 @@ describe Wright::Provider::Directory do
       dir = Wright::Provider::Directory.new(@dir_resource)
       lambda do
         reset_logger
-        FakeFS { dir.remove! }
+        FakeFS { dir.remove }
         assert !dir.updated?
       end.must_output @remove_message_debug
     end
@@ -92,7 +92,7 @@ describe Wright::Provider::Directory do
       Wright.dry_run do
         lambda do
           reset_logger
-          FakeFS { dir.create! }
+          FakeFS { dir.create }
         end.must_output @create_message_dry
         FakeFS { assert !File.directory?(@dir_resource.name) }
       end
@@ -105,7 +105,7 @@ describe Wright::Provider::Directory do
           reset_logger
           FakeFS do
             create_target_dir
-            dir.remove!
+            dir.remove
           end
         end.must_output @remove_message_dry
       end

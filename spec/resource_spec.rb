@@ -114,8 +114,7 @@ describe Wright::Resource do
 
   it 'should run actions' do
     class NiSayer < Wright::Resource
-      def say!; print 'Ni!'; end
-      def say; raise RuntimeError.new('This should never be called'); end
+      def say; print 'Ni!'; end
       def shout; print 'NI!'; end
     end
     Wright::Config[:resources] = { ni_sayer: { provider: 'Sample' } }

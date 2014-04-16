@@ -8,11 +8,11 @@ describe Wright::Resource::Directory do
 
   after(:each) { FakeFS::FileSystem.clear }
 
-  describe '#create!' do
+  describe '#create' do
     it 'should create directories' do
       FakeFS do
         dir = Wright::Resource::Directory.new(@dirname)
-        dir.create!
+        dir.create
         assert File.directory?(@dirname)
         Wright::Util::File.file_mode(@dirname).must_equal ~::File.umask & 0777
         Wright::Util::File.file_owner(@dirname).must_equal Process.uid
@@ -26,7 +26,7 @@ describe Wright::Resource::Directory do
         dir.mode = '644'
         dir.owner = 23
         dir.group = 42
-        dir.create!
+        dir.create
         assert File.directory?(@dirname)
         Wright::Util::File.file_mode(@dirname).must_equal 0644
         Wright::Util::File.file_owner(@dirname).must_equal 23
@@ -38,7 +38,7 @@ describe Wright::Resource::Directory do
       FakeFS do
         dirname = File.join(@dirname, @dirname, @dirname)
         dir = Wright::Resource::Directory.new(dirname)
-        dir.create!
+        dir.create
         assert File.directory?(dirname)
       end
     end
@@ -52,7 +52,7 @@ describe Wright::Resource::Directory do
         dir.mode = '644'
         dir.owner = 23
         dir.group = 42
-        dir.create!
+        dir.create
         assert File.directory?(@dirname)
         Wright::Util::File.file_mode(@dirname).must_equal 0644
         Wright::Util::File.file_owner(@dirname).must_equal 23
@@ -66,7 +66,7 @@ describe Wright::Resource::Directory do
         FileUtils.chmod(0600, @dirname)
         dir = Wright::Resource::Directory.new(@dirname)
         dir.mode = '644'
-        dir.create!
+        dir.create
         assert File.directory?(@dirname)
         Wright::Util::File.file_mode(@dirname).must_equal 0644
       end
@@ -78,7 +78,7 @@ describe Wright::Resource::Directory do
         mode = Wright::Util::File.file_mode(@dirname)
         owner = Wright::Util::File.file_owner(@dirname)
         group = Wright::Util::File.file_group(@dirname)
-        Wright::Resource::Directory.new(@dirname).create!
+        Wright::Resource::Directory.new(@dirname).create
         Wright::Util::File.file_mode(@dirname).must_equal(mode)
         Wright::Util::File.file_owner(@dirname).must_equal(owner)
         Wright::Util::File.file_group(@dirname).must_equal(group)
@@ -93,7 +93,7 @@ describe Wright::Resource::Directory do
         group = Etc.getgrgid(Process.gid).name
         dir = Wright::Resource::Directory.new(@dirname)
         dir.owner = "#{owner}:#{group}"
-        dir.create!
+        dir.create
         Wright::Util::File.file_owner(@dirname).must_equal Process.uid
         Wright::Util::File.file_group(@dirname).must_equal Process.gid
       end
@@ -107,19 +107,19 @@ describe Wright::Resource::Directory do
       FakeFS do
         lambda do
           dir.owner = user
-          dir.create!
+          dir.create
         end.must_raise ArgumentError
         Dir.exist?(@dirname).must_equal false
 
         lambda do
           dir.group = group
-            dir.create!
+            dir.create
         end.must_raise ArgumentError
         Dir.exist?(@dirname).must_equal false
 
         lambda do
           dir.owner = "#{user}:#{group}"
-          dir.create!
+          dir.create
         end.must_raise ArgumentError
         Dir.exist?(@dirname).must_equal false
       end
@@ -129,17 +129,17 @@ describe Wright::Resource::Directory do
       FakeFS do
         FileUtils.touch(@dirname)
         dir = Wright::Resource::Directory.new(@dirname)
-        -> { dir.create! }.must_raise Errno::EEXIST
+        -> { dir.create }.must_raise Errno::EEXIST
       end
     end
   end
 
-  describe '#remove!' do
+  describe '#remove' do
     it 'should remove directories' do
       FakeFS do
         FileUtils.mkdir_p(@dirname)
         dir = Wright::Resource::Directory.new(@dirname)
-        dir.remove!
+        dir.remove
         assert !File.exist?(@dirname)
       end
     end
@@ -149,7 +149,7 @@ describe Wright::Resource::Directory do
         FileUtils.mkdir_p(@dirname)
         FileUtils.touch(File.join(@dirname, 'somefile'))
         dir = Wright::Resource::Directory.new(@dirname)
-        -> { dir.remove! }.must_raise Errno::ENOTEMPTY
+        -> { dir.remove }.must_raise Errno::ENOTEMPTY
         assert File.directory?(@dirname)
       end
     end
@@ -158,7 +158,7 @@ describe Wright::Resource::Directory do
       FakeFS do
         FileUtils.touch(@dirname)
         dir = Wright::Resource::Directory.new(@dirname)
-        -> { dir.remove! }.must_raise RuntimeError
+        -> { dir.remove }.must_raise RuntimeError
         assert File.exist?(@dirname)
       end
     end

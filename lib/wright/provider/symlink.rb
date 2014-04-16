@@ -8,7 +8,7 @@ module Wright
       # Public: Create or update the Symlink.
       #
       # Returns nothing.
-      def create!
+      def create
         if exist?
           symlink = symlink_to_s(@resource.name, @resource.to)
           Wright.log.debug "symlink already created: #{symlink}"
@@ -25,7 +25,7 @@ module Wright
       # Public: Remove the Symlink.
       #
       # Returns nothing.
-      def remove!
+      def remove
         if ::File.exist?(@resource.name) && !::File.symlink?(@resource.name)
           fail "'#{@resource.name}' is not a symlink"
         end

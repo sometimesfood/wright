@@ -37,7 +37,7 @@ describe Wright::Provider::File do
       file = Wright::Provider::File.new(@file_resource)
       lambda do
         reset_logger
-        FakeFS { file.create! }
+        FakeFS { file.create }
       end.must_output @create_message
       assert file.updated?
     end
@@ -48,7 +48,7 @@ describe Wright::Provider::File do
         reset_logger
         FakeFS do
           create_target_file
-          file.create!
+          file.create
         end
         assert !file.updated?
       end.must_output @create_message_debug
@@ -61,7 +61,7 @@ describe Wright::Provider::File do
         FakeFS do
           create_target_file
           File.chmod(0111, @file_resource.name)
-          file.create!
+          file.create
         end
         assert file.updated?
       end.must_output @create_message
@@ -74,7 +74,7 @@ describe Wright::Provider::File do
         FakeFS do
           create_target_file
           File.write(@file_resource.name, 'wrong content')
-          file.create!
+          file.create
         end
       end.must_output @create_message
       assert file.updated?
@@ -86,7 +86,7 @@ describe Wright::Provider::File do
         reset_logger
         FakeFS do
           create_target_file
-          file.remove!
+          file.remove
         end
         assert file.updated?
       end.must_output @remove_message
@@ -96,7 +96,7 @@ describe Wright::Provider::File do
       file = Wright::Provider::File.new(@file_resource)
       lambda do
         reset_logger
-        FakeFS { file.remove! }
+        FakeFS { file.remove }
         assert !file.updated?
       end.must_output @remove_message_debug
     end
@@ -108,7 +108,7 @@ describe Wright::Provider::File do
       Wright.dry_run do
         lambda do
           reset_logger
-          FakeFS { file.create! }
+          FakeFS { file.create }
         end.must_output @create_message_dry
         FakeFS { assert !File.exist?(@file_resource.name) }
       end
@@ -121,7 +121,7 @@ describe Wright::Provider::File do
           reset_logger
           FakeFS do
             create_target_file
-            file.remove!
+            file.remove
           end
         end.must_output @remove_message_dry
       end

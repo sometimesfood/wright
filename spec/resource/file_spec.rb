@@ -12,12 +12,12 @@ describe Wright::Resource::File do
 
   after(:each) { FakeFS::FileSystem.clear }
 
-  describe '#create!' do
+  describe '#create' do
     it 'should create files' do
       FakeFS do
         file = Wright::Resource::File.new(@filename)
         file.content = 'hello world'
-        file.create!
+        file.create
         assert File.file?(@filename)
         File.read(@filename).must_equal 'hello world'
       end
@@ -26,7 +26,7 @@ describe Wright::Resource::File do
     it 'should create empty files when content is not set' do
       FakeFS do
         file = Wright::Resource::File.new(@filename)
-        file.create!
+        file.create
         assert File.file?(@filename)
         File.read(@filename).must_equal ''
       end
@@ -39,7 +39,7 @@ describe Wright::Resource::File do
         file.owner = 23
         file.group = 42
         file.mode = '700'
-        file.create!
+        file.create
         assert File.file?(@filename)
         File.read(@filename).must_equal 'hello world'
         Wright::Util::File.file_owner(@filename).must_equal 23
@@ -57,7 +57,7 @@ describe Wright::Resource::File do
         file.owner = 23
         file.group = 42
         file.content = 'hello world'
-        file.create!
+        file.create
         File.read(@filename).must_equal 'hello world'
         Wright::Util::File.file_mode(@filename).must_equal 0644
         Wright::Util::File.file_owner(@filename).must_equal 23
@@ -71,7 +71,7 @@ describe Wright::Resource::File do
         File.chmod(0600, @filename)
         file = Wright::Resource::File.new(@filename)
         file.mode = '644'
-        file.create!
+        file.create
         File.read(@filename).must_equal 'old content'
         Wright::Util::File.file_mode(@filename).must_equal 0644
       end
@@ -87,7 +87,7 @@ describe Wright::Resource::File do
         file.owner = 23
         file.group = 42
         file.content = 'hello world'
-        file.create!
+        file.create
         File.read(@filename).must_equal 'hello world'
         Wright::Util::File.file_mode(@filename).must_equal 0600
         Wright::Util::File.file_owner(@filename).must_equal 23
@@ -99,7 +99,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.mkdir_p(@filename)
         file = Wright::Resource::File.new(@filename)
-        -> { file.create! }.must_raise Errno::EISDIR
+        -> { file.create }.must_raise Errno::EISDIR
         assert File.directory?(@filename)
       end
     end
@@ -112,7 +112,7 @@ describe Wright::Resource::File do
         group = Etc.getgrgid(Process.gid).name
         file = Wright::Resource::File.new(@filename)
         file.owner = "#{owner}:#{group}"
-        file.create!
+        file.create
         Wright::Util::File.file_owner(@filename).must_equal Process.uid
         Wright::Util::File.file_group(@filename).must_equal Process.gid
       end
@@ -126,21 +126,21 @@ describe Wright::Resource::File do
       FakeFS do
         lambda do
           file.owner = user
-          file.create!
+          file.create
         end.must_raise ArgumentError
         File.exist?(@filename).must_equal false
 
         file.owner = nil
         lambda do
           file.group = group
-          file.create!
+          file.create
         end.must_raise ArgumentError
         File.exist?(@filename).must_equal false
 
         file.group = nil
         lambda do
           file.owner = "#{user}:#{group}"
-          file.create!
+          file.create
         end.must_raise ArgumentError
         File.exist?(@filename).must_equal false
       end
@@ -150,17 +150,17 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.touch(@filename)
         dir = Wright::Resource::Directory.new(@filename)
-        -> { dir.create! }.must_raise Errno::EEXIST
+        -> { dir.create }.must_raise Errno::EEXIST
       end
     end
   end
 
-  describe '#remove!' do
+  describe '#remove' do
     it 'should remove files' do
       FakeFS do
         FileUtils.touch(@filename)
         file = Wright::Resource::File.new(@filename)
-        file.remove!
+        file.remove
         assert !File.exist?(@filename)
       end
     end
@@ -169,7 +169,7 @@ describe Wright::Resource::File do
       FakeFS do
         FileUtils.mkdir_p(@filename)
         file = Wright::Resource::File.new(@filename)
-        -> { file.remove! }.must_raise Errno::EISDIR
+        -> { file.remove }.must_raise Errno::EISDIR
         assert File.directory?(@filename)
       end
     end
@@ -180,7 +180,7 @@ describe Wright::Resource::File do
         FileUtils.ln_s('target_file', @filename)
         file = Wright::Resource::File.new(@filename)
         assert File.symlink?(@filename)
-        file.remove!
+        file.remove
         assert !File.symlink?(@filename)
         assert File.exist?('target_file')
       end

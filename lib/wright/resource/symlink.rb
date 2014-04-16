@@ -9,7 +9,7 @@ module Wright
     #
     #   link = Wright::Resource::Symlink.new('/tmp/fstab')
     #   link.to = '/etc/fstab'
-    #   link.create!
+    #   link.create
     class Symlink < Wright::Resource
       # Public: Initialize a Symlink.
       #
@@ -26,18 +26,18 @@ module Wright
       # Public: Create or update the Symlink.
       #
       # Returns true if the symlink was updated and false otherwise.
-      def create!
+      def create
         might_update_resource do
-          @provider.create!
+          @provider.create
         end
       end
 
       # Public: Remove the Symlink.
       #
       # Returns true if the symlink was updated and false otherwise.
-      def remove!
+      def remove
         might_update_resource do
-          @provider.remove!
+          @provider.remove
         end
       end
     end

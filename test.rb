@@ -40,7 +40,7 @@ end
 puts '#########################################'
 require 'wright'
 class Wright::Provider::Bla < Wright::Provider
-  def install!
+  def install
     puts 'Bla: installing...'
     @updated = true
 #    raise 'oh noes!'
@@ -53,9 +53,9 @@ class Bla < Wright::Resource
     @action = :install
   end
 
-  def install!
+  def install
     might_update_resource do
-      @provider.install!
+      @provider.install
     end
   end
 

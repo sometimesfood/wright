@@ -49,22 +49,22 @@ In order to create some resources using the wright DSL:
     puts File.directory? '/tmp/foo'
     puts File.symlink? '/tmp/foo/fstab'
     
-    fstab.remove!
-    foo_dir.remove!
+    fstab.remove
+    foo_dir.remove
 
 If you don't want to use the DSL:
 
     foo_dir = Wright::Resource::Directory.new('/tmp/foo')
-    foo_dir.create!
+    foo_dir.create
     fstab = Wright::Resource::Symlink.new('/tmp/foo/fstab')
     fstab.to = '/etc/fstab'
-    fstab.create!
+    fstab.create
    
     puts File.directory? '/tmp/foo'
     puts File.symlink? '/tmp/foo/fstab'
     
-    fstab.remove!
-    foo_dir.remove!
+    fstab.remove
+    foo_dir.remove
 
 Copyright
 ---------

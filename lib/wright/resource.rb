@@ -67,14 +67,10 @@ module Wright
     # Examples
     #
     #   fstab = Wright::Resource::Symlink.new('/tmp/fstab')
-    #   fstab.action = :remove!
+    #   fstab.action = :remove
     #   fstab.run_action
     def run_action
-      if @action
-        bang_action = "#{@action}!".to_sym
-        action = respond_to?(bang_action) ? bang_action : @action
-        send(action)
-      end
+      send @action if @action
     end
 
     private

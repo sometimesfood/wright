@@ -9,7 +9,7 @@ module Wright
     #
     #   file = Wright::Resource::File.new('/tmp/foo')
     #   file.content = 'bar'
-    #   file.create!
+    #   file.create
     class File < Wright::Resource
       # Public: Get/Set the file's content.
       attr_accessor :content
@@ -46,18 +46,18 @@ module Wright
       # Public: Create or update the File.
       #
       # Returns true if the file was updated and false otherwise.
-      def create!
+      def create
         might_update_resource do
-          @provider.create!
+          @provider.create
         end
       end
 
       # Public: Remove the File.
       #
       # Returns true if the file was updated and false otherwise.
-      def remove!
+      def remove
         might_update_resource do
-          @provider.remove!
+          @provider.remove
         end
       end
     end

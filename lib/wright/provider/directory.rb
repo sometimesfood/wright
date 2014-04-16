@@ -11,7 +11,7 @@ module Wright
       # Public: Create or update the directory.
       #
       # Returns nothing.
-      def create!
+      def create
         if ::File.directory?(@resource.name) && permissions.uptodate?
 
           Wright.log.debug "directory already created: '#{@resource.name}'"
@@ -28,7 +28,7 @@ module Wright
       # Public: Remove the directory.
       #
       # Returns nothing.
-      def remove!
+      def remove
         if ::File.exist?(@resource.name) && !::File.directory?(@resource.name)
           fail "'#{@resource.name}' exists but is not a directory"
         end

@@ -13,7 +13,7 @@ module Wright
       # Public: Create or update the File.
       #
       # Returns nothing.
-      def create!
+      def create
         fail Errno::EISDIR, @resource.name if ::File.directory?(@resource.name)
 
         if uptodate?
@@ -28,7 +28,7 @@ module Wright
       # Public: Remove the File.
       #
       # Returns nothing.
-      def remove!
+      def remove
         file = @resource.name
 
         fail Errno::EISDIR, file if ::File.directory?(file)

@@ -8,7 +8,7 @@ module Wright
     # Examples
     #
     #   dir = Wright::Resource::Directory.new('/tmp/foobar')
-    #   dir.create!
+    #   dir.create
     class Directory < Wright::Resource
       # Public: Initialize a Directory.
       #
@@ -46,18 +46,18 @@ module Wright
       # Public: Create or update the directory.
       #
       # Returns true if the directory was updated and false otherwise.
-      def create!
+      def create
         might_update_resource do
-          @provider.create!
+          @provider.create
         end
       end
 
       # Public: Remove the directory.
       #
       # Returns true if the directory was updated and false otherwise.
-      def remove!
+      def remove
         might_update_resource do
-          @provider.remove!
+          @provider.remove
         end
       end
     end
