@@ -2,10 +2,13 @@
 
 require 'bundler/setup'
 
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'lib')
+$LOAD_PATH.unshift File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 
 require 'wright'
 require 'wright/resource/symlink'
+require 'wright/resource/file'
+require 'wright/resource/directory'
+require 'wright/resource/package'
 
 include Wright::DSL
 
