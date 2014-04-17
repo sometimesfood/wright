@@ -13,65 +13,12 @@ require 'wright/resource/package'
 include Wright::DSL
 
 Wright.dry_run do
-  # use an existing resource
-  symlink '/tmp/fstab' do |l|
-    l.to = '/etc/fstab'
-    puts l
-  end
-end
-
-# define and register a new resource class at runtime
-class TestClass
-  def initialize(name); end
-end
-Wright::DSL.register_resource TestClass
-
-f = test_class "hello" do |t|
-  puts t
-end
-puts f.class
-
-g = test_class 'foobar'
-puts g.class
-
-class Blubb < Wright::Resource; end
-Wright::DSL.register_resource Blubb
-blubb do |b|
-  puts b
-end
-
-puts '#########################################'
-require 'wright'
-class Wright::Provider::Bla < Wright::Provider
-  def install
-    puts 'Bla: installing...'
-    @updated = true
-#    raise 'oh noes!'
-  end
-end
-
-class Bla < Wright::Resource
-  def initialize(name)
-    super
-    @action = :install
+  Wright.log.level = Wright::Logger::DEBUG
+  emacs = package 'emacs29' do |p|
+    p.action = nil
   end
 
-  def install
-    might_update_resource do
-      @provider.install
-    end
-  end
-
-  def something_else
-    puts "something else..."
-  end
-end
-Wright::DSL.register_resource Bla
-
-bla "lalala-23" do |b|
-#  b.provider = Wright::Provider::Bla.new(b)
-#  b.provider = Wright::Provider::Bla
-  b.on_update = -> { puts "Oh yeah!" }
-  b.action = :something_else
-  b.ignore_failure = true
+  installed_version = emacs.installed_version
+  puts "installed version: #{installed_version}" if installed_version
+  emacs.install
 end
