@@ -22,8 +22,8 @@ describe Wright::Resource::Symlink do
       FakeFS do
         link = link_resource(@target, @link_name)
         link.create
-        assert File.symlink?(@link_name)
-        File.readlink(@link_name).must_equal(@target)
+        File.symlink?(@link_name).must_equal true
+        File.readlink(@link_name).must_equal @target
       end
     end
 
@@ -34,7 +34,7 @@ describe Wright::Resource::Symlink do
         link.create
 
         assert File.symlink?(@link_name)
-        File.readlink(@link_name).must_equal(@target)
+        File.readlink(@link_name).must_equal @target
       end
     end
 
@@ -46,7 +46,7 @@ describe Wright::Resource::Symlink do
         link.create
 
         assert File.symlink?(@link_name)
-        File.readlink(@link_name).must_equal(@target)
+        File.readlink(@link_name).must_equal @target
       end
     end
 
@@ -55,8 +55,8 @@ describe Wright::Resource::Symlink do
         file_content = 'Hello world'
         File.write(@link_name, file_content)
         link = link_resource(@target, @link_name)
-        -> { link.create }.must_raise(Errno::EEXIST)
-        File.read(@link_name).must_equal(file_content)
+        -> { link.create }.must_raise Errno::EEXIST
+        File.read(@link_name).must_equal file_content
       end
     end
   end
@@ -68,11 +68,11 @@ describe Wright::Resource::Symlink do
         FileUtils.touch(@target)
         FileUtils.ln_s(@target, @link_name)
 
-        assert File.exist?(@target)
-        assert File.symlink?(@link_name)
+        File.exist?(@target).must_equal true
+        File.symlink?(@link_name).must_equal true
         link.remove
-        assert  File.exist?(@target)
-        assert !File.symlink?(@link_name)
+        File.exist?(@target).must_equal true
+        File.symlink?(@link_name).must_equal false
       end
     end
 
@@ -80,9 +80,9 @@ describe Wright::Resource::Symlink do
       FakeFS do
         FileUtils.touch(@link_name)
         link = Wright::Resource::Symlink.new(@link_name)
-        assert File.exist?(@link_name)
+        File.exist?(@link_name).must_equal true
         -> { link.remove }.must_raise RuntimeError
-        assert File.exist?(@link_name)
+        File.exist?(@link_name).must_equal true
       end
     end
   end

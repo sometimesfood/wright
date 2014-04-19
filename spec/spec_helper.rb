@@ -9,20 +9,13 @@ begin
       add_filter '/vendor/'
     end
   end
-rescue LoadError
 end
 
-# extend Wright::Config to pass on clear for tests
 module Wright
+  # extend Wright::Config to pass on clear for tests
   class Config
-    def self.clear
-      @config_hash.clear
-    end
-    def self.dump
-      @config_hash.clone
-    end
-    def self.restore(hash)
-      @config_hash = hash
+    class << self
+      attr_accessor :config_hash
     end
   end
 end

@@ -10,7 +10,7 @@ describe Util::ActiveSupport do
   end
 
   it 'should underscore CamelCase words' do
-    Util::ActiveSupport.underscore('FooBar'     ).must_equal 'foo_bar'
+    Util::ActiveSupport.underscore('FooBar').must_equal 'foo_bar'
     Util::ActiveSupport.underscore('FooBar::Baz').must_equal 'foo_bar/baz'
   end
 

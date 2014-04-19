@@ -3,9 +3,11 @@ require_relative 'spec_helper'
 require 'wright/resource'
 require 'wright/provider'
 
-# add provider attribute reader for tests
-class Wright::Resource
-  attr_reader :provider
+module Wright
+  # add provider attribute reader for tests
+  class Resource
+    attr_reader :provider
+  end
 end
 
 module Wright
@@ -13,17 +15,25 @@ module Wright
     class Sample < Wright::Provider; end
     class AlternateSample < Wright::Provider; end
 
+    # provider that is always updated
     class AlwaysUpdated < Wright::Provider
-      def updated?; true; end
+      def updated?
+        true
+      end
     end
+
+    # provider that is never updated
     class NeverUpdated < Wright::Provider
-      def updated?; false; end
+      def updated?
+        false
+      end
     end
   end
 end
 
 class Sample < Wright::Resource; end
 
+# resource with a single method to test update notification
 class Updater < Wright::Resource
   def do_something
     might_update_resource {}
@@ -32,14 +42,14 @@ end
 
 describe Wright::Resource do
   before(:each) do
-    @config = Wright::Config.dump
-    Wright::Config.clear
+    @config = Wright::Config.config_hash.clone
+    Wright::Config.config_hash.clear
     @hello = 'Hello world'
     @say_hello = -> { print @hello }
   end
 
   after(:each) do
-    Wright::Config.restore(@config)
+    Wright::Config.config_hash = @config
   end
 
   it 'should retrieve a provider for a resource' do
@@ -108,14 +118,20 @@ describe Wright::Resource do
   it 'should raise an ArgumentError if on_update is not callable' do
     resource = Sample.new
     -> { resource.on_update = "I'm a string" }.must_raise ArgumentError
-    -> { resource.on_update = Proc.new {} }.must_be_silent
+    -> { resource.on_update = -> {} }.must_be_silent
     -> { resource.on_update = nil }.must_be_silent
   end
 
   it 'should run actions' do
+    # simple resource to test different actions
     class NiSayer < Wright::Resource
-      def say; print 'Ni!'; end
-      def shout; print 'NI!'; end
+      def say
+        print 'Ni!'
+      end
+
+      def shout
+        print 'NI!'
+      end
     end
     Wright::Config[:resources] = { ni_sayer: { provider: 'Sample' } }
     ni_sayer = NiSayer.new
@@ -134,11 +150,22 @@ describe Wright::Resource do
   end
 
   it 'should not raise exceptions if ignore_failure is enabled' do
-    class Wright::Provider::RaisesExceptions < Wright::Provider
-      def raise_hell; raise 'hell'; end
+    module Wright
+      class Provider
+        # provider that always raises exceptions
+        class RaisesExceptions < Wright::Provider
+          def fail_train
+            fail 'Fail train!'
+          end
+        end
+      end
     end
+
+    # resource that always raises exceptions
     class RaisesExceptions < Wright::Resource
-      def raise_hell; might_update_resource { @provider.raise_hell }; end
+      def fail_train
+        might_update_resource { @provider.fail_train }
+      end
     end
 
     resource = RaisesExceptions.new('fake_name')
@@ -146,12 +173,12 @@ describe Wright::Resource do
     lambda do
       resource.ignore_failure = true
       reset_logger
-      resource.raise_hell
-    end.must_output "ERROR: raises_exceptions 'fake_name': hell\n"
+      resource.fail_train
+    end.must_output "ERROR: raises_exceptions 'fake_name': Fail train!\n"
 
     lambda do
       resource.ignore_failure = false
-      resource.raise_hell
+      resource.fail_train
     end.must_raise(RuntimeError)
   end
 end

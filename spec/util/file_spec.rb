@@ -81,9 +81,9 @@ describe Util::File do
         FileUtils.chmod(mode, @file)
         Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0644
         Util::File.symbolic_mode_to_i('u=r,go+w', mode, type).must_equal 0466
-        Util::File.symbolic_mode_to_i('+x' , mode, type).must_equal  0755
-        Util::File.symbolic_mode_to_i('+X' , mode, type).must_equal  0644
-        Util::File.symbolic_mode_to_i('a-r', mode, type).must_equal  0200
+        Util::File.symbolic_mode_to_i('+x' , mode, type).must_equal 0755
+        Util::File.symbolic_mode_to_i('+X' , mode, type).must_equal 0644
+        Util::File.symbolic_mode_to_i('a-r', mode, type).must_equal 0200
         Util::File.symbolic_mode_to_i('+s' , mode, type).must_equal 06644
         Util::File.symbolic_mode_to_i('+t' , mode, type).must_equal 01644
         FakeFS::FileSystem.clear

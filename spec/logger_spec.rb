@@ -13,13 +13,13 @@ FORMATS = {
 
 describe Wright::Logger do
   before(:each) do
-    @config = Wright::Config.dump
-    Wright::Config.clear
+    @config = Wright::Config.config_hash.clone
+    Wright::Config.config_hash.clear
     @message = 'Soylent Green is STILL made out of people!'
   end
 
   after(:each) do
-    Wright::Config.restore(@config)
+    Wright::Config.config_hash = @config
   end
 
   it 'should enable colors on TTYs' do
@@ -40,7 +40,7 @@ describe Wright::Logger do
 
   it 'should format log messages according to the config' do
     [true, false].each do |enable_color|
-      Wright::Config[:log] = {colorize: enable_color}
+      Wright::Config[:log] = { colorize: enable_color }
 
       FORMATS.each do |severity, color|
         log_entry = "#{severity.upcase}: #{@message}\n"
@@ -52,7 +52,9 @@ describe Wright::Logger do
 
         lambda do
           stdout = $stdout.dup
-          def stdout.tty?; true; end
+          def stdout.tty?
+            true
+          end
           logger = Wright::Logger.new(stdout)
           logger.formatter = Wright::Logger::Formatter.new
           logger.send(severity, @message)

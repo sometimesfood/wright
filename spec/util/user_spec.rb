@@ -34,7 +34,7 @@ describe Util::User do
 
     it 'should convert owner strings to [owner, group] arrays' do
       Util::User.owner_to_owner_group('foo').must_equal ['foo', nil]
-      Util::User.owner_to_owner_group('foo:bar').must_equal ['foo', 'bar']
+      Util::User.owner_to_owner_group('foo:bar').must_equal %w(foo bar)
     end
 
     it 'should raise exceptions for invalid owner strings' do

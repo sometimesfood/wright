@@ -1,1 +1,1 @@
-raise RuntimeError.new('This should never be loaded')
+fail 'This should never be loaded'

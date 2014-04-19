@@ -1,1 +1,1 @@
-raise RuntimeError.new('This should not be loaded')
+fail 'This should not be loaded'

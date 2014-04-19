@@ -113,7 +113,7 @@ describe Wright::Resource::Directory do
 
         lambda do
           dir.group = group
-            dir.create
+          dir.create
         end.must_raise ArgumentError
         Dir.exist?(@dirname).must_equal false
 

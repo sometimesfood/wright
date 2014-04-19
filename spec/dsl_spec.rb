@@ -9,16 +9,18 @@ describe Wright::DSL do
     @recipe = Class.new do
       extend dsl
     end
-    @Wright_DSL = dsl
+    @wright_dsl = dsl
   end
 
   it 'should register new resources at runtime' do
     resource_class = Class.new do
-      def self.name; 'ResourceKlass'; end
+      def self.name
+        'ResourceKlass'
+      end
       def initialize(name); end
     end
 
-    @Wright_DSL.register_resource(resource_class)
+    @wright_dsl.register_resource(resource_class)
 
     resource_name = 'resource_klass'
     @recipe.must_respond_to(resource_name)
@@ -28,21 +30,32 @@ describe Wright::DSL do
 
   it 'should execute the default action for a resource' do
     resource_class = Class.new do
-      def self.name; 'Hello'; end
-      def initialize(name); @name = name; end
-      def run_action; puts "Hello #{@name}"; end
+      def self.name
+        'Hello'
+      end
+
+      def initialize(name)
+        @name = name
+      end
+
+      def run_action
+        puts "Hello #{@name}"
+      end
     end
-    @Wright_DSL.register_resource(resource_class)
+    @wright_dsl.register_resource(resource_class)
     resource_name = Wright::Util.class_to_resource_name(resource_class)
     -> { @recipe.send(resource_name, 'world') }.must_output("Hello world\n")
   end
 
   it 'should call blocks passed to a resource function' do
     resource_class = Class.new do
-      def self.name; 'ResourceKlass'; end
+      def self.name
+        'ResourceKlass'
+      end
+
       def initialize(name); end
     end
-    @Wright_DSL.register_resource(resource_class)
+    @wright_dsl.register_resource(resource_class)
 
     resource_name = Wright::Util.class_to_resource_name(resource_class)
     block = ->(resource) { throw resource.class }
