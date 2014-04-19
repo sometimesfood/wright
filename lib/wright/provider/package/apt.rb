@@ -1,3 +1,4 @@
+require 'wright/provider'
 require 'wright/provider/package'
 
 module Wright
