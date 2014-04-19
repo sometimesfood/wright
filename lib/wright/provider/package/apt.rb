@@ -8,10 +8,12 @@ module Wright
       # Resource::Package on Debian-based systems.
       class Apt < Wright::Provider::Package
         def installed_version
-          package = @resource.name
-          stdout, stderr, status = Open3.capture3("dpkg-query -s #{package}")
-          if status.success?
-            /^Version: (?<version>.*)$/ =~ stdout
+          cmd = "dpkg-query -s #{@resource.name}"
+          cmd_stdout, _cmd_stderr, cmd_status = Open3.capture3(cmd)
+          installed_re = /^Status: install ok installed$/
+
+          if cmd_status.success? && installed_re =~ cmd_stdout
+            /^Version: (?<version>.*)$/ =~ cmd_stdout
             version
           else
             nil

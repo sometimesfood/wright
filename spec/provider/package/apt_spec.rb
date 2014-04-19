@@ -21,7 +21,7 @@ def command_output(filename)
   command_stdout = File.read("#{APT_DIR}/#{filename}.stdout")
   command_stderr = File.read("#{APT_DIR}/#{filename}.stderr")
   command_status = File.read("#{APT_DIR}/#{filename}.return").chomp == '0'
-  [ command_stdout, command_stderr, FakeProcessStatus.new(command_status) ]
+  [command_stdout, command_stderr, FakeProcessStatus.new(command_status)]
 end
 
 APT_DIR = File.join(File.dirname(__FILE__), 'apt')
@@ -55,6 +55,20 @@ describe Wright::Provider::Package::Apt do
 
     it 'should return nil for missing packages' do
       pkg_name = 'vlc'
+      pkg_version = nil
+      pkg_resource = FakePackageResource.new(pkg_name)
+      pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
+      command =  "dpkg-query -s #{pkg_name}"
+
+      @mock_open3.expect(:capture3, CAPTURE3[command], [command])
+      Open3.stub :capture3, @capture3_stub do
+        pkg_provider.installed_version.must_equal pkg_version
+      end
+      @mock_open3.verify
+    end
+
+    it 'should return nil for removed packages' do
+      pkg_name = 'htop'
       pkg_version = nil
       pkg_resource = FakePackageResource.new(pkg_name)
       pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
