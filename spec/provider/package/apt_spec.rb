@@ -26,11 +26,14 @@ end
 
 APT_DIR = File.join(File.dirname(__FILE__), 'apt')
 
-CAPTURE3 = {
-  'dpkg-query -s abcde' => command_output('dpkg-query.abcde'),
-  'dpkg-query -s htop' => command_output('dpkg-query.htop'),
-  'dpkg-query -s vlc' => command_output('dpkg-query.vlc')
-}
+CAPTURE3_COMMANDS =
+  Dir["#{APT_DIR}/*.stdout"].map { |f| File.basename(f, '.stdout') }
+
+CAPTURE3 =
+  Hash[CAPTURE3_COMMANDS.map do |c|
+         [c.gsub('_', ' '),
+          command_output(c)]
+       end]
 
 describe Wright::Provider::Package::Apt do
   before :each do
