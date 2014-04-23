@@ -37,8 +37,17 @@ CAPTURE3 =
 
 describe Wright::Provider::Package::Apt do
   before :each do
+    @env = { 'DEBIAN_FRONTEND' => 'noninteractive' }
     @mock_open3 = Minitest::Mock.new
-    @capture3_stub = ->(command) { @mock_open3.capture3(command) }
+    @capture3_stub = ->(env, command) { @mock_open3.capture3(env, command) }
+    @install_message = ->(pkg) { "INFO: install package: '#{pkg}'\n" }
+    #@install_message_dry = ->(pkg) { "INFO: (would) install package: '#{pkg}'\n"
+    @install_message_debug = lambda do |pkg|
+      "DEBUG: package already installed: '#{pkg}'\n"
+    end
+    #@remove_message = "INFO: remove symlink: '#{name}'\n"
+    #@remove_message_dry = "INFO: (would) remove symlink: '#{name}'\n"
+    #@remove_message_debug = "DEBUG: symlink already removed: '#{name}'\n"
   end
 
   describe '#installed_version' do
@@ -47,9 +56,9 @@ describe Wright::Provider::Package::Apt do
       pkg_version = '2.5.3-1'
       pkg_resource = FakePackageResource.new(pkg_name)
       pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
-      command =  "dpkg-query -s #{pkg_name}"
+      command = "dpkg-query -s #{pkg_name}"
 
-      @mock_open3.expect(:capture3, CAPTURE3[command], [command])
+      @mock_open3.expect(:capture3, CAPTURE3[command], [@env, command])
       Open3.stub :capture3, @capture3_stub do
         pkg_provider.installed_version.must_equal pkg_version
       end
@@ -61,9 +70,9 @@ describe Wright::Provider::Package::Apt do
       pkg_version = nil
       pkg_resource = FakePackageResource.new(pkg_name)
       pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
-      command =  "dpkg-query -s #{pkg_name}"
+      command = "dpkg-query -s #{pkg_name}"
 
-      @mock_open3.expect(:capture3, CAPTURE3[command], [command])
+      @mock_open3.expect(:capture3, CAPTURE3[command], [@env, command])
       Open3.stub :capture3, @capture3_stub do
         pkg_provider.installed_version.must_equal pkg_version
       end
@@ -75,11 +84,67 @@ describe Wright::Provider::Package::Apt do
       pkg_version = nil
       pkg_resource = FakePackageResource.new(pkg_name)
       pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
-      command =  "dpkg-query -s #{pkg_name}"
+      command = "dpkg-query -s #{pkg_name}"
 
-      @mock_open3.expect(:capture3, CAPTURE3[command], [command])
+      @mock_open3.expect(:capture3, CAPTURE3[command], [@env, command])
       Open3.stub :capture3, @capture3_stub do
         pkg_provider.installed_version.must_equal pkg_version
+      end
+      @mock_open3.verify
+    end
+  end
+
+  describe '#install' do
+    it 'should install packages that are not currently installed' do
+      pkg_name = 'htop'
+      pkg_resource = FakePackageResource.new(pkg_name)
+      pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
+      dpkg_cmd = "dpkg-query -s #{pkg_name}"
+      apt_cmd = "apt-get install -qy #{pkg_name}"
+
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.install
+          pkg_provider.updated?.must_equal true
+        end.must_output @install_message.call(pkg_name)
+      end
+      @mock_open3.verify
+    end
+
+    it 'should not install packages that are already installed' do
+      pkg_name = 'abcde'
+      pkg_resource = FakePackageResource.new(pkg_name)
+      pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
+      dpkg_cmd = "dpkg-query -s #{pkg_name}"
+
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.install
+          pkg_provider.updated?.must_equal false
+        end.must_output @install_message_debug.call(pkg_name)
+      end
+      @mock_open3.verify
+    end
+
+    it 'should raise exceptions for unknown packages' do
+      pkg_name = 'unknown-package'
+      pkg_resource = FakePackageResource.new(pkg_name)
+      pkg_provider = Wright::Provider::Package::Apt.new(pkg_resource)
+      dpkg_cmd = "dpkg-query -s #{pkg_name}"
+      apt_cmd = "apt-get install -qy #{pkg_name}"
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
+
+      Open3.stub :capture3, @capture3_stub do
+        e = -> { pkg_provider.install }.must_raise RuntimeError
+        wright_error = "cannot install package '#{pkg_name}'"
+        apt_error = "E: Unable to locate package #{pkg_name}"
+        e.message.must_equal %Q(#{wright_error}: "#{apt_error}")
       end
       @mock_open3.verify
     end
