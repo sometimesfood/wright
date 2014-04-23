@@ -7,8 +7,19 @@ module Wright
     #
     # Examples
     #
-    #   package = Wright::Resource::Package.new('fortune')
-    #   package.install
+    #   vim = Wright::Resource::Package.new('vim')
+    #   vim.installed_version
+    #   # => nil
+    #   vim.install
+    #   vim.installed_version
+    #   # => "2:7.3.547-7"
+    #
+    #   htop = Wright::Resource::Package.new('htop')
+    #   htop.installed_version
+    #   # => "1.0.1-1"
+    #   htop.remove
+    #   htop.installed_version
+    #   # => nil
     class Package < Wright::Resource
       # Public: Get/Set the package version.
       attr_accessor :version
@@ -22,6 +33,10 @@ module Wright
         @action = :install
       end
 
+      # Public: Get the installed version of a package.
+      #
+      # Returns the package version String or nil if the package is
+      # not currently installed.
       def installed_version
         @provider.installed_version
       end

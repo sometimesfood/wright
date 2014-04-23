@@ -7,6 +7,10 @@ module Wright
       # Public: AptPackage provider. Used as a Provider for
       # Resource::Package on Debian-based systems.
       class Apt < Wright::Provider::Package
+        # Public: Get the installed package version.
+        #
+        # Returns the package version String or nil if the package is
+        # not currently installed.
         def installed_version
           cmd = "dpkg-query -s #{@resource.name}"
           cmd_stdout, _cmd_stderr, cmd_status = Open3.capture3(env, cmd)
@@ -20,6 +24,9 @@ module Wright
           end
         end
 
+        # Public: Install the package.
+        #
+        # Returns nothing.
         def install
           if uptodate?(:install)
             Wright.log.debug "package already installed: '#{@resource.name}'"
@@ -30,6 +37,9 @@ module Wright
           @updated = true
         end
 
+        # Public: Remove the package.
+        #
+        # Returns nothing.
         def remove
           if uptodate?(:remove)
             Wright.log.debug "package already removed: '#{@resource.name}'"
