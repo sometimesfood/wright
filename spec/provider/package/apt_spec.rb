@@ -54,7 +54,9 @@ describe Wright::Provider::Package::Apt do
     @mock_open3 = Minitest::Mock.new
     @capture3_stub = ->(env, command) { @mock_open3.capture3(env, command) }
     @install_message = ->(pkg) { "INFO: install package: '#{pkg}'\n" }
-    #@install_message_dry = ->(pkg) { "INFO: (would) install package: '#{pkg}'\n" }
+    @install_message_dry = lambda do |pkg|
+      "INFO: (would) install package: '#{pkg}'\n"
+    end
     @install_message_debug = lambda do |pkg|
       "DEBUG: package already installed: '#{pkg}'\n"
     end
@@ -154,6 +156,25 @@ describe Wright::Provider::Package::Apt do
         e.message.must_equal %Q(#{wright_error}: "#{apt_error}")
       end
       @mock_open3.verify
+    end
+
+    describe 'dry_run' do
+      it 'should not actually install packages' do
+        pkg_name = 'htop'
+        pkg_provider = package_provider(pkg_name)
+        dpkg_cmd = dpkg_query(pkg_name)
+
+        Wright.dry_run do
+          @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+          Open3.stub :capture3, @capture3_stub do
+            lambda do
+              reset_logger
+              pkg_provider.install
+            end.must_output @install_message_dry.call(pkg_name)
+          end
+          @mock_open3.verify
+        end
+      end
     end
   end
 end
