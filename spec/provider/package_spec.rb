@@ -5,12 +5,12 @@ require 'wright/provider/package'
 
 describe Wright::Provider::Package do
   describe '#uptodate?' do
-    it 'should return the correct status for all available actions' do
+    it 'should return the correct status' do
       pkg_resource = OpenStruct.new(name: 'foo')
       pkg_provider = Wright::Provider::Package.new(pkg_resource)
 
       def pkg_provider.installed_version
-        42
+        '4.2'
       end
       pkg_provider.uptodate?(:install).must_equal true
       pkg_provider.uptodate?(:remove).must_equal false
@@ -20,6 +20,29 @@ describe Wright::Provider::Package do
       end
       pkg_provider.uptodate?(:install).must_equal false
       pkg_provider.uptodate?(:remove).must_equal true
+    end
+
+    it 'should return the correct status when given a specific version' do
+      pkg_resource = OpenStruct.new(name: 'foo', version: '4.3')
+      pkg_provider = Wright::Provider::Package.new(pkg_resource)
+
+      def pkg_provider.installed_version
+        '4.2'
+      end
+      pkg_provider.uptodate?(:install).must_equal false
+      pkg_provider.uptodate?(:remove).must_equal true
+
+      def pkg_provider.installed_version
+        nil
+      end
+      pkg_provider.uptodate?(:install).must_equal false
+      pkg_provider.uptodate?(:remove).must_equal true
+
+      def pkg_provider.installed_version
+        '4.3'
+      end
+      pkg_provider.uptodate?(:install).must_equal true
+      pkg_provider.uptodate?(:remove).must_equal false
     end
 
     it 'should raise exceptions for invalid actions' do

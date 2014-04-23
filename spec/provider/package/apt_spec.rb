@@ -38,8 +38,9 @@ def dpkg_query(pkg_name)
   "dpkg-query -s #{pkg_name}"
 end
 
-def apt_get(action, pkg_name)
-  "apt-get #{action} -qy #{pkg_name}"
+def apt_get(action, pkg_name, pkg_version = nil)
+  version = pkg_version.nil? ? '' : "=#{pkg_version}"
+  "apt-get #{action} -qy #{pkg_name}#{version}"
 end
 
 def package_provider(pkg_name, pkg_version = nil)
@@ -144,6 +145,43 @@ describe Wright::Provider::Package::Apt do
       @mock_open3.verify
     end
 
+    it 'should install package versions that are not currently installed' do
+      pkg_name = 'abcde'
+      pkg_version = '2.5.4-1'
+      pkg_provider = package_provider(pkg_name, pkg_version)
+      dpkg_cmd = dpkg_query(pkg_name)
+      apt_cmd = apt_get(:install, pkg_name, pkg_version)
+
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.install
+          pkg_provider.updated?.must_equal true
+        end.must_output @install_message.call(pkg_name)
+      end
+      @mock_open3.verify
+    end
+
+    it 'should not try to install package versions already installed' do
+      pkg_name = 'abcde'
+      pkg_version = '2.5.3-1'
+      pkg_provider = package_provider(pkg_name, pkg_version)
+      dpkg_cmd = dpkg_query(pkg_name)
+      apt_cmd = apt_get(:install, pkg_name, pkg_version)
+
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.install
+          pkg_provider.updated?.must_equal false
+        end.must_output @install_message_debug.call(pkg_name)
+      end
+      @mock_open3.verify
+    end
+
     it 'should raise exceptions for unknown packages' do
       pkg_name = 'unknown-package'
       pkg_provider = package_provider(pkg_name)
@@ -184,6 +222,43 @@ describe Wright::Provider::Package::Apt do
     it 'should not try to remove packages that are already removed' do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+      apt_cmd = apt_get(:remove, pkg_name)
+
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.remove
+          pkg_provider.updated?.must_equal false
+        end.must_output @remove_message_debug.call(pkg_name)
+      end
+      @mock_open3.verify
+    end
+
+    it 'should remove package versions that are currently installed' do
+      pkg_name = 'abcde'
+      pkg_version = '2.5.3-1'
+      pkg_provider = package_provider(pkg_name, pkg_version)
+      dpkg_cmd = dpkg_query(pkg_name)
+      apt_cmd = apt_get(:remove, pkg_name)
+
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.remove
+          pkg_provider.updated?.must_equal true
+        end.must_output @remove_message.call(pkg_name)
+      end
+      @mock_open3.verify
+    end
+
+    it 'should not try to remove packages that are already removed' do
+      pkg_name = 'htop'
+      pkg_version = '2.5.4-1'
+      pkg_provider = package_provider(pkg_name, pkg_version)
       dpkg_cmd = dpkg_query(pkg_name)
       apt_cmd = apt_get(:remove, pkg_name)
 

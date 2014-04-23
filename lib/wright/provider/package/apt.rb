@@ -1,3 +1,4 @@
+require 'wright/dry_run'
 require 'wright/provider'
 require 'wright/provider/package'
 
@@ -58,7 +59,7 @@ module Wright
             Wright.log.info "(would) install package: '#{package}'"
           else
             Wright.log.info "install package: '#{package}'"
-            apt_get(:install, package)
+            apt_get(:install, package, @resource.version)
           end
         end
 
@@ -72,8 +73,9 @@ module Wright
           end
         end
 
-        def apt_get(action, package)
-          apt_cmd = "apt-get #{action} -qy #{package}"
+        def apt_get(action, package, version = nil)
+          package_version = version.nil? ? '' : "=#{version}"
+          apt_cmd = "apt-get #{action} -qy #{package}#{package_version}"
           _cmd_stdout, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
           unless cmd_status.success?
             apt_error = cmd_stderr.chomp

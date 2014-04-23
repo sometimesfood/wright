@@ -16,9 +16,17 @@ module Wright
       def uptodate?(action)
         case action
         when :install
-          !installed_version.nil?
+          if @resource.version
+            @resource.version == installed_version
+          else
+            !installed_version.nil?
+          end
         when :remove
-          installed_version.nil?
+          if @resource.version
+            @resource.version != installed_version
+          else
+            installed_version.nil?
+          end
         else
           fail ArgumentError, "invalid action '#{action}'"
         end
