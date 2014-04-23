@@ -48,7 +48,7 @@ module Wright
             Wright.log.info "(would) install package: '#{package}'"
           else
             Wright.log.info "install package: '#{package}'"
-            apt_get_install(package)
+            apt_get(:install, package)
           end
         end
 
@@ -58,25 +58,16 @@ module Wright
             Wright.log.info "(would) remove package: '#{package}'"
           else
             Wright.log.info "remove package: '#{package}'"
-            apt_get_remove(package)
+            apt_get(:remove, package)
           end
         end
 
-        def apt_get_install(package)
-          apt_cmd = "apt-get install -qy #{package}"
+        def apt_get(action, package)
+          apt_cmd = "apt-get #{action} -qy #{package}"
           _cmd_stdout, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
           unless cmd_status.success?
             apt_error = cmd_stderr.chomp
-            fail %Q(cannot install package '#{package}': "#{apt_error}")
-          end
-        end
-
-        def apt_get_remove(package)
-          apt_cmd = "apt-get remove -qy #{package}"
-          _cmd_stdout, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
-          unless cmd_status.success?
-            apt_error = cmd_stderr.chomp
-            fail %Q(cannot remove package '#{package}': "#{apt_error}")
+            fail %Q(cannot #{action} package '#{package}': "#{apt_error}")
           end
         end
 
