@@ -26,4 +26,7 @@ def reset_logger(log_level = Wright::Logger::DEBUG)
   Wright.log.level = log_level
 end
 
+# fake resource for provider tests
+FakeResource = Struct.new(:name)
+
 require 'minitest/autorun'

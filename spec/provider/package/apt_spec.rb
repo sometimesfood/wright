@@ -16,9 +16,6 @@ class FakeProcessStatus
   end
 end
 
-# fake package resource
-FakePackageResource = Struct.new(:name)
-
 def command_output(filename)
   command_stdout = File.read("#{APT_DIR}/#{filename}.stdout")
   command_stderr = File.read("#{APT_DIR}/#{filename}.stderr")
@@ -50,7 +47,7 @@ def apt_get_remove(pkg_name)
 end
 
 def package_provider(pkg_name)
-  pkg_resource = FakePackageResource.new(pkg_name)
+  pkg_resource = FakeResource.new(pkg_name)
   Wright::Provider::Package::Apt.new(pkg_resource)
 end
 

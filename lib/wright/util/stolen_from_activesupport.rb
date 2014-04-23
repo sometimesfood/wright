@@ -173,9 +173,9 @@ module Wright #:nodoc:
         error_re = /(uninitialized constant|wrong constant name)/
         const_re = const_regexp(camel_cased_word)
         message_re = /#{error_re} #{const_re}$/
-        unless e.message =~ message_re || e.name.to_s == camel_cased_word.to_s
-          raise
-        end
+        uninitialized_constant_exception =
+          e.message =~ message_re || e.name.to_s == camel_cased_word.to_s
+        raise unless uninitialized_constant_exception
       end
 
       # Internal: Construct a regular expression that will match a
