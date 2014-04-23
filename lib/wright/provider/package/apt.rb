@@ -38,12 +38,16 @@ module Wright
             Wright.log.info "(would) install package: '#{package}'"
           else
             Wright.log.info "install package: '#{package}'"
-            apt_cmd = "apt-get install -qy #{package}"
-            _cmd_stdout, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
-            unless cmd_status.success?
-              apt_error = cmd_stderr.chomp
-              fail %Q(cannot install package '#{package}': "#{apt_error}")
-            end
+            apt_get_install(package)
+          end
+        end
+
+        def apt_get_install(package)
+          apt_cmd = "apt-get install -qy #{package}"
+          _cmd_stdout, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
+          unless cmd_status.success?
+            apt_error = cmd_stderr.chomp
+            fail %Q(cannot install package '#{package}': "#{apt_error}")
           end
         end
 
