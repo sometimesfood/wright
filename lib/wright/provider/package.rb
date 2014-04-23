@@ -5,6 +5,8 @@ module Wright
     # Public: Package provider. Used as a Provider base class for
     # Resource::Package.
     class Package < Wright::Provider
+      private
+
       # Public: Check if the package is up-to-date for a given
       # action.
       #
@@ -16,19 +18,19 @@ module Wright
       def uptodate?(action)
         case action
         when :install
-          if @resource.version
-            @resource.version == installed_version
-          else
-            !installed_version.nil?
-          end
+          package_installed
         when :remove
-          if @resource.version
-            @resource.version != installed_version
-          else
-            installed_version.nil?
-          end
+          !package_installed
         else
           fail ArgumentError, "invalid action '#{action}'"
+        end
+      end
+
+      def package_installed
+        if @resource.version
+          @resource.version == installed_version
+        else
+          !installed_version.nil?
         end
       end
     end
