@@ -28,7 +28,7 @@ module Wright
 
       # Public: Install the Package.
       #
-      # Returns true if the file was updated and false otherwise.
+      # Returns true if the package was updated and false otherwise.
       def install
         might_update_resource do
           @provider.install
@@ -37,7 +37,7 @@ module Wright
 
       # Public: Remove the Package.
       #
-      # Returns true if the file was updated and false otherwise.
+      # Returns true if the package was updated and false otherwise.
       def remove
         might_update_resource do
           @provider.remove

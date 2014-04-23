@@ -45,6 +45,10 @@ def apt_get_install(pkg_name)
   "apt-get install -qy #{pkg_name}"
 end
 
+def apt_get_remove(pkg_name)
+  "apt-get remove -qy #{pkg_name}"
+end
+
 def package_provider(pkg_name)
   pkg_resource = FakePackageResource.new(pkg_name)
   Wright::Provider::Package::Apt.new(pkg_resource)
@@ -62,9 +66,13 @@ describe Wright::Provider::Package::Apt do
     @install_message_debug = lambda do |pkg|
       "DEBUG: package already installed: '#{pkg}'\n"
     end
-    # @remove_message = "INFO: remove symlink: '#{name}'\n"
-    # @remove_message_dry = "INFO: (would) remove symlink: '#{name}'\n"
-    # @remove_message_debug = "DEBUG: symlink already removed: '#{name}'\n"
+    @remove_message = ->(pkg) { "INFO: remove package: '#{pkg}'\n" }
+    @remove_message_dry = lambda do |pkg| 
+      "INFO: (would) remove package: '#{pkg}'\n"
+    end
+    @remove_message_debug = lambda do |pkg|
+      "DEBUG: package already removed: '#{pkg}'\n"
+    end
   end
 
   describe '#installed_version' do
@@ -127,7 +135,7 @@ describe Wright::Provider::Package::Apt do
       @mock_open3.verify
     end
 
-    it 'should not install packages that are already installed' do
+    it 'should not try to install packages that are already installed' do
       pkg_name = 'abcde'
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
@@ -159,40 +167,113 @@ describe Wright::Provider::Package::Apt do
       end
       @mock_open3.verify
     end
+  end
 
-    describe 'dry_run' do
-      it 'should not actually install packages' do
-        pkg_name = 'htop'
-        pkg_provider = package_provider(pkg_name)
-        dpkg_cmd = dpkg_query(pkg_name)
+  describe '#remove' do
+    it 'should remove packages that are currently installed' do
+      pkg_name = 'abcde'
+      pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+      apt_cmd = apt_get_remove(pkg_name)
 
-        Wright.dry_run do
-          @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-          Open3.stub :capture3, @capture3_stub do
-            lambda do
-              reset_logger
-              pkg_provider.install
-            end.must_output @install_message_dry.call(pkg_name)
-          end
-          @mock_open3.verify
-        end
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.remove
+          pkg_provider.updated?.must_equal true
+        end.must_output @remove_message.call(pkg_name)
       end
+      @mock_open3.verify
+    end
 
-      it 'should not install packages that are already installed' do
-        pkg_name = 'abcde'
-        pkg_provider = package_provider(pkg_name)
-        dpkg_cmd = dpkg_query(pkg_name)
+    it 'should not try to remove packages that are already removed' do
+      pkg_name = 'htop'
+      pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+      apt_cmd = apt_get_remove(pkg_name)
 
-        Wright.dry_run do
-          @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-          Open3.stub :capture3, @capture3_stub do
-            lambda do
-              reset_logger
-              pkg_provider.install
-            end.must_output @install_message_debug.call(pkg_name)
-          end
-          @mock_open3.verify
+      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+      Open3.stub :capture3, @capture3_stub do
+        lambda do
+          reset_logger
+          pkg_provider.remove
+          pkg_provider.updated?.must_equal false
+        end.must_output @remove_message_debug.call(pkg_name)
+      end
+      @mock_open3.verify
+    end
+  end
+
+  describe 'dry_run' do
+    it 'should not actually install packages' do
+      pkg_name = 'htop'
+      pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+
+      Wright.dry_run do
+        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+        Open3.stub :capture3, @capture3_stub do
+          lambda do
+            reset_logger
+            pkg_provider.install
+          end.must_output @install_message_dry.call(pkg_name)
         end
+        @mock_open3.verify
+      end
+    end
+
+    it 'should not try to install packages that are already installed' do
+      pkg_name = 'abcde'
+      pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+
+      Wright.dry_run do
+        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+        Open3.stub :capture3, @capture3_stub do
+          lambda do
+            reset_logger
+            pkg_provider.install
+            pkg_provider.updated?.must_equal false
+          end.must_output @install_message_debug.call(pkg_name)
+        end
+        @mock_open3.verify
+      end
+    end
+
+    it 'should not actually remove packages' do
+      pkg_name = 'abcde'
+      pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+
+      Wright.dry_run do
+        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+        Open3.stub :capture3, @capture3_stub do
+          lambda do
+            reset_logger
+            pkg_provider.remove
+          end.must_output @remove_message_dry.call(pkg_name)
+        end
+        @mock_open3.verify
+      end
+    end
+
+    it 'should not try to remove packages that are already removed' do
+      pkg_name = 'htop'
+      pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+
+      Wright.dry_run do
+        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+        Open3.stub :capture3, @capture3_stub do
+          lambda do
+            reset_logger
+            pkg_provider.remove
+            pkg_provider.updated?.must_equal false
+          end.must_output @remove_message_debug.call(pkg_name)
+        end
+        @mock_open3.verify
       end
     end
   end
