@@ -42,8 +42,8 @@ def apt_get(action, pkg_name)
   "apt-get #{action} -qy #{pkg_name}"
 end
 
-def package_provider(pkg_name)
-  pkg_resource = FakeResource.new(pkg_name)
+def package_provider(pkg_name, pkg_version = nil)
+  pkg_resource = OpenStruct.new(name: pkg_name, version: pkg_version)
   Wright::Provider::Package::Apt.new(pkg_resource)
 end
 

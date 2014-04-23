@@ -1,3 +1,4 @@
+require 'ostruct'
 require 'fakefs/safe'
 require 'wright/logger'
 
@@ -25,8 +26,5 @@ def reset_logger(log_level = Wright::Logger::DEBUG)
   Wright.log.formatter = Wright::Logger::Formatter.new
   Wright.log.level = log_level
 end
-
-# fake resource for provider tests
-FakeResource = Struct.new(:name)
 
 require 'minitest/autorun'
