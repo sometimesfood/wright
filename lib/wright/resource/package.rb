@@ -21,7 +21,7 @@ module Wright
     #   htop.installed_version
     #   # => nil
     class Package < Wright::Resource
-      # Public: Get/Set the package version.
+      # Public: Get/Set the package version to install/remove.
       attr_accessor :version
 
       # Public: Initialize a Package.

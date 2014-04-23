@@ -38,12 +38,8 @@ def dpkg_query(pkg_name)
   "dpkg-query -s #{pkg_name}"
 end
 
-def apt_get_install(pkg_name)
-  "apt-get install -qy #{pkg_name}"
-end
-
-def apt_get_remove(pkg_name)
-  "apt-get remove -qy #{pkg_name}"
+def apt_get(action, pkg_name)
+  "apt-get #{action} -qy #{pkg_name}"
 end
 
 def package_provider(pkg_name)
@@ -118,7 +114,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get_install(pkg_name)
+      apt_cmd = apt_get(:install, pkg_name)
 
       @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
       @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
@@ -152,7 +148,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'unknown-package'
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get_install(pkg_name)
+      apt_cmd = apt_get(:install, pkg_name)
 
       @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
       @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
@@ -171,7 +167,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'abcde'
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get_remove(pkg_name)
+      apt_cmd = apt_get(:remove, pkg_name)
 
       @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
       @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
@@ -189,7 +185,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get_remove(pkg_name)
+      apt_cmd = apt_get(:remove, pkg_name)
 
       @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
       Open3.stub :capture3, @capture3_stub do
