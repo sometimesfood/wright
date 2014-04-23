@@ -5,6 +5,7 @@ require 'wright/provider/package/apt'
 require 'minitest/mock'
 require 'open3'
 
+# fake Process::Status replacement
 class FakeProcessStatus
   def initialize(success)
     @success = success
@@ -15,6 +16,7 @@ class FakeProcessStatus
   end
 end
 
+# fake package resource
 FakePackageResource = Struct.new(:name)
 
 def command_output(filename)
@@ -60,9 +62,9 @@ describe Wright::Provider::Package::Apt do
     @install_message_debug = lambda do |pkg|
       "DEBUG: package already installed: '#{pkg}'\n"
     end
-    #@remove_message = "INFO: remove symlink: '#{name}'\n"
-    #@remove_message_dry = "INFO: (would) remove symlink: '#{name}'\n"
-    #@remove_message_debug = "DEBUG: symlink already removed: '#{name}'\n"
+    # @remove_message = "INFO: remove symlink: '#{name}'\n"
+    # @remove_message_dry = "INFO: (would) remove symlink: '#{name}'\n"
+    # @remove_message_debug = "DEBUG: symlink already removed: '#{name}'\n"
   end
 
   describe '#installed_version' do
@@ -171,6 +173,23 @@ describe Wright::Provider::Package::Apt do
               reset_logger
               pkg_provider.install
             end.must_output @install_message_dry.call(pkg_name)
+          end
+          @mock_open3.verify
+        end
+      end
+
+      it 'should not install packages that are already installed' do
+        pkg_name = 'abcde'
+        pkg_provider = package_provider(pkg_name)
+        dpkg_cmd = dpkg_query(pkg_name)
+
+        Wright.dry_run do
+          @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
+          Open3.stub :capture3, @capture3_stub do
+            lambda do
+              reset_logger
+              pkg_provider.install
+            end.must_output @install_message_debug.call(pkg_name)
           end
           @mock_open3.verify
         end
