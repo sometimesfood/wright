@@ -18,19 +18,19 @@ module Wright
       def uptodate?(action)
         case action
         when :install
-          package_installed
+          package_installed?
         when :remove
-          !package_installed
+          !package_installed?
         else
           fail ArgumentError, "invalid action '#{action}'"
         end
       end
 
-      def package_installed
+      def package_installed?
         if @resource.version
           @resource.version == installed_version
         else
-          !installed_version.nil?
+          !installed_version.nil? # rubocop:disable NonNilCheck
         end
       end
     end

@@ -16,6 +16,8 @@ class FakeProcessStatus
   end
 end
 
+APT_DIR = File.join(File.dirname(__FILE__), 'apt')
+
 def command_output(filename)
   command_stdout = File.read("#{APT_DIR}/#{filename}.stdout")
   command_stderr = File.read("#{APT_DIR}/#{filename}.stderr")
@@ -23,16 +25,18 @@ def command_output(filename)
   [command_stdout, command_stderr, FakeProcessStatus.new(command_status)]
 end
 
-APT_DIR = File.join(File.dirname(__FILE__), 'apt')
+def build_capture3_hash
+  capture3_file_basenames =
+    Dir["#{APT_DIR}/*.stdout"].map { |f| File.basename(f, '.stdout') }
 
-CAPTURE3_COMMANDS =
-  Dir["#{APT_DIR}/*.stdout"].map { |f| File.basename(f, '.stdout') }
+  capture3_commands = capture3_file_basenames.map do |c|
+    [c.gsub('_', ' '),
+     command_output(c)]
+  end
+  Hash[capture3_commands]
+end
 
-CAPTURE3 =
-  Hash[CAPTURE3_COMMANDS.map do |c|
-         [c.gsub('_', ' '),
-          command_output(c)]
-       end]
+CAPTURE3 = build_capture3_hash
 
 def dpkg_query(pkg_name)
   "dpkg-query -s #{pkg_name}"
@@ -61,7 +65,7 @@ describe Wright::Provider::Package::Apt do
       "DEBUG: package already installed: '#{pkg}'\n"
     end
     @remove_message = ->(pkg) { "INFO: remove package: '#{pkg}'\n" }
-    @remove_message_dry = lambda do |pkg| 
+    @remove_message_dry = lambda do |pkg|
       "INFO: (would) remove package: '#{pkg}'\n"
     end
     @remove_message_debug = lambda do |pkg|
@@ -169,7 +173,6 @@ describe Wright::Provider::Package::Apt do
       pkg_version = '2.5.3-1'
       pkg_provider = package_provider(pkg_name, pkg_version)
       dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:install, pkg_name, pkg_version)
 
       @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
       Open3.stub :capture3, @capture3_stub do
@@ -223,7 +226,6 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:remove, pkg_name)
 
       @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
       Open3.stub :capture3, @capture3_stub do
@@ -260,7 +262,6 @@ describe Wright::Provider::Package::Apt do
       pkg_version = '2.5.4-1'
       pkg_provider = package_provider(pkg_name, pkg_version)
       dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:remove, pkg_name)
 
       @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
       Open3.stub :capture3, @capture3_stub do
