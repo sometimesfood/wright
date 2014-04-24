@@ -2,9 +2,6 @@ require_relative '../../spec_helper'
 
 require 'wright/provider/package/apt'
 
-require 'minitest/mock'
-require 'open3'
-
 def dpkg_query(pkg_name)
   "dpkg-query -s #{pkg_name}"
 end

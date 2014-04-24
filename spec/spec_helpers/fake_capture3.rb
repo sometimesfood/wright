@@ -1,4 +1,7 @@
-# Open::capture3 replacement that reads stdout, stderr and return
+require 'minitest/mock'
+require 'open3'
+
+# Open3::capture3 replacement that reads stdout, stderr and return
 # values from the filesystem
 class FakeCapture3
   def initialize(basedir, env)
