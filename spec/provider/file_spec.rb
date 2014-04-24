@@ -3,16 +3,13 @@ require_relative '../spec_helper'
 require 'wright/provider/file'
 require 'wright/dry_run'
 
-FakeFile = Struct.new('FakeFile', :name, :owner, :group, :mode, :content)
-
 describe Wright::Provider::File do
   before(:each) do
-    @file_resource = FakeFile.new
-    @file_resource.name = 'foo'
-    @file_resource.owner = 23
-    @file_resource.group = 42
-    @file_resource.mode = 0600
-    @file_resource.content = 'Hello world'
+    @file_resource = OpenStruct.new(name: 'foo',
+                                    owner: 23,
+                                    group: 42,
+                                    mode: 0600,
+                                    content: 'Hello world')
 
     file = "'#{@file_resource.name}'"
     @create_message = "INFO: create file: #{file}\n"

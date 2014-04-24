@@ -3,15 +3,12 @@ require_relative '../spec_helper'
 require 'wright/provider/directory'
 require 'wright/dry_run'
 
-FakeDirectory = Struct.new('FakeDirectory', :name, :owner, :group, :mode)
-
 describe Wright::Provider::Directory do
   before(:each) do
-    @dir_resource = FakeDirectory.new
-    @dir_resource.name = '/tmp/foo'
-    @dir_resource.owner = 23
-    @dir_resource.group = 42
-    @dir_resource.mode = 0700
+    @dir_resource = OpenStruct.new(name: '/tmp/foo',
+                                   owner: 23,
+                                   group: 42,
+                                   mode: 0700)
 
     dir = "'#{@dir_resource.name}'"
     @create_message = "INFO: create directory: #{dir}\n"

@@ -5,13 +5,9 @@ require 'fileutils'
 require 'wright/provider/symlink'
 require 'wright/dry_run'
 
-FakeSymlink = Struct.new('FakeSymlink', :name, :to)
-
 describe Wright::Provider::Symlink do
   before(:each) do
-    @link_resource = FakeSymlink.new
-    @link_resource.to = 'foo'
-    @link_resource.name = 'bar'
+    @link_resource = OpenStruct.new(to: 'foo', name: 'bar')
 
     name = @link_resource.name
     to = @link_resource.to
