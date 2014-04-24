@@ -1,3 +1,5 @@
+require_relative 'spec_helpers/fake_capture3'
+
 require 'ostruct'
 require 'fakefs/safe'
 require 'wright/logger'

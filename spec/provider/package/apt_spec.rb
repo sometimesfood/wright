@@ -5,39 +5,6 @@ require 'wright/provider/package/apt'
 require 'minitest/mock'
 require 'open3'
 
-# fake Process::Status replacement
-class FakeProcessStatus
-  def initialize(success)
-    @success = success
-  end
-
-  def success?
-    @success
-  end
-end
-
-APT_DIR = File.join(File.dirname(__FILE__), 'apt')
-
-def command_output(filename)
-  command_stdout = File.read("#{APT_DIR}/#{filename}.stdout")
-  command_stderr = File.read("#{APT_DIR}/#{filename}.stderr")
-  command_status = File.read("#{APT_DIR}/#{filename}.return").chomp == '0'
-  [command_stdout, command_stderr, FakeProcessStatus.new(command_status)]
-end
-
-def build_capture3_hash
-  capture3_file_basenames =
-    Dir["#{APT_DIR}/*.stdout"].map { |f| File.basename(f, '.stdout') }
-
-  capture3_commands = capture3_file_basenames.map do |c|
-    [c.gsub('_', ' '),
-     command_output(c)]
-  end
-  Hash[capture3_commands]
-end
-
-CAPTURE3 = build_capture3_hash
-
 def dpkg_query(pkg_name)
   "dpkg-query -s #{pkg_name}"
 end
@@ -54,9 +21,9 @@ end
 
 describe Wright::Provider::Package::Apt do
   before :each do
-    @env = { 'DEBIAN_FRONTEND' => 'noninteractive' }
-    @mock_open3 = Minitest::Mock.new
-    @capture3_stub = ->(env, command) { @mock_open3.capture3(env, command) }
+    apt_dir = File.join(File.dirname(__FILE__), 'apt')
+    env = { 'DEBIAN_FRONTEND' => 'noninteractive' }
+    @fake_capture3 = FakeCapture3.new(apt_dir, env)
     @install_message = ->(pkg) { "INFO: install package: '#{pkg}'\n" }
     @install_message_dry = lambda do |pkg|
       "INFO: (would) install package: '#{pkg}'\n"
@@ -80,11 +47,10 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
         pkg_provider.installed_version.must_equal pkg_version
       end
-      @mock_open3.verify
     end
 
     it 'should return nil for missing packages' do
@@ -93,11 +59,10 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
         pkg_provider.installed_version.must_equal pkg_version
       end
-      @mock_open3.verify
     end
 
     it 'should return nil for removed packages' do
@@ -106,11 +71,10 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
         pkg_provider.installed_version.must_equal pkg_version
       end
-      @mock_open3.verify
     end
   end
 
@@ -121,16 +85,15 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
       apt_cmd = apt_get(:install, pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.install
           pkg_provider.updated?.must_equal true
         end.must_output @install_message.call(pkg_name)
       end
-      @mock_open3.verify
     end
 
     it 'should not try to install packages that are already installed' do
@@ -138,15 +101,14 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.install
           pkg_provider.updated?.must_equal false
         end.must_output @install_message_debug.call(pkg_name)
       end
-      @mock_open3.verify
     end
 
     it 'should install package versions that are not currently installed' do
@@ -156,16 +118,15 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
       apt_cmd = apt_get(:install, pkg_name, pkg_version)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.install
           pkg_provider.updated?.must_equal true
         end.must_output @install_message.call(pkg_name)
       end
-      @mock_open3.verify
     end
 
     it 'should not try to install package versions already installed' do
@@ -174,15 +135,14 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name, pkg_version)
       dpkg_cmd = dpkg_query(pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.install
           pkg_provider.updated?.must_equal false
         end.must_output @install_message_debug.call(pkg_name)
       end
-      @mock_open3.verify
     end
 
     it 'should raise exceptions for unknown packages' do
@@ -191,15 +151,14 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
       apt_cmd = apt_get(:install, pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.stub do
         e = -> { pkg_provider.install }.must_raise RuntimeError
         wright_error = "cannot install package '#{pkg_name}'"
         apt_error = "E: Unable to locate package #{pkg_name}"
         e.message.must_equal %Q(#{wright_error}: "#{apt_error}")
       end
-      @mock_open3.verify
     end
   end
 
@@ -210,16 +169,15 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
       apt_cmd = apt_get(:remove, pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.remove
           pkg_provider.updated?.must_equal true
         end.must_output @remove_message.call(pkg_name)
       end
-      @mock_open3.verify
     end
 
     it 'should not try to remove packages that are already removed' do
@@ -227,15 +185,14 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.remove
           pkg_provider.updated?.must_equal false
         end.must_output @remove_message_debug.call(pkg_name)
       end
-      @mock_open3.verify
     end
 
     it 'should remove package versions that are currently installed' do
@@ -245,16 +202,15 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
       apt_cmd = apt_get(:remove, pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      @mock_open3.expect(:capture3, CAPTURE3[apt_cmd], [@env, apt_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.remove
           pkg_provider.updated?.must_equal true
         end.must_output @remove_message.call(pkg_name)
       end
-      @mock_open3.verify
     end
 
     it 'should not try to remove packages that are already removed' do
@@ -263,15 +219,14 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name, pkg_version)
       dpkg_cmd = dpkg_query(pkg_name)
 
-      @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-      Open3.stub :capture3, @capture3_stub do
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.remove
           pkg_provider.updated?.must_equal false
         end.must_output @remove_message_debug.call(pkg_name)
       end
-      @mock_open3.verify
     end
   end
 
@@ -282,14 +237,13 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
 
       Wright.dry_run do
-        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-        Open3.stub :capture3, @capture3_stub do
+        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.stub do
           lambda do
             reset_logger
             pkg_provider.install
           end.must_output @install_message_dry.call(pkg_name)
         end
-        @mock_open3.verify
       end
     end
 
@@ -299,15 +253,14 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
 
       Wright.dry_run do
-        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-        Open3.stub :capture3, @capture3_stub do
+        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.stub do
           lambda do
             reset_logger
             pkg_provider.install
             pkg_provider.updated?.must_equal false
           end.must_output @install_message_debug.call(pkg_name)
         end
-        @mock_open3.verify
       end
     end
 
@@ -317,14 +270,13 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
 
       Wright.dry_run do
-        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-        Open3.stub :capture3, @capture3_stub do
+        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.stub do
           lambda do
             reset_logger
             pkg_provider.remove
           end.must_output @remove_message_dry.call(pkg_name)
         end
-        @mock_open3.verify
       end
     end
 
@@ -334,15 +286,14 @@ describe Wright::Provider::Package::Apt do
       dpkg_cmd = dpkg_query(pkg_name)
 
       Wright.dry_run do
-        @mock_open3.expect(:capture3, CAPTURE3[dpkg_cmd], [@env, dpkg_cmd])
-        Open3.stub :capture3, @capture3_stub do
+        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.stub do
           lambda do
             reset_logger
             pkg_provider.remove
             pkg_provider.updated?.must_equal false
           end.must_output @remove_message_debug.call(pkg_name)
         end
-        @mock_open3.verify
       end
     end
   end
