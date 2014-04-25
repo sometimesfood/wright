@@ -37,40 +37,40 @@ describe Wright::Provider::Package::Apt do
     end
   end
 
-  describe '#installed_version' do
+  describe '#installed_versions' do
     it 'should return the installed package version via dpkg-query' do
       pkg_name = 'abcde'
-      pkg_version = '2.5.3-1'
+      pkg_versions = ['2.5.3-1']
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
-        pkg_provider.installed_version.must_equal pkg_version
+        pkg_provider.installed_versions.must_equal pkg_versions
       end
     end
 
-    it 'should return nil for missing packages' do
+    it 'should return empty array for missing packages' do
       pkg_name = 'vlc'
-      pkg_version = nil
+      pkg_versions = []
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
-        pkg_provider.installed_version.must_equal pkg_version
+        pkg_provider.installed_versions.must_equal pkg_versions
       end
     end
 
     it 'should return nil for removed packages' do
       pkg_name = 'htop'
-      pkg_version = nil
+      pkg_versions = []
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
-        pkg_provider.installed_version.must_equal pkg_version
+        pkg_provider.installed_versions.must_equal pkg_versions
       end
     end
   end

@@ -12,18 +12,17 @@ module Wright
       class Apt < Wright::Provider::Package
         # Public: Get the installed package version.
         #
-        # Returns the package version String or nil if the package is
-        # not currently installed.
-        def installed_version
+        # Returns an array of installed package version Strings.
+        def installed_versions
           cmd = "dpkg-query -s #{@resource.name}"
           cmd_stdout, _cmd_stderr, cmd_status = Open3.capture3(env, cmd)
           installed_re = /^Status: install ok installed$/
 
           if cmd_status.success? && installed_re =~ cmd_stdout
             /^Version: (?<version>.*)$/ =~ cmd_stdout
-            version
+            [version]
           else
-            nil
+            []
           end
         end
 

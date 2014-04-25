@@ -28,9 +28,9 @@ module Wright
 
       def package_installed?
         if @resource.version
-          @resource.version == installed_version
+          installed_versions.include?(@resource.version)
         else
-          !installed_version.nil? # rubocop:disable NonNilCheck
+          !installed_versions.empty?
         end
       end
     end
