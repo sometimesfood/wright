@@ -10,13 +10,14 @@ describe Util::File do
     @dir = 'somedir'
   end
 
+  after(:each) { FakeFS::FileSystem.clear }
+
   describe 'file_mode' do
     it 'should return the correct mode for a given file' do
       FakeFS do
         FileUtils.touch(@file)
         FileUtils.chmod(0644, @file)
         Util::File.file_mode(@file).must_equal 0644
-        FakeFS::FileSystem.clear
       end
     end
 
@@ -32,7 +33,6 @@ describe Util::File do
         pwent = Etc.getpwent
         File.chown(pwent.uid, pwent.gid, @file)
         Util::File.file_owner(@file).must_equal pwent.uid
-        FakeFS::FileSystem.clear
       end
     end
 
@@ -48,7 +48,6 @@ describe Util::File do
         pwent = Etc.getpwent
         File.chown(pwent.uid, pwent.gid, @file)
         Util::File.file_group(@file).must_equal pwent.gid
-        FakeFS::FileSystem.clear
       end
     end
 
@@ -86,7 +85,6 @@ describe Util::File do
         Util::File.symbolic_mode_to_i('a-r', mode, type).must_equal 0200
         Util::File.symbolic_mode_to_i('+s' , mode, type).must_equal 06644
         Util::File.symbolic_mode_to_i('+t' , mode, type).must_equal 01644
-        FakeFS::FileSystem.clear
       end
     end
 
@@ -99,7 +97,6 @@ describe Util::File do
         Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0644
         Util::File.symbolic_mode_to_i('+x', mode, type).must_equal 0755
         Util::File.symbolic_mode_to_i('+X', mode, type).must_equal 0755
-        FakeFS::FileSystem.clear
       end
     end
 
