@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.version       = Wright::VERSION
 
   gem.add_development_dependency 'minitest', '~> 5.3.3'
+  gem.add_development_dependency 'minitest-stub-const', '~> 0.1'
   gem.add_development_dependency 'fakefs', '~> 0.5.2'
   gem.add_development_dependency 'rake', '~> 10.2.2'
   gem.add_development_dependency 'rdoc', '~> 4.1.1'

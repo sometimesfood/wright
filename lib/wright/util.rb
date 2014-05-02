@@ -36,5 +36,25 @@ module Wright
     def self.filename_to_classname(filename)
       ActiveSupport.camelize(filename.chomp('.rb').chomp('/'))
     end
+
+    def self.distro
+      os_release = ::File.read('/etc/os-release')
+      /^ID_LIKE=(?<id_like>.*)$/ =~ os_release
+      /^ID=(?<id>.*)$/ =~ os_release
+      id_like || id || 'linux'
+    end
+    private_class_method :distro
+
+    def self.os_family
+      system_arch = RbConfig::CONFIG['target_os']
+      case system_arch
+      when /darwin/
+        'macosx'
+      when /linux/
+        distro
+      else
+        'other'
+      end
+    end
   end
 end
