@@ -7,11 +7,6 @@ Rake::TestTask.new do |t|
   t.pattern = 'spec/**/*_spec.rb'
 end
 
-desc 'Start wright IRB session'
-task :console do
-  exec 'irb -I lib -r wright'
-end
-
 RDoc::Task.new(clobber_rdoc: 'rdoc:clobber',
                rerdoc: 'rdoc:force') do |t|
   t.rdoc_files.include('lib/**/*.rb')

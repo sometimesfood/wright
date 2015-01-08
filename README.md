@@ -33,9 +33,9 @@ All tests should pass.
 Getting Started
 ---------------
 
-To start up wright IRB session, simply run:
+To start a wright IRB session, simply run:
 
-    $ bundle exec rake console
+    $ bundle console
 
 In order to create some resources using the wright DSL:
 
