@@ -146,11 +146,11 @@ describe Wright::Resource::File do
       end
     end
 
-    it 'should raise an exception if there is a regular file at path' do
+    it 'should raise an exception if there is a directory at path' do
       FakeFS do
-        FileUtils.touch(@filename)
-        dir = Wright::Resource::Directory.new(@filename)
-        -> { dir.create }.must_raise Errno::EEXIST
+        FileUtils.mkdir(@filename)
+        file = Wright::Resource::File.new(@filename)
+        -> { file.create }.must_raise Errno::EISDIR
       end
     end
   end
