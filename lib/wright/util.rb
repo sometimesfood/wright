@@ -45,6 +45,18 @@ module Wright
     end
     private_class_method :distro
 
+    # Internal: Get the system's OS family.
+    #
+    # Examples
+    #
+    #   Wright::Util.os_family
+    #   # => "debian"
+    #
+    #   Wright::Util.os_family
+    #   # => "macosx"
+    #
+    # Returns the String system OS family (base distribution for
+    # GNU/Linux systems) or 'other' for unknown operating systems.
     def self.os_family
       system_arch = RbConfig::CONFIG['target_os']
       case system_arch

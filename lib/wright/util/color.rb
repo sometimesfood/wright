@@ -40,7 +40,7 @@ module Wright
         "#{color}#{string}#{no_color}"
       end
 
-      COLOR_MAP = {
+      COLOR_MAP = { #:nodoc:
         none: "\e[0m",
         red: "\e[31m",
         yellow: "\e[32m"
