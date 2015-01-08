@@ -30,4 +30,6 @@ def reset_logger(log_level = Wright::Logger::DEBUG)
   Wright.log.level = log_level
 end
 
+reset_logger(Wright::Logger::FATAL)
+
 require 'minitest/autorun'
