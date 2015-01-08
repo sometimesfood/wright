@@ -6,26 +6,24 @@ Lightweight configuration management.
 Requirements
 ------------
 
- - Ruby 1.9
+ - Ruby ≥1.9
 
 Documentation
 -------------
 
-There's not too much useful documentation at the moment. Run
-`bundle exec rake rerdoc` to generate HTML documentation.
+There is not too much useful documentation that is targeted towards
+users at the moment.
 
-Installation
-------------
+Run `bundle exec rake rdoc` to generate HTML docs for wright
+developers.
 
- - Make sure `ruby --version` is at least 1.9.1. (If your distro
-   doesn't use Ruby 1.9 by default, just use
-   [rbenv](https://github.com/sstephenson/rbenv/) and
-   [ruby-build](https://github.com/sstephenson/ruby-build/).)
+Hacking
+-------
 
- - Install bundler.
+To get started with wright, simply install the development
+dependencies via bundler:
 
- - `cd ~/src/wright && bundle install --path vendor/bundle`
-
+ - `bundle install --path .bundle`
  - `bundle exec rake test`
 
 All tests should pass.
@@ -69,4 +67,4 @@ If you don't want to use the DSL:
 Copyright
 ---------
 
-Copyright (c) 2012 Sebastian Boehm. See LICENSE for details.
+Copyright (c) 2012-2015 Sebastian Boehm. See LICENSE for details.
