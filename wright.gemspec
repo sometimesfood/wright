@@ -20,5 +20,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake', '~> 10.2.2'
   gem.add_development_dependency 'rdoc', '~> 4.1.1'
   gem.add_development_dependency 'simplecov', '~> 0.7.1'
+  gem.add_development_dependency 'pry'
   gem.add_development_dependency 'rubocop'
 end
