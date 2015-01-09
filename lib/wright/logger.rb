@@ -16,7 +16,7 @@ module Wright # rubocop:disable Documentation
       # message  - The actual log message.
       #
       # Returns the formatted String log entry.
-      def call(severity, time, progname, message)
+      def call(severity, _time, _progname, message)
         log_entry = "#{severity}: #{message}\n"
         if Wright::Config[:log][:colorize]
           colorize(log_entry, severity)
@@ -57,9 +57,9 @@ module Wright # rubocop:disable Documentation
     def initialize(logdev = $stdout)
       super
       Wright::Config[:log] ||= {}
-      if Wright::Config[:log][:colorize].nil?
-        Wright::Config[:log][:colorize] = logdev.tty?
-      end
+      return unless Wright::Config[:log][:colorize].nil?
+
+      Wright::Config[:log][:colorize] = logdev.tty?
     end
   end
 

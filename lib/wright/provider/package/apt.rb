@@ -78,10 +78,10 @@ module Wright
           package_version = version.nil? ? '' : "=#{version}"
           apt_cmd = "apt-get #{action} -qy #{package}#{package_version}"
           _cmd_stdout, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
-          unless cmd_status.success?
-            apt_error = cmd_stderr.chomp
-            fail %Q(cannot #{action} package '#{package}': "#{apt_error}")
-          end
+          return if cmd_status.success?
+
+          apt_error = cmd_stderr.chomp
+          fail %(cannot #{action} package '#{package}': "#{apt_error}")
         end
 
         def env

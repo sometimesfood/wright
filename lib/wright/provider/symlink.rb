@@ -15,9 +15,7 @@ module Wright
           return
         end
 
-        if ::File.exist?(@resource.name) && !::File.symlink?(@resource.name)
-          fail Errno::EEXIST, @resource.name
-        end
+        fail Errno::EEXIST, @resource.name if regular_file?
         ln_sfn(@resource.to, @resource.name)
         @updated = true
       end
@@ -80,6 +78,10 @@ module Wright
           Wright.log.info "remove symlink: '#{@resource.name}'"
           FileUtils.rm(@resource.name)
         end
+      end
+
+      def regular_file?
+        ::File.exist?(@resource.name) && !::File.symlink?(@resource.name)
       end
     end
   end

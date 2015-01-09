@@ -13,14 +13,11 @@ module Wright
       # Returns nothing.
       def create
         if ::File.directory?(@resource.name) && permissions.uptodate?
-
           Wright.log.debug "directory already created: '#{@resource.name}'"
           return
         end
 
-        if ::File.exist?(@resource.name) && !::File.directory?(@resource.name)
-          fail Errno::EEXIST, @resource.name
-        end
+        fail Errno::EEXIST, @resource.name if regular_file?
         create_directory
         @updated = true
       end
@@ -68,6 +65,10 @@ module Wright
           Wright.log.info "remove directory: '#{@resource.name}'"
           FileUtils.rmdir(@resource.name)
         end
+      end
+
+      def regular_file?
+        ::File.exist?(@resource.name) && !::File.directory?(@resource.name)
       end
     end
   end

@@ -56,14 +56,17 @@ module Wright
       end
 
       def write_content_to_file
-        file = Tempfile.new(::File.basename(@resource.name))
-        file.write(@resource.content) if @resource.content
-        file.close
-        if @resource.content || !::File.exist?(@resource.name)
-          FileUtils.mv(file.path, @resource.name)
-        else
-          file.unlink
-        end
+        tempfile = Tempfile.new(::File.basename(@resource.name))
+        tempfile.write(@resource.content) if @resource.content
+        move_tempfile(tempfile)
+      ensure
+        tempfile.close!
+      end
+
+      def move_tempfile(tempfile)
+        # do not overwrite existing files if content was not specified
+        return if @resource.content.nil? && ::File.exist?(@resource.name)
+        FileUtils.mv(tempfile.path, @resource.name)
       end
 
       def remove_file

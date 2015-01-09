@@ -53,7 +53,7 @@ module Wright
     # work: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
     #
     # Returns nothing.
-    def self.yield_resource(resource_class, name, &block)
+    def self.yield_resource(resource_class, name)
       r = resource_class.new(name)
       yield(r) if block_given?
       r.run_action if r.respond_to?(:run_action)
