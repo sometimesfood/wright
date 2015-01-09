@@ -17,7 +17,7 @@ describe Wright::DSL do
       def self.name
         'ResourceKlass'
       end
-      def initialize(name); end
+      def initialize(_name); end
     end
 
     @wright_dsl.register_resource(resource_class)
@@ -53,7 +53,7 @@ describe Wright::DSL do
         'ResourceKlass'
       end
 
-      def initialize(name); end
+      def initialize(_name); end
     end
     @wright_dsl.register_resource(resource_class)
 

@@ -154,7 +154,7 @@ describe Wright::Provider::Package::Apt do
         e = -> { pkg_provider.install }.must_raise RuntimeError
         wright_error = "cannot install package '#{pkg_name}'"
         apt_error = "E: Unable to locate package #{pkg_name}"
-        e.message.must_equal %Q(#{wright_error}: "#{apt_error}")
+        e.message.must_equal %(#{wright_error}: "#{apt_error}")
       end
     end
   end
