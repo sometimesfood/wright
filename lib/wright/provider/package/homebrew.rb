@@ -1,4 +1,5 @@
 require 'open3'
+require 'json'
 
 require 'wright/dry_run'
 require 'wright/provider'
@@ -7,18 +8,18 @@ require 'wright/provider/package'
 module Wright
   class Provider
     class Package
-      # Apt package provider. Used as a provider for
-      # {Resource::Package} on Debian-based systems.
-      class Apt < Wright::Provider::Package
+      # Homebrew package provider. Used as a provider for
+      # {Resource::Package} on OS X systems.
+      class Homebrew < Wright::Provider::Package
         # @return [Array<String>] the installed package versions
         def installed_versions
-          cmd = "dpkg-query -s #{@resource.name}"
-          cmd_stdout, _, cmd_status = Open3.capture3(env, cmd)
-          installed_re = /^Status: install ok installed$/
+          cmd = "brew info --json=v1 #{@resource.name}"
+          cmd_stdout, _, cmd_status = Wright::Util.bundler_clean_env do
+            Open3.capture3(env, cmd)
+          end
 
-          if cmd_status.success? && installed_re =~ cmd_stdout
-            /^Version: (?<version>.*)$/ =~ cmd_stdout
-            [version]
+          if cmd_status.success?
+            JSON[cmd_stdout].first['installed'].map { |v| v['version'] }
           else
             []
           end
@@ -58,7 +59,7 @@ module Wright
             Wright.log.info "(would) install package: '#{package}'"
           else
             Wright.log.info "install package: '#{package}'"
-            apt_get(:install, package, @resource.version)
+            brew(:install, package, @resource.version)
           end
         end
 
@@ -68,22 +69,25 @@ module Wright
             Wright.log.info "(would) remove package: '#{package}'"
           else
             Wright.log.info "remove package: '#{package}'"
-            apt_get(:remove, package)
+            brew(:uninstall, package)
           end
         end
 
-        def apt_get(action, package, version = nil)
-          package_version = version.nil? ? '' : "=#{version}"
-          apt_cmd = "apt-get #{action} -qy #{package}#{package_version}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
+        # @todo warn if version specified (ignored by homebrew)
+        def brew(action, package, _version = nil)
+          brew_cmd = "brew #{action} #{package}"
+
+          _, cmd_stderr, cmd_status = Wright::Util.bundler_clean_env do
+            Open3.capture3(env, brew_cmd)
+          end
           return if cmd_status.success?
 
-          apt_error = cmd_stderr.chomp
-          fail %(cannot #{action} package '#{package}': "#{apt_error}")
+          brew_error = cmd_stderr.chomp
+          fail %(cannot #{action} package '#{package}': "#{brew_error}")
         end
 
         def env
-          { 'DEBIAN_FRONTEND' => 'noninteractive' }
+          {}
         end
       end
     end

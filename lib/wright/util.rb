@@ -1,4 +1,5 @@
 require 'wright/util/stolen_from_activesupport'
+require 'open3'
 
 module Wright
   # @api private
@@ -64,6 +65,14 @@ module Wright
         distro
       else
         'other'
+      end
+    end
+
+    def self.bundler_clean_env
+      if defined?(Bundler)
+        Bundler.with_clean_env { yield }
+      else
+        yield
       end
     end
   end
