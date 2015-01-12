@@ -13,7 +13,7 @@ module Wright
   #   # register the resource
   #   Wright::DSL.register_resource KitchenSink
   #
-  #   include Wright::DSL
+  #   extend Wright::DSL
   #
   #   kitchen_sink "I don't do anything"
   #
