@@ -2,7 +2,7 @@ module Wright
   module Util
     # Internal: ANSI color helpers.
     module Color
-      # Internal: Colorize a string red.
+      # Internal: Colorize a string (red).
       #
       # string - The string to colorize.
       #
@@ -11,7 +11,7 @@ module Wright
         colorize(string, :red)
       end
 
-      # Internal: Colorize a string yellow.
+      # Internal: Colorize a string (yellow).
       #
       # string - The string to colorize.
       #
