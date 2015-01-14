@@ -14,7 +14,7 @@ module Wright
       #
       # Returns nothing.
       def create
-        fail Errno::EISDIR, @resource.name if ::File.directory?(@resource.name)
+        fail Errno::EISDIR, filename if ::File.directory?(filename)
 
         if uptodate?
           Wright.log.debug "file already created: '#{@resource.name}'"
@@ -29,15 +29,13 @@ module Wright
       #
       # Returns nothing.
       def remove
-        file = @resource.name
+        fail Errno::EISDIR, filename if ::File.directory?(filename)
 
-        fail Errno::EISDIR, file if ::File.directory?(file)
-
-        if ::File.exist?(file) || ::File.symlink?(file)
+        if ::File.exist?(filename) || ::File.symlink?(filename)
           remove_file
           @updated = true
         else
-          Wright.log.debug "file already removed: '#{file}'"
+          Wright.log.debug "file already removed: '#{@resource.name}'"
         end
       end
 
@@ -56,7 +54,7 @@ module Wright
       end
 
       def write_content_to_file
-        tempfile = Tempfile.new(::File.basename(@resource.name))
+        tempfile = Tempfile.new(::File.basename(filename))
         tempfile.write(@resource.content) if @resource.content
         move_tempfile(tempfile)
       ensure
@@ -65,17 +63,16 @@ module Wright
 
       def move_tempfile(tempfile)
         # do not overwrite existing files if content was not specified
-        return if @resource.content.nil? && ::File.exist?(@resource.name)
-        FileUtils.mv(tempfile.path, @resource.name)
+        return if @resource.content.nil? && ::File.exist?(filename)
+        FileUtils.mv(tempfile.path, filename)
       end
 
       def remove_file
-        file = @resource.name
         if Wright.dry_run?
-          Wright.log.info "(would) remove file: '#{file}'"
+          Wright.log.info "(would) remove file: '#{@resource.name}'"
         else
-          Wright.log.info "remove file: '#{file}'"
-          FileUtils.rm(file)
+          Wright.log.info "remove file: '#{@resource.name}'"
+          FileUtils.rm(filename)
         end
       end
 
@@ -88,15 +85,19 @@ module Wright
       end
 
       def content_uptodate?
-        return false unless ::File.exist?(@resource.name)
+        return false unless ::File.exist?(filename)
         content = @resource.content || ''
         target_checksum = checksum(content)
-        current_checksum = checksum(::File.read(@resource.name))
+        current_checksum = checksum(::File.read(filename))
         current_checksum == target_checksum
       end
 
       def uptodate?
         content_uptodate? && permissions.uptodate?
+      end
+
+      def filename
+        @filename ||= @resource.name
       end
     end
   end

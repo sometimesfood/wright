@@ -12,12 +12,12 @@ module Wright
       #
       # Returns nothing.
       def create
-        if ::File.directory?(@resource.name) && permissions.uptodate?
+        if ::File.directory?(dirname) && permissions.uptodate?
           Wright.log.debug "directory already created: '#{@resource.name}'"
           return
         end
 
-        fail Errno::EEXIST, @resource.name if regular_file?
+        fail Errno::EEXIST, dirname if regular_file?
         create_directory
         @updated = true
       end
@@ -26,11 +26,11 @@ module Wright
       #
       # Returns nothing.
       def remove
-        if ::File.exist?(@resource.name) && !::File.directory?(@resource.name)
-          fail "'#{@resource.name}' exists but is not a directory"
+        if ::File.exist?(dirname) && !::File.directory?(dirname)
+          fail "'#{dirname}' exists but is not a directory"
         end
 
-        if ::File.directory?(@resource.name)
+        if ::File.directory?(dirname)
           remove_directory
           @updated = true
         else
@@ -46,13 +46,12 @@ module Wright
       end
 
       def create_directory
-        dirname = @resource.name
         dir_permissions = permissions
 
         if Wright.dry_run?
-          Wright.log.info "(would) create directory: '#{dirname}'"
+          Wright.log.info "(would) create directory: '#{@resource.name}'"
         else
-          Wright.log.info "create directory: '#{dirname}'"
+          Wright.log.info "create directory: '#{@resource.name}'"
           FileUtils.mkdir_p(dirname)
           dir_permissions.update
         end
@@ -63,12 +62,16 @@ module Wright
           Wright.log.info "(would) remove directory: '#{@resource.name}'"
         else
           Wright.log.info "remove directory: '#{@resource.name}'"
-          FileUtils.rmdir(@resource.name)
+          FileUtils.rmdir(dirname)
         end
       end
 
       def regular_file?
-        ::File.exist?(@resource.name) && !::File.directory?(@resource.name)
+        ::File.exist?(dirname) && !::File.directory?(dirname)
+      end
+
+      def dirname
+        @dirname ||= @resource.name
       end
     end
   end
