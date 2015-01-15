@@ -106,4 +106,22 @@ describe Util::File do
       end.must_raise ArgumentError
     end
   end
+
+  describe 'expand_tilde_path' do
+    it 'should expand tilde paths' do
+      expected = File.join(Etc.getpwnam('root').dir, 'foo')
+      actual = Wright::Util::File.expand_tilde_path('~root/foo')
+      actual.must_equal expected
+    end
+
+    it 'should not expand anything but the first path element' do
+      expected = File.join(Etc.getpwnam('root').dir, 'foo', '..')
+      actual = Wright::Util::File.expand_tilde_path('~root/foo/..')
+      actual.must_equal expected
+    end
+
+    it 'should not expand non-tilde paths' do
+      Wright::Util::File.expand_tilde_path('../foo/bar').must_equal '../foo/bar'
+    end
+  end
 end

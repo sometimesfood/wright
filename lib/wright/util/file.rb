@@ -215,6 +215,28 @@ module Wright #:nodoc:
       def self.file_group(path)
         ::File.exist?(path) ? ::File.stat(path).gid : nil
       end
+
+      # Internal: Expand tilde symbols in file paths. Path elements
+      # other than the first one are left alone.
+      #
+      # path - The file path.
+      #
+      # Examples
+      #
+      #   Wright::Util::File.expand_tilde_path('~root/foo')
+      #   # => "/root/foo"
+      #
+      #   Wright::Util::File.expand_tilde_path('~root/foo/..')
+      #   # => "/root/foo/.."
+      #
+      #   Wright::Util::File.expand_tilde_path('../foo/bar')
+      #   # => "../foo/bar"
+      def self.expand_tilde_path(path)
+        return path unless path.start_with?('~')
+
+        first, *rest = path.split(::File::SEPARATOR)
+        ::File.join(::File.expand_path(first), rest)
+      end
     end
   end
 end
