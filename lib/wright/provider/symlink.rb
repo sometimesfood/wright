@@ -16,7 +16,7 @@ module Wright
         end
 
         fail Errno::EEXIST, @resource.name if regular_file?
-        ln_sfn(@resource.to, @resource.name)
+        create_link
         @updated = true
       end
 
@@ -47,23 +47,13 @@ module Wright
           ::File.readlink(@resource.name) == @resource.to
       end
 
-      # Internal: Creates a link named link_name to target.
-      #
-      # If the file denoted by link_name is a symlink to a directory,
-      # ln_sfn does not descend into it. Behaves similar to GNU ln(1) or
-      # OpenBSD ln(1) when using "ln -sfn to link_name".
-      #
-      # Returns nothing.
-      def ln_sfn(target, link_name)
-        symlink = symlink_to_s(link_name, target)
+      def create_link
+        symlink = symlink_to_s(@resource.name, @resource.to)
         if Wright.dry_run?
           Wright.log.info "(would) create symlink: #{symlink}"
         else
           Wright.log.info "create symlink: #{symlink}"
-          if ::File.symlink?(link_name) && ::File.directory?(link_name)
-            FileUtils.rm(link_name)
-          end
-          FileUtils.ln_sf(target, link_name)
+          Wright::Util::File.ln_sfn(@resource.to, @resource.name)
         end
       end
 

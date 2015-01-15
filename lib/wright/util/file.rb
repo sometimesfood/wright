@@ -231,11 +231,27 @@ module Wright #:nodoc:
       #
       #   Wright::Util::File.expand_tilde_path('../foo/bar')
       #   # => "../foo/bar"
+      #
+      # Returns the expanded String path.
       def self.expand_tilde_path(path)
         return path unless path.start_with?('~')
 
         first, *rest = path.split(::File::SEPARATOR)
         ::File.join(::File.expand_path(first), rest)
+      end
+
+      # Internal: Creates a link named link_name to target.
+      #
+      # If the file denoted by link_name is a symlink to a directory,
+      # ln_sfn does not descend into it. Behaves similar to GNU ln(1) or
+      # OpenBSD ln(1) when using "ln -sfn to link_name".
+      #
+      # Returns nothing.
+      def self.ln_sfn(target, link_name)
+        if ::File.symlink?(link_name) && ::File.directory?(link_name)
+          FileUtils.rm(link_name)
+        end
+        FileUtils.ln_sf(target, link_name)
       end
     end
   end
