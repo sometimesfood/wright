@@ -71,7 +71,7 @@ module Wright
       end
 
       def dirname
-        @dirname ||= ::File.expand_path(@resource.name)
+        ::File.expand_path(@resource.name)
       end
     end
   end
