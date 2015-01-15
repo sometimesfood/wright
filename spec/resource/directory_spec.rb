@@ -133,6 +133,16 @@ describe Wright::Resource::Directory do
         -> { dir.create }.must_raise Errno::EEXIST
       end
     end
+
+    it 'should expand paths' do
+      FakeFS do
+        dirname = '~/foobar'
+        dir = Wright::Resource::Directory.new(dirname)
+        FileUtils.mkdir_p(File.expand_path('~'))
+        dir.create
+        Dir.exist?(File.expand_path(dirname)).must_equal true
+      end
+    end
   end
 
   describe '#remove' do
@@ -161,6 +171,16 @@ describe Wright::Resource::Directory do
         dir = Wright::Resource::Directory.new(@dirname)
         -> { dir.remove }.must_raise RuntimeError
         assert File.exist?(@dirname)
+      end
+    end
+
+    it 'should expand paths' do
+      FakeFS do
+        dirname = '~/foobar'
+        dir = Wright::Resource::Directory.new(dirname)
+        FileUtils.mkdir_p(File.expand_path(dirname))
+        dir.remove
+        Dir.exist?(File.expand_path(dirname)).must_equal false
       end
     end
   end

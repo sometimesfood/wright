@@ -153,6 +153,19 @@ describe Wright::Resource::File do
         -> { file.create }.must_raise Errno::EISDIR
       end
     end
+
+    it 'should expand paths' do
+      FakeFS do
+        filename = '~/foobar'
+        expanded_path = File.expand_path(filename)
+        file = Wright::Resource::File.new(filename)
+        FileUtils.mkdir_p(File.expand_path('~'))
+        file.mode = '0765'
+        file.create
+        File.exist?(expanded_path).must_equal true
+        Wright::Util::File.file_mode(expanded_path).must_equal 0765
+      end
+    end
   end
 
   describe '#remove' do
@@ -183,6 +196,17 @@ describe Wright::Resource::File do
         file.remove
         assert !File.symlink?(@filename)
         assert File.exist?('target_file')
+      end
+    end
+
+    it 'should expand paths' do
+      FakeFS do
+        filename = '~/foobar'
+        file = Wright::Resource::File.new(filename)
+        FileUtils.mkdir_p(File.expand_path('~'))
+        FileUtils.touch(File.expand_path(filename))
+        file.remove
+        File.exist?(File.expand_path(filename)).must_equal false
       end
     end
   end
