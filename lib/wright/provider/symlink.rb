@@ -15,7 +15,7 @@ module Wright
           return
         end
 
-        fail Errno::EEXIST, @resource.name if regular_file?
+        fail Errno::EEXIST, link_name if regular_file?
         create_link
         @updated = true
       end
@@ -24,11 +24,11 @@ module Wright
       #
       # Returns nothing.
       def remove
-        if ::File.exist?(@resource.name) && !::File.symlink?(@resource.name)
-          fail "'#{@resource.name}' is not a symlink"
+        if ::File.exist?(link_name) && !::File.symlink?(link_name)
+          fail "'#{link_name}' is not a symlink"
         end
 
-        if ::File.symlink?(@resource.name)
+        if ::File.symlink?(link_name)
           remove_symlink
           @updated = true
         else
@@ -43,8 +43,8 @@ module Wright
       # Returns true if the link exists and points to the specified target
       # and false otherwise.
       def exist? #:doc:
-        ::File.symlink?(@resource.name) &&
-          ::File.readlink(@resource.name) == @resource.to
+        ::File.symlink?(link_name) &&
+          ::File.readlink(link_name) == link_to
       end
 
       def create_link
@@ -53,7 +53,7 @@ module Wright
           Wright.log.info "(would) create symlink: #{symlink}"
         else
           Wright.log.info "create symlink: #{symlink}"
-          Wright::Util::File.ln_sfn(@resource.to, @resource.name)
+          Wright::Util::File.ln_sfn(link_to, link_name)
         end
       end
 
@@ -66,12 +66,20 @@ module Wright
           Wright.log.info "(would) remove symlink: '#{@resource.name}'"
         else
           Wright.log.info "remove symlink: '#{@resource.name}'"
-          FileUtils.rm(@resource.name)
+          FileUtils.rm(link_name)
         end
       end
 
       def regular_file?
-        ::File.exist?(@resource.name) && !::File.symlink?(@resource.name)
+        ::File.exist?(link_name) && !::File.symlink?(link_name)
+      end
+
+      def link_to
+        @resource.to
+      end
+
+      def link_name
+        @resource.name
       end
     end
   end
