@@ -75,11 +75,11 @@ module Wright
       end
 
       def link_to
-        @resource.to
+        Wright::Util::File.expand_tilde_path(@resource.to)
       end
 
       def link_name
-        @resource.name
+        Wright::Util::File.expand_tilde_path(@resource.name)
       end
     end
   end

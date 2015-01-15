@@ -60,6 +60,20 @@ describe Wright::Resource::Symlink do
         File.read(@link_name).must_equal file_content
       end
     end
+
+    it 'should expand paths' do
+      FakeFS do
+        FileUtils.mkdir_p(File.expand_path('~'))
+        link = Wright::Resource::Symlink.new('~/foo')
+        link.to = '~/bar/..'
+        link.create
+
+        File.exist?(File.expand_path('~/foo')).must_equal true
+        expected = File.join(File.expand_path('~'), 'bar/..')
+        actual = File.readlink(File.expand_path('~/foo'))
+        expected.must_equal actual
+      end
+    end
   end
 
   describe '#remove' do
@@ -84,6 +98,19 @@ describe Wright::Resource::Symlink do
         File.exist?(@link_name).must_equal true
         -> { link.remove }.must_raise RuntimeError
         File.exist?(@link_name).must_equal true
+      end
+    end
+
+    it 'should expand paths' do
+      FakeFS do
+        FileUtils.mkdir_p(File.expand_path('~'))
+        FileUtils.touch(File.expand_path('~/bar'))
+        FileUtils.ln_sf(File.expand_path('~/bar'),
+                        File.expand_path('~/foo'))
+        link = Wright::Resource::Symlink.new('~/foo')
+        link.remove
+        File.exist?(File.expand_path('~/foo')).must_equal false
+        File.exist?(File.expand_path('~/bar')).must_equal true
       end
     end
   end
