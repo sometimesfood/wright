@@ -12,7 +12,8 @@ module Wright
       #
       # Returns a Wright::Util::FilePermissions object.
       def self.create_from_resource(resource, filetype)
-        p = Wright::Util::FilePermissions.new(resource.name, filetype)
+        filepath = ::File.expand_path(resource.name)
+        p = Wright::Util::FilePermissions.new(filepath, filetype)
         p.owner = resource.owner
         p.group = resource.group
         p.mode = resource.mode

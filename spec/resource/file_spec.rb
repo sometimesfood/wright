@@ -157,10 +157,13 @@ describe Wright::Resource::File do
     it 'should expand paths' do
       FakeFS do
         filename = '~/foobar'
+        expanded_path = File.expand_path(filename)
         file = Wright::Resource::File.new(filename)
         FileUtils.mkdir_p(File.expand_path('~'))
+        file.mode = '0765'
         file.create
-        File.exist?(File.expand_path(filename)).must_equal true
+        File.exist?(expanded_path).must_equal true
+        Wright::Util::File.file_mode(expanded_path).must_equal 0765
       end
     end
   end
