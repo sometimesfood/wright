@@ -22,6 +22,8 @@ EOS
   gem.require_paths = ['lib']
   gem.version       = Wright::VERSION
 
+  gem.required_ruby_version = '>= 1.9.3'
+
   gem.add_development_dependency 'minitest', '~> 5.5.1'
   gem.add_development_dependency 'minitest-stub-const', '~> 0.2'
   gem.add_development_dependency 'fakefs', '~> 0.6.4'
