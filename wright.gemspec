@@ -7,7 +7,12 @@ Gem::Specification.new do |gem|
   gem.summary       = 'gem summary'
   gem.homepage      = ''
 
-  gem.files         = `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
+  gem.files         = Dir['Rakefile',
+                          'README.md',
+                          'LICENSE',
+                          'NEWS',
+                          '{bin,lib,man,spec}/**/*'] \
+                      & `git ls-files -z`.split("\0")
   gem.executables   = gem.files.grep(/^bin\//).map { |f| File.basename(f) }
   gem.test_files    = gem.files.grep(/^(test|spec|features)\//)
   gem.name          = 'wright'
