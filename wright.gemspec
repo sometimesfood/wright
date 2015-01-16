@@ -3,9 +3,12 @@ require File.expand_path('../lib/wright/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ['Sebastian Boehm']
   gem.email         = ['sebastian@sometimesfood.org']
-  gem.description   = 'gem description'
-  gem.summary       = 'gem summary'
-  gem.homepage      = ''
+  gem.license       = 'MIT'
+  gem.summary       = 'A lightweight config management library'
+  gem.homepage      = 'https://github.com/sometimesfood/wright'
+  gem.description   = <<EOS
+Wright is a lightweight configuration management library.
+EOS
 
   gem.files         = Dir['Rakefile',
                           'README.md',
