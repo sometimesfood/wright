@@ -14,12 +14,12 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = Wright::VERSION
 
-  gem.add_development_dependency 'minitest', '~> 5.3.3'
-  gem.add_development_dependency 'minitest-stub-const', '~> 0.1'
-  gem.add_development_dependency 'fakefs', '~> 0.5.2'
-  gem.add_development_dependency 'rake', '~> 10.2.2'
-  gem.add_development_dependency 'rdoc', '~> 4.1.1'
-  gem.add_development_dependency 'simplecov', '~> 0.7.1'
-  gem.add_development_dependency 'pry'
-  gem.add_development_dependency 'rubocop'
+  gem.add_development_dependency 'minitest', '~> 5.5.1'
+  gem.add_development_dependency 'minitest-stub-const', '~> 0.2'
+  gem.add_development_dependency 'fakefs', '~> 0.6.4'
+  gem.add_development_dependency 'rake', '~> 10.4.2'
+  gem.add_development_dependency 'rdoc', '~> 4.2.0'
+  gem.add_development_dependency 'simplecov', '~> 0.9.1'
+  gem.add_development_dependency 'pry', '~> 0.10.1'
+  gem.add_development_dependency 'rubocop', '~> 0.28.0'
 end
