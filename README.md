@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sometimesfood/wright.svg?branch=master)](https://travis-ci.org/sometimesfood/wright)
+
 wright
 ======
 
