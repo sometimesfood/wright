@@ -2,6 +2,10 @@
 [![Build Status](http://img.shields.io/travis/sometimesfood/wright.svg)][travis]
 [![Code Climate](http://img.shields.io/codeclimate/github/sometimesfood/wright.svg)][codeclimate]
 
+[gem]: https://rubygems.org/gems/wright
+[travis]: https://travis-ci.org/sometimesfood/wright
+[codeclimate]: https://codeclimate.com/github/sometimesfood/wright
+
 wright
 ======
 
