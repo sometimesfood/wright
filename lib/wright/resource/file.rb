@@ -13,7 +13,7 @@ module Wright
       # @return [String] the file's intended content
       attr_accessor :content
 
-      # @return [String] the file's intended group.
+      # @return [String] the file's intended group
       attr_accessor :group
 
       # @return [String, Integer] the file's intended mode
