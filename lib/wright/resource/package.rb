@@ -62,3 +62,11 @@ module Wright
 end
 
 Wright::DSL.register_resource(Wright::Resource::Package)
+
+Wright::Config[:resources][:package] ||= {}
+
+case Wright::Util.os_family
+when 'debian'
+  Wright::Config[:resources][:package][:provider] ||=
+    'Wright::Provider::Package::Apt'
+end
