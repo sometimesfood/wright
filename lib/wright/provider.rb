@@ -1,3 +1,4 @@
+require 'wright/config'
 require 'wright/util/recursive_autoloader'
 
 module Wright

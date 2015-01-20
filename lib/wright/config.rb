@@ -62,3 +62,5 @@ module Wright
     end
   end
 end
+
+Wright::Config[:resources] ||= {}

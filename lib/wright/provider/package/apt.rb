@@ -91,3 +91,10 @@ module Wright
     end
   end
 end
+
+Wright::Config[:resources][:package] ||= {}
+
+if Wright::Util.os_family == 'debian'
+  Wright::Config[:resources][:package][:provider] ||=
+    'Wright::Provider::Package::Apt'
+end

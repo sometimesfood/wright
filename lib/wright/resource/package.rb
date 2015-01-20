@@ -62,9 +62,3 @@ module Wright
 end
 
 Wright::DSL.register_resource(Wright::Resource::Package)
-
-# hard-coded for now
-# TODO: remove this
-Wright::Config[:resources] ||= {}
-Wright::Config[:resources][:package] =
-  { provider: 'Wright::Provider::Package::Apt' }
