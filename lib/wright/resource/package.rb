@@ -57,6 +57,8 @@ module Wright
           @provider.remove
         end
       end
+
+      alias_method :uninstall, :remove
     end
   end
 end
