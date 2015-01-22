@@ -118,6 +118,7 @@ module Wright #:nodoc:
       # Raises NameError if the constant name is not in CamelCase or
       #   the constant is unknown.
       def self.constantize(camel_cased_word)
+        # TODO: Replace this method with Module.const_get in Ruby 2.0
         names = camel_cased_word.split('::')
         names.shift if names.empty? || names.first.empty?
 
