@@ -52,6 +52,8 @@ module Wright
     # Implicitly invoking a block from within another block does not
     # work: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
     #
+    # Yields the resource_class object.
+    #
     # Returns nothing.
     def self.yield_resource(resource_class, name)
       r = resource_class.new(name)
