@@ -20,7 +20,7 @@ module Wright
 
     # Checks if a (nested) configuration value is set.
     #
-    # @param [Array<symbol>] path the configuration item
+    # @param path [Array<symbol>] the configuration key
     #
     # @example
     #   Wright::Config[:foo] = { bar: :baz }
@@ -43,7 +43,7 @@ module Wright
 
     # Retrieves a (nested) configuration value.
     #
-    # @param [Array<Symbol>] path the configuration key
+    # @param path [Array<Symbol>] the configuration key
     #
     # @example
     #   Wright::Config[:foo] = { bar: :baz }

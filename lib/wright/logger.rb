@@ -4,18 +4,20 @@ require 'wright/config'
 require 'wright/util/color'
 
 module Wright # rubocop:disable Documentation
-  # Public: Default logger for Wright.
+  # Default logger for Wright.
   class Logger < ::Logger
-    # Public: Default formatter for Wright log messages.
+    # @api private
+    # Default formatter for Wright log messages.
     class Formatter < ::Logger::Formatter
-      # Internal: Called by Wright::Logger to format log messages.
+      # This method is called by {Wright::Logger} to format log
+      # messages.
       #
-      # severity - The String log severity.
-      # time     - The time for the log entry. Ignored.
-      # progname - The program name for the log entry. Ignored.
-      # message  - The actual log message.
+      # @param severity [String] the log entry's severity
+      # @param _time [Time] the log entry's time stamp (ignored)
+      # @param _progname [String] the log entry's program name (ignored)
+      # @param message [String] the log message
       #
-      # Returns the formatted String log entry.
+      # @return [String] the formatted log entry
       def call(severity, _time, _progname, message)
         log_entry = "#{severity}: #{message}\n"
         if Wright::Config[:log][:colorize]
@@ -27,13 +29,12 @@ module Wright # rubocop:disable Documentation
 
       private
 
-      # Internal: ANSI-Colorize a log message according to its
-      # severity.
+      # ANSI-Colorizes a log message according to its severity.
       #
-      # string   - The String log message to be colorized.
-      # severity - The String severity of the log message.
+      # @param string [String] the log message to be colorized
+      # @param severity [String] the severity of the log message
       #
-      # Returns the colorized String.
+      # @return [String] the colorized log message
       def colorize(string, severity)
         case severity
         when 'ERROR', 'FATAL'
@@ -48,12 +49,12 @@ module Wright # rubocop:disable Documentation
       end
     end
 
-    # Public: Initialize a Logger.
+    # Initializes a Logger.
     #
     # Enables log colorization if the log device is a TTY and
     # colorization was not disabled before initialization.
     #
-    # logdev - The log device used by the Logger.
+    # @param logdev [IO] the log device used by the Logger.
     def initialize(logdev = $stdout)
       super
       Wright::Config[:log] ||= {}
@@ -64,7 +65,7 @@ module Wright # rubocop:disable Documentation
   end
 
   class << self
-    # Public: Get/Set Wright's Logger.
+    # @return [Logger] the logger used by Wright
     attr_accessor :log
   end
   @log = Wright::Logger.new
