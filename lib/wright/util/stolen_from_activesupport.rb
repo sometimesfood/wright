@@ -25,20 +25,19 @@
 #   OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 #   WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-module Wright #:nodoc:
+module Wright
   module Util
-    # Internal: Various methods copied verbatim from ActiveSupport in
-    #   order to keep dependencies to a minimum.
+    # @api private
+    # Various methods copied verbatim from ActiveSupport in
+    # order to keep dependencies to a minimum.
     module ActiveSupport
-      # Internal: Convert a CamelCased String to underscored,
-      #   lowercase form.
+      # Converts a CamelCased string to underscored, lowercase form.
       #
       # Changes '::' to '/' to convert namespaces to paths.
       #
-      # camel_cased_word - The String to be underscored.
+      # @param camel_cased_word [String] the string to be converted
       #
-      # Examples
-      #
+      # @example
       #   underscore("ActiveModel")
       #   # => "active_model"
       #
@@ -46,12 +45,13 @@ module Wright #:nodoc:
       #   # => "active_model/errors"
       #
       # As a rule of thumb you can think of underscore as the inverse
-      # of camelize, though there are cases where that does not hold:
+      # of camelize, though there are cases where that does not hold.
       #
+      # @example
       #   camelize(underscore("SSLError"))
       #   # => "SslError"
       #
-      # Returns the underscored String.
+      # @return [String] the underscored string
       def self.underscore(camel_cased_word)
         word = camel_cased_word.to_s.dup
         word.gsub!(/::/, '/')
@@ -62,15 +62,14 @@ module Wright #:nodoc:
         word
       end
 
-      # Internal: Convert an underscored_string to UpperCamelCase.
+      # Converts an underscored_string to UpperCamelCase.
       #
       # camelize will also convert '/' to '::' which is useful for
-      #   converting paths to namespaces.
+      # converting paths to namespaces.
       #
-      # s - The String to be camelized.
+      # @param s [String] the string to be camelized
       #
-      # Examples
-      #
+      # @example
       #   camelize("active_record")
       #   # => "ActiveRecord"
       #
@@ -78,25 +77,25 @@ module Wright #:nodoc:
       #   # => "ActiveRecord::Errors"
       #
       # As a rule of thumb you can think of camelize as the inverse of
-      # underscore, though there are cases where that does not hold:
+      # underscore, though there are cases where that does not hold.
       #
       #   camelize(underscore("SSLError"))
       #   # => "SslError"
       #
-      # Returns the camelized String.
+      # @return [String] the camelized string
       def self.camelize(s)
         s.to_s
           .gsub(/\/(.?)/) { "::#{Regexp.last_match[1].upcase}" }
           .gsub(/(?:^|_)(.)/) { Regexp.last_match[1].upcase }
       end
 
-      # Internal: Find a constant with the name specified in the
-      # argument string.
+      # Finds a constant with the name specified in the argument
+      # string.
       #
-      # camel_cased_word - The String name of the constant to find.
+      # @param camel_cased_word [String] the name of the constant to
+      #   find
       #
-      # Examples
-      #
+      # @example
       #   constantize("Module")
       #   # => Module
       #
@@ -105,8 +104,9 @@ module Wright #:nodoc:
       #
       # The name is assumed to be the one of a top-level constant, no
       # matter whether it starts with "::" or not. No lexical context
-      # is taken into account:
+      # is taken into account.
       #
+      # @example
       #   C = 'outside'
       #   module M
       #     C = 'inside'
@@ -114,11 +114,11 @@ module Wright #:nodoc:
       #     constantize("C") # => 'outside', same as ::C
       #   end
       #
-      # Returns the constant.
-      # Raises NameError if the constant name is not in CamelCase or
-      #   the constant is unknown.
+      # @return [Class] the constant
+      # @raise [NameError] if the constant name is not in CamelCase or
+      #   the constant is unknown
+      # @todo Replace this method with Module.const_get in Ruby 2.0.
       def self.constantize(camel_cased_word)
-        # TODO: Replace this method with Module.const_get in Ruby 2.0
         names = camel_cased_word.split('::')
         names.shift if names.empty? || names.first.empty?
 
@@ -130,13 +130,13 @@ module Wright #:nodoc:
         c
       end
 
-      # Internal: Find a constant with the name specified in the
-      # argument string.
+      # Finds a constant with the name specified in the argument
+      # string.
       #
-      # camel_cased_word - The String name of the constant to find.
+      # @param camel_cased_word [String] the name of the constant to
+      #   find
       #
-      # Examples
-      #
+      # @example
       #   constantize("Module")
       #   # => Module
       #
@@ -145,8 +145,9 @@ module Wright #:nodoc:
       #
       # The name is assumed to be the one of a top-level constant, no
       # matter whether it starts with "::" or not. No lexical context
-      # is taken into account:
+      # is taken into account.
       #
+      # @example
       #   C = 'outside'
       #   module M
       #     C = 'inside'
@@ -154,9 +155,7 @@ module Wright #:nodoc:
       #     constantize("C") # => 'outside', same as ::C
       #   end
       #
-      # nil is returned when the name is not in CamelCase or the
-      # constant (or part of it) is unknown.
-      #
+      # @example
       #   safe_constantize("blargle")
       #   # => nil
       #
@@ -166,8 +165,8 @@ module Wright #:nodoc:
       #   safe_constantize("UnknownModule::Foo::Bar")
       #   # => nil
       #
-      # Returns the constant or nil if the name is not in CamelCase or
-      #   the constant is unknown.
+      # @return [Class, NilClass] the constant or nil if the name is
+      #   not in CamelCase or the constant is unknown
       def self.safe_constantize(camel_cased_word)
         constantize(camel_cased_word)
       rescue NameError => e
@@ -179,17 +178,16 @@ module Wright #:nodoc:
         raise unless uninitialized_constant_exception
       end
 
-      # Internal: Construct a regular expression that will match a
-      # constant part by part.
+      # Constructs a regular expression that will match a constant
+      # part by part.
       #
-      # camel_cased_word - The CamelCased String constant name.
+      # @param camel_cased_word [String] the CamelCased constant name
       #
-      # Examples
-      #
+      # @example
       #   const_regexp("Foo::Bar::Baz")
       #   # => "Foo(::Bar(::Baz)?)?"
       #
-      # Returns the String to be used as a regular expression.
+      # @return [String] the string to be used as a regular expression
       def self.const_regexp(camel_cased_word)
         parts = camel_cased_word.split('::')
         last  = parts.pop
