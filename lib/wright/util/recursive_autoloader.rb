@@ -2,22 +2,20 @@ require 'wright/util'
 
 module Wright
   module Util
-    # Internal: Recursive autoloader, recursively adds autoloads for
-    # all files in a directory.
+    # Recursive autoloader, recursively adds autoloads for all files
+    # in a directory.
     module RecursiveAutoloader
-      # Internal: Adds autoloads for all files in a directory to a
-      # parent class.
+      # Adds autoloads for all files in a directory to a parent class.
       #
       # Registers all files in directory to be autoloaded the
       # first time ParentClass::CamelCased::FileName is accessed.
       #
-      # directory - The path of the directory containing the files to
-      #             be autoloaded.
+      # @param directory [String] the path of the directory containing
+      #   the files to be autoloaded
+      # @param parent_class [String] the parent class to add the
+      #   autoloads to
       #
-      # parent_class - The parent class to add the autoloads to.
-      #
-      # Examples
-      #
+      # @example
       #   require 'fileutils'
       #
       #   # set up a test directory
@@ -42,8 +40,8 @@ module Wright
       #   Root::Foo.autoload? 'BarBaz'
       #   # => nil
       #
-      # Returns nothing.
-      # Raises ArgumentError if the parent class cannot be resolved.
+      # @return [void]
+      # @raise [ArgumentError] if the parent class cannot be resolved
       def self.add_autoloads(directory, parent_class)
         unless class_exists?(parent_class)
           fail ArgumentError, "Can't resolve parent_class #{parent_class}"
