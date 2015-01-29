@@ -3,11 +3,11 @@ require 'fileutils'
 
 module Wright
   class Provider
-    # Public: Symlink provider. Used as a Provider for Resource::Symlink.
+    # Symlink provider. Used as a provider for {Resource::Symlink}.
     class Symlink < Wright::Provider
-      # Public: Create or update the Symlink.
+      # Creates or updates the symlink.
       #
-      # Returns nothing.
+      # @return [void]
       def create
         if exist?
           symlink = symlink_to_s(@resource.name, @resource.to)
@@ -20,9 +20,9 @@ module Wright
         @updated = true
       end
 
-      # Public: Remove the Symlink.
+      # Removes the symlink.
       #
-      # Returns nothing.
+      # @return [void]
       def remove
         if ::File.exist?(link_name) && !::File.symlink?(link_name)
           fail "'#{link_name}' is not a symlink"
@@ -38,11 +38,11 @@ module Wright
 
       private
 
-      # Internal: Checks if the specified link exists.
+      # Checks if the specified link exists.
       #
-      # Returns true if the link exists and points to the specified target
-      # and false otherwise.
-      def exist? #:doc:
+      # Returns true if the link exists and points to the specified
+      # target and false otherwise.
+      def exist?
         ::File.symlink?(link_name) &&
           ::File.readlink(link_name) == link_to
       end

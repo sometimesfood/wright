@@ -6,11 +6,11 @@ require 'wright/util/file_permissions'
 
 module Wright
   class Provider
-    # Public: Directory provider. Used as a Provider for Resource::Directory.
+    # Directory provider. Used as a provider for {Resource::Directory}.
     class Directory < Wright::Provider
-      # Public: Create or update the directory.
+      # Creates or updates the directory.
       #
-      # Returns nothing.
+      # @return [void]
       def create
         if ::File.directory?(dirname) && permissions.uptodate?
           Wright.log.debug "directory already created: '#{@resource.name}'"
@@ -22,9 +22,9 @@ module Wright
         @updated = true
       end
 
-      # Public: Remove the directory.
+      # Removes the directory.
       #
-      # Returns nothing.
+      # @return [void]
       def remove
         if ::File.exist?(dirname) && !::File.directory?(dirname)
           fail "'#{dirname}' exists but is not a directory"

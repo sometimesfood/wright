@@ -3,29 +3,28 @@ require 'wright/dsl'
 
 module Wright
   class Resource
-    # Public: Symlink resource, represents a symlink.
+    # Symlink resource, represents a symlink.
     #
-    # Examples
-    #
+    # @example
     #   file = Wright::Resource::File.new('/tmp/foo')
     #   file.content = 'bar'
     #   file.create
     class File < Wright::Resource
-      # Public: Get/Set the file's content.
+      # @return [String] the file's intended content
       attr_accessor :content
 
-      # Public: Get/Set the file's group.
+      # @return [String] the file's intended group.
       attr_accessor :group
 
-      # Public: Get/Set the file's mode.
+      # @return [String, Integer] the file's intended mode
       attr_accessor :mode
 
-      # Public: Get the file's owner.
+      # @return [String] the file's intended owner
       attr_reader :owner
 
-      # Public: Initialize a File.
+      # Initializes a File.
       #
-      # name - The file's name.
+      # @param name [String] the file's name
       def initialize(name)
         super
         @content = nil
@@ -35,7 +34,7 @@ module Wright
         @action = :create
       end
 
-      # Public: Set the file's owner.
+      # Sets the file's owner.
       def owner=(owner)
         target_owner, target_group =
           Wright::Util::User.owner_to_owner_group(owner)
@@ -43,18 +42,20 @@ module Wright
         @group = target_group unless target_group.nil?
       end
 
-      # Public: Create or update the File.
+      # Creates or updates the file.
       #
-      # Returns true if the file was updated and false otherwise.
+      # @return [Bool] true if the file was updated and false
+      #   otherwise
       def create
         might_update_resource do
           @provider.create
         end
       end
 
-      # Public: Remove the File.
+      # Removes the file.
       #
-      # Returns true if the file was updated and false otherwise.
+      # @return [Bool] true if the file was updated and false
+      #   otherwise
       def remove
         might_update_resource do
           @provider.remove

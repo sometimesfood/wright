@@ -1,38 +1,37 @@
 require 'wright/util/stolen_from_activesupport'
 
 module Wright
-  # Internal: Various utility functions.
+  # @api private
+  # Various utility functions.
   module Util
-    # Internal: Get the resource name corresponding to a class.
+    # Converts a class constant into its corresponding resource name.
     #
-    # klass - The class constant for which to get the resource name.
+    # @param klass [Class] the class constant
     #
-    # Examples
-    #
+    # @example
     #   Wright::Util.class_to_resource_name(Wright::Resource::Package)
     #   # => "package"
     #
     #   Wright::Util.class_to_resource_name(Foo::Bar::BazQux)
     #   # => "baz_qux"
     #
-    # Returns the String resource name of the given class.
+    # @return [String] the resource name of the given class
     def self.class_to_resource_name(klass)
       ActiveSupport.underscore(klass.name).split('/').last
     end
 
-    # Internal: Get the class name corresponding to a file path.
+    # Converts a file path into its corresponding class name.
     #
-    # filename - The filename for which to get the class name.
+    # @param filename [String] the filename
     #
-    # Examples
-    #
-    #   Wright::Util.filename_to_classname("foo/bar/baz.rb")
+    # @example
+    #   Wright::Util.filename_to_classname('foo/bar/baz.rb')
     #   # => "Foo::Bar::Baz"
     #
-    #   Wright::Util.filename_to_classname("foo/bar/")
+    #   Wright::Util.filename_to_classname('foo/bar/')
     #   # => "Foo::Bar"
     #
-    # Returns the String class name for the given filename.
+    # @return [String] the class name for the given filename
     def self.filename_to_classname(filename)
       ActiveSupport.camelize(filename.chomp('.rb').chomp('/'))
     end
@@ -45,18 +44,17 @@ module Wright
     end
     private_class_method :distro
 
-    # Internal: Get the system's OS family.
+    # Determines the system's OS family.
     #
-    # Examples
-    #
+    # @example
     #   Wright::Util.os_family
     #   # => "debian"
-    #
+    # @example
     #   Wright::Util.os_family
     #   # => "macosx"
     #
-    # Returns the String system OS family (base distribution for
-    # GNU/Linux systems) or 'other' for unknown operating systems.
+    # @return [String] the system's OS family (base distribution for
+    #   GNU/Linux systems) or 'other' for unknown operating systems
     def self.os_family
       system_arch = RbConfig::CONFIG['target_os']
       case system_arch

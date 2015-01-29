@@ -1,13 +1,12 @@
 require 'forwardable'
 
 module Wright
-  # Public: Configuration container, wraps a regular Ruby hash.
+  # Configuration container, wraps a regular Ruby hash.
   #
   # Useful for getting and setting configuration values, such as
-  # logging verbosity, colour output and provider configuration.
+  # logging verbosity, color output and provider configuration.
   #
-  # Examples
-  #
+  # @example
   #   Wright::Config[:foo] = { bar: :baz }
   #   Wright::Config[:foo][:bar]
   #   # => :baz
@@ -19,12 +18,11 @@ module Wright
     end
     private_class_method :new
 
-    # Public: Check if a (nested) configuration value is set.
+    # Checks if a (nested) configuration value is set.
     #
-    # path - The configuration item as an argument list.
+    # @param path [Array<Symbol>] the configuration key
     #
-    # Examples
-    #
+    # @example
     #   Wright::Config[:foo] = { bar: :baz }
     #   Wright::Config.nested_key?(:foo, :bar)
     #   # => true
@@ -32,7 +30,7 @@ module Wright
     #   Wright::Config.nested_key?(:this, :doesnt, :exist)
     #   # => false
     #
-    # Returns true if the configuration value is set and false
+    # @return [Bool] true if the configuration value is set and false
     #   otherwise.
     def self.nested_key?(*path)
       last_key = path.pop
@@ -43,12 +41,11 @@ module Wright
       last_hash.respond_to?(:key?) && last_hash.key?(last_key)
     end
 
-    # Public: Retrieve a (nested) configuration value.
+    # Retrieves a (nested) configuration value.
     #
-    # path - The configuration item as an argument list.
+    # @param path [Array<Symbol>] the configuration key
     #
-    # Examples
-    #
+    # @example
     #   Wright::Config[:foo] = { bar: :baz }
     #   Wright::Config.nested_value(:foo, :bar)
     #   # => :baz
@@ -56,7 +53,7 @@ module Wright
     #   Wright::Config.nested_value(:this, :doesnt, :exist)
     #   # => nil
     #
-    # Returns the configuration value or nil if the value is not set.
+    # @return the configuration value or nil if the value is not set
     def self.nested_value(*path)
       nested_key?(*path) ? path.reduce(@config_hash) { |a, e| a[e] } : nil
     end

@@ -4,11 +4,11 @@ require 'wright/logger'
 require 'wright/dry_run'
 
 module Wright
-  # Public: Resource base class.
+  # Resource base class.
   class Resource
-    # Public: Initialize a Resource.
+    # Initializes a Resource.
     #
-    # name - The resource's name.
+    # @param name [String] the name of the resource
     def initialize(name = nil)
       @name = name
       @resource_name = Util.class_to_resource_name(self.class).to_sym
@@ -18,16 +18,15 @@ module Wright
       @ignore_failure = false
     end
 
-    # Public: Get/Set the name Symbol of the method to be run by run_action.
+    # @return [Symbol] the name of the method to be run by {#run_action}
     attr_accessor :action
 
-    # Public: Get/Set the ignore_failure attribute.
+    # @return [Bool] the ignore_failure attribute
     attr_accessor :ignore_failure
 
-    # Public: Get/Set the resource's name attribute.
+    # @return [String] the resource's name attribute
     #
-    # Examples
-    #
+    # @example
     #   foo = Wright::Resource::Symlink.new('/tmp/fstab')
     #   foo.name
     #   # => "/tmp/fstab"
@@ -38,22 +37,21 @@ module Wright
     #   # => "/tmp/passwd"
     attr_accessor :name
 
-    # Public: Returns a compact resource name Symbol.
+    # @return [Symbol] a compact resource name
     #
-    # Examples
-    #
+    # @example
     #   foo = Wright::Resource::Symlink.new
     #   foo.resource_name
     #   # => :symlink
     attr_reader :resource_name
 
-    # Public: Set an update action for a resource.
+    # Sets an update action for a resource.
     #
-    # on_update - The block that is called if the resource is
-    #             updated. Has to respond to :call.
+    # @param on_update [Proc, #call] the block that is called when the
+    #   resource is updated.
     #
-    # Returns nothing.
-    # Raises ArgumentError if on_update is not callable
+    # @return [void]
+    # @raise [ArgumentError] if on_update is not callable
     def on_update=(on_update)
       if on_update.respond_to?(:call) || on_update.nil?
         @on_update = on_update
@@ -62,28 +60,29 @@ module Wright
       end
     end
 
-    # Public: Run the resource's current action.
+    # Runs the resource's current action.
     #
-    # Examples
-    #
+    # @example
     #   fstab = Wright::Resource::Symlink.new('/tmp/fstab')
     #   fstab.action = :remove
     #   fstab.run_action
+    #
+    # @return the return value of the current action
     def run_action
       send @action if @action
     end
 
     private
 
-    # Public: Mark a code block that might update a resource.
+    # @api public
+    # Marks a code block that might update a resource.
     #
     # Usually this method is called in the definition of a new
     # resource class in order to mark those methods that should be
     # able to trigger update actions. Runs the current update action
     # if the provider was updated by the block method.
     #
-    # Examples
-    #
+    # @example
     #   class BalloonAnimal < Wright::Provider
     #     def inflate
     #       puts "It's a giraffe!"
@@ -101,8 +100,9 @@ module Wright
     #   balloon = Balloon.new.inflate
     #   # => true
     #
-    # Returns true if the provider was updated and false otherwise.
-    def might_update_resource #:doc:
+    # @return [Bool] true if the provider was updated and false
+    #   otherwise
+    def might_update_resource
       begin
         yield
       rescue => e

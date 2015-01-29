@@ -3,38 +3,39 @@ require 'wright/dsl'
 
 module Wright
   class Resource
-    # Public: Symlink resource, represents a symlink.
+    # Symlink resource, represents a symlink.
     #
-    # Examples
-    #
+    # @example
     #   link = Wright::Resource::Symlink.new('/tmp/fstab')
     #   link.to = '/etc/fstab'
     #   link.create
     class Symlink < Wright::Resource
-      # Public: Initialize a Symlink.
+      # Initializes a Symlink.
       #
-      # name - The link's name.
+      # @param name [String] the symlink's name
       def initialize(name)
         super
         @to = nil
         @action = :create
       end
 
-      # Public: Get/Set the link's target.
+      # @return [String] the symlink's intended target
       attr_accessor :to
 
-      # Public: Create or update the Symlink.
+      # Creates or updates the symlink.
       #
-      # Returns true if the symlink was updated and false otherwise.
+      # @return [Bool] true if the symlink was updated and false
+      #   otherwise
       def create
         might_update_resource do
           @provider.create
         end
       end
 
-      # Public: Remove the Symlink.
+      # Removes the symlink.
       #
-      # Returns true if the symlink was updated and false otherwise.
+      # @return [Bool] true if the symlink was updated and false
+      #   otherwise
       def remove
         might_update_resource do
           @provider.remove

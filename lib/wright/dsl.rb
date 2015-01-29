@@ -1,12 +1,11 @@
 require 'wright/util'
 
 module Wright
-  # Public: Includable Wright script DSL.
+  # Includable Wright script DSL.
   #
   # Contains resource methods for all registered resources.
   #
-  # Examples
-  #
+  # @example
   #   # define a new resource at runtime
   #   class KitchenSink < Wright::Resource; end
   #
@@ -28,16 +27,17 @@ module Wright
   #   a_sink_to_remember.class
   #   # => KitchenSink
   module DSL
-    # Public: Register a class as a resource.
+    # Registers a class as a resource.
     #
     # Creates a resource method in the DSL module. Uses the
     # snake-cased class name as method name.
     #
-    # resource_class - The resource class. Usually a subclass of
-    #                  Wright::Resource. Will be initialized with the
-    #                  resource's name as an argument.
+    # Typically resource_class is a subclass of {Resource}. It is
+    # initialized with the resource's name as an argument.
     #
-    # Returns nothing.
+    # @param resource_class the resource class
+    #
+    # @return [void]
     def self.register_resource(resource_class)
       method_name = Util.class_to_resource_name(resource_class)
       this_module = self
@@ -46,15 +46,15 @@ module Wright
       end
     end
 
-    # Internal: Instantiate a resource_class object and perform its
-    # default action.
+    # @api private
+    # Instantiates a resource and performs its default action.
     #
     # Implicitly invoking a block from within another block does not
     # work: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
     #
-    # Yields the resource_class object.
+    # @yield [resource] the resource
     #
-    # Returns nothing.
+    # @return [void]
     def self.yield_resource(resource_class, name)
       r = resource_class.new(name)
       yield(r) if block_given?

@@ -5,7 +5,6 @@
 /coverage/
 /doc/
 /pkg/
-/html/
 /.config
 /.yardoc
 /Gemfile.lock
@@ -13,7 +12,6 @@
 InstalledFiles
 _yardoc
 lib/bundler/man
-rdoc
 spec/reports
 test/tmp
 test/version_tmp

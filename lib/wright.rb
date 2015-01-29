@@ -8,6 +8,7 @@ require 'wright/resource/file'
 require 'wright/resource/package'
 require 'wright/resource/symlink'
 
-# Public: TODO: Add some documentation
+# @todo add proper documentation
+# Lightweight configuration management.
 module Wright
 end

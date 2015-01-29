@@ -3,16 +3,15 @@ require 'wright/dsl'
 
 module Wright
   class Resource
-    # Public: Directory resource, represents a directory.
+    # Directory resource, represents a directory.
     #
-    # Examples
-    #
+    # @example
     #   dir = Wright::Resource::Directory.new('/tmp/foobar')
     #   dir.create
     class Directory < Wright::Resource
-      # Public: Initialize a Directory.
+      # Initializes a Directory.
       #
-      # name - The directory's name.
+      # @param name [String] the directory's name
       def initialize(name)
         super
         @mode = nil
@@ -21,13 +20,13 @@ module Wright
         @action = :create
       end
 
-      # Public: Get/Set the directory's mode.
+      # @return [String, Integer] the directory's mode
       attr_accessor :mode
 
-      # Public: Get the directory's owner.
+      # @return [String] the directory's owner
       attr_reader :owner
 
-      # Public: Set the directory's owner.
+      # Sets the directory's owner.
       def owner=(owner)
         target_owner, target_group =
           Wright::Util::User.owner_to_owner_group(owner)
@@ -35,26 +34,28 @@ module Wright
         @group = target_group unless target_group.nil?
       end
 
-      # Public: Get the directory's group.
+      # @return [String] the directory's group
       attr_reader :group
 
-      # Public: Set the directory's group
+      # Sets the directory's group.
       def group=(group)
         @group = Wright::Util::User.group_to_gid(group)
       end
 
-      # Public: Create or update the directory.
+      # Creates or updates the directory.
       #
-      # Returns true if the directory was updated and false otherwise.
+      # @return [Bool] true if the directory was updated and false
+      #   otherwise
       def create
         might_update_resource do
           @provider.create
         end
       end
 
-      # Public: Remove the directory.
+      # Removes the directory.
       #
-      # Returns true if the directory was updated and false otherwise.
+      # @return [Bool] true if the directory was updated and false
+      #   otherwise
       def remove
         might_update_resource do
           @provider.remove

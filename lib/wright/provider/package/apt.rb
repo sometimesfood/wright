@@ -7,12 +7,10 @@ require 'wright/provider/package'
 module Wright
   class Provider
     class Package
-      # Public: AptPackage provider. Used as a Provider for
-      # Resource::Package on Debian-based systems.
+      # Apt package provider. Used as a Provider for
+      # {Resource::Package} on Debian-based systems.
       class Apt < Wright::Provider::Package
-        # Public: Get the installed package version.
-        #
-        # Returns an array of installed package version Strings.
+        # @return [Array<String>] the installed package versions
         def installed_versions
           cmd = "dpkg-query -s #{@resource.name}"
           cmd_stdout, _cmd_stderr, cmd_status = Open3.capture3(env, cmd)
@@ -26,9 +24,9 @@ module Wright
           end
         end
 
-        # Public: Install the package.
+        # Installs the package.
         #
-        # Returns nothing.
+        # @return [void]
         def install
           if uptodate?(:install)
             Wright.log.debug "package already installed: '#{@resource.name}'"
@@ -39,9 +37,9 @@ module Wright
           @updated = true
         end
 
-        # Public: Remove the package.
+        # Removes the package.
         #
-        # Returns nothing.
+        # @return [void]
         def remove
           if uptodate?(:remove)
             Wright.log.debug "package already removed: '#{@resource.name}'"

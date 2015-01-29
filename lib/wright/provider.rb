@@ -2,26 +2,26 @@ require 'wright/config'
 require 'wright/util/recursive_autoloader'
 
 module Wright
-  # Public: Provider class.
+  # Provider class.
   class Provider
-    # Public: Wright standard provider directory.
+    # Wright standard provider directory
     PROVIDER_DIR = File.expand_path('provider', File.dirname(__FILE__))
 
     Wright::Util::RecursiveAutoloader.add_autoloads(PROVIDER_DIR, name)
 
-    # Public: Initialize a Provider.
+    # Initializes a Provider.
     #
-    # resource - The resource used by the provider, typically a
-    #            Wright::Resource.
+    # @param resource [Resource] the resource used by the provider
     def initialize(resource)
       @resource = resource
       @updated = false
     end
 
-    # Public: Checks if the provider was updated since the last call
-    # to updated?.
+    # Checks if the provider was updated since the last call to
+    # {#updated?}
     #
-    # Returns true if the provider was updated and false otherwise.
+    # @return [Bool] true if the provider was updated and false
+    #   otherwise
     def updated?
       updated = @updated
       @updated = false

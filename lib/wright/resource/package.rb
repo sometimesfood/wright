@@ -3,10 +3,9 @@ require 'wright/dsl'
 
 module Wright
   class Resource
-    # Public: Package resource, represents a package.
+    # Package resource, represents a package.
     #
-    # Examples
-    #
+    # @example
     #   vim = Wright::Resource::Package.new('vim')
     #   vim.installed_versions
     #   # => []
@@ -21,37 +20,37 @@ module Wright
     #   htop.installed_versions
     #   # => []
     class Package < Wright::Resource
-      # Public: Get/Set the package version to install/remove.
+      # @return [String] the package version to install or remove
       attr_accessor :version
 
-      # Public: Initialize a Package.
+      # Initializes a Package.
       #
-      # name - The package name.
+      # @param name [String] the package's name
       def initialize(name)
         super
         @version = nil
         @action = :install
       end
 
-      # Public: Get the installed version of a package.
-      #
-      # Returns an array of installed package version Strings.
+      # @return [Array<String>] the installed package versions
       def installed_versions
         @provider.installed_versions
       end
 
-      # Public: Install the Package.
+      # Installs the Package.
       #
-      # Returns true if the package was updated and false otherwise.
+      # @return [Bool] true if the package was updated and false
+      #   otherwise
       def install
         might_update_resource do
           @provider.install
         end
       end
 
-      # Public: Remove the Package.
+      # Removes the Package.
       #
-      # Returns true if the package was updated and false otherwise.
+      # @return [Bool] true if the package was updated and false
+      #   otherwise
       def remove
         might_update_resource do
           @provider.remove

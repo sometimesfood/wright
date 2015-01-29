@@ -2,19 +2,20 @@ require 'wright/provider'
 
 module Wright
   class Provider
-    # Public: Package provider. Used as a Provider base class for
-    # Resource::Package.
+    # Package provider. Used as a base class for Resource::Package
+    # providers.
     class Package < Wright::Provider
       private
 
-      # Public: Check if the package is up-to-date for a given
-      # action.
+      # @api public
+      # Checks if the package is up-to-date for a given action.
       #
-      # action - The action symbol. Currently supports :install and
-      #          :remove.
+      # @param action [Symbol] the action. Currently supports
+      #   +:install+ and +:remove+.
       #
-      # Returns true if the package is up-to-date and false otherwise.
-      # Raises ArgumentError if the action is invalid.
+      # @return [Bool] +true+ if the package is up-to-date and +false+
+      #   otherwise
+      # @raise [ArgumentError] if the action is invalid
       def uptodate?(action)
         case action
         when :install
