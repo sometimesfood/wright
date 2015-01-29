@@ -27,11 +27,11 @@
 #   OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #   SUCH DAMAGE.
 
-module Wright #:nodoc:
+module Wright
   module Util
-    # Internal: Various file methods.
+    # Various file methods.
     module File
-      USER_MAP = { #:nodoc:
+      USER_MAP = {
         'u' => 04700,
         'g' => 02070,
         'o' => 01007,
@@ -44,7 +44,7 @@ module Wright #:nodoc:
       end
       private_class_method :user_mask
 
-      MODE_MAP = { #:nodoc:
+      MODE_MAP = {
         'r' => 0444,
         'w' => 0222,
         'x' => 0111,
@@ -59,22 +59,20 @@ module Wright #:nodoc:
       end
       private_class_method :mode_mask
 
-      # Internal: Convert a symbolic mode string to an integer mode
-      # value.
+      # Converts a symbolic mode string to an integer mode value.
       #
-      # mode - The symbolic mode string.
-      # base_mode - The integer base mode.
-      # filetype - The filetype. Defaults to :file.
+      # @param mode [String] the symbolic mode string
+      # @param base_mode [Integer] the base mode
+      # @param filetype [Symbol] the filetype
       #
-      # Examples
-      #
+      # @example
       #   Wright::Util::File.symbolic_mode_to_i('u=rw,go=r', 0400).to_s(8)
       #   # => "644"
       #
       #   Wright::Util::File.symbolic_mode_to_i('u=rw,g+r', 0200).to_s(8)
       #   # => "640"
       #
-      # Returns the integer mode.
+      # @return [Integer] the integer mode
       def self.symbolic_mode_to_i(mode, base_mode, filetype = :file)
         is_directory = (filetype == :directory)
         unless symbolic_mode?(mode)
@@ -87,23 +85,22 @@ module Wright #:nodoc:
         mode_i
       end
 
-      # Internal: Convert a single symbolic mode clause to an integer
-      # mode value.
+      # Converts a single symbolic mode clause to an integer mode
+      # value.
       #
-      # mode_clause - The symbolic mode clause.
-      # base_mode_i - The integer base mode.
-      # is_directory - Denotes whether the mode_clause should be
-      #                treated as a symbolic directory mode clause.
+      # @param mode_clause [String] the symbolic mode clause
+      # @param base_mode_i [Integer] the integer base mode
+      # @param is_directory [Bool] denotes whether the mode_clause
+      #   should be treated as a symbolic directory mode clause
       #
-      # Examples
-      #
+      # @example
       #   Wright::Util::File.mode_clause_to_i('g+r', 0600, false).to_s(8)
       #   # => "640"
       #
       #   Wright::Util::File.mode_clause_to_i('+rw', 0600, false).to_s(8)
       #   # => "666"
       #
-      # Returns the mode clause as an integer.
+      # @return [Integer] the mode clause as an integer
       def self.mode_clause_to_i(mode_clause, base_mode_i, is_directory)
         mode_clause = "a#{mode_clause}" if mode_clause =~ /\A[+-=]/
         who, op, perm = mode_clause.split(/([+-=])/)
@@ -126,12 +123,11 @@ module Wright #:nodoc:
       end
       private_class_method :apply_user_mode_masks
 
-      # Internal: Convert a numeric mode string to an integer mode.
+      # Converts a numeric mode string to an integer mode.
       #
-      # mode - The numeric mode string.
+      # @param mode [String, #to_i] the numeric mode string
       #
-      # Examples
-      #
+      # @example
       #   Wright::Util::File.numeric_mode_to_i('0600').to_s(8)
       #   # => "600"
       #
@@ -144,8 +140,8 @@ module Wright #:nodoc:
       #   Wright::Util::File.numeric_mode_to_i('invalid_mode').to_s(8)
       #   # => nil
       #
-      # Returns the mode in integer form or nil if the mode could not
-      # be converted.
+      # @return [Integer] the mode in integer form or +nil+ if the
+      #   mode could not be converted
       def self.numeric_mode_to_i(mode)
         return mode.to_i unless mode.is_a?(String)
         mode =~ /\A[0-7]{3,4}\Z/ ? mode.to_i(8) : nil
@@ -159,29 +155,27 @@ module Wright #:nodoc:
       end
       private_class_method :symbolic_mode?
 
-      # Internal: Get a file's current mode.
+      # Returns a file's current mode.
       #
-      # path - The file's path.
+      # @param path [String] the file's path
       #
-      # Examples
-      #
+      # @example
       #   FileUtils.touch('foo')
       #   FileUtils.chmod(0644, 'foo')
       #   Wright::Util::File.file_mode('foo').to_s(8)
       #   # => "644"
       #
-      # Returns the file mode as an integer or nil if the file does
-      # not exist.
+      # @return [Integer] the file mode as an integer or +nil+ if the
+      #   file does not exist
       def self.file_mode(path)
         ::File.exist?(path) ? (::File.stat(path).mode & 07777) : nil
       end
 
-      # Internal: Get a file's owner.
+      # Returns a file's owner.
       #
-      # path - The file's path.
+      # @param path [String] the file's path
       #
-      # Examples
-      #
+      # @example
       #   FileUtils.touch('foo')
       #   FileUtils.chown(0, 0, 'foo')
       #   Wright::Util::File.file_owner('foo')
@@ -190,18 +184,17 @@ module Wright #:nodoc:
       #   Wright::Util::File.file_owner('nonexistent')
       #   # => nil
       #
-      # Returns the file owner's uid or nil if the file does not
-      # exist.
+      # @return [Integer] the file owner's uid or +nil+ if the file
+      #   does not exist
       def self.file_owner(path)
         ::File.exist?(path) ? ::File.stat(path).uid : nil
       end
 
-      # Internal: Get a file's owner.
+      # Returns a file's owner.
       #
-      # path - The file's path.
+      # @param path [String] the file's path
       #
-      # Examples
-      #
+      # @example
       #   FileUtils.touch('foo')
       #   FileUtils.chown(0, 0, 'foo')
       #   Wright::Util::File.file_group('foo')
@@ -210,19 +203,18 @@ module Wright #:nodoc:
       #   Wright::Util::File.file_group('nonexistent')
       #   # => nil
       #
-      # Returns the file owner's uid or nil if the file does not
-      # exist.
+      # @return [Integer] the file owner's uid or nil if the file does
+      #   not exist.
       def self.file_group(path)
         ::File.exist?(path) ? ::File.stat(path).gid : nil
       end
 
-      # Internal: Expand tilde symbols in file paths. Path elements
-      # other than the first one are left alone.
+      # Expands tilde symbols in file paths. Path elements other than
+      # the first one are left alone.
       #
-      # path - The file path.
+      # @param path [String] the file path
       #
-      # Examples
-      #
+      # @example
       #   Wright::Util::File.expand_tilde_path('~root/foo')
       #   # => "/root/foo"
       #
@@ -232,7 +224,7 @@ module Wright #:nodoc:
       #   Wright::Util::File.expand_tilde_path('../foo/bar')
       #   # => "../foo/bar"
       #
-      # Returns the expanded String path.
+      # @return [String] the expanded path
       def self.expand_tilde_path(path)
         return path unless path.start_with?('~')
 
@@ -240,13 +232,16 @@ module Wright #:nodoc:
         ::File.join(::File.expand_path(first), rest)
       end
 
-      # Internal: Creates a link named link_name to target.
+      # Creates symlinks without descending into directories.
       #
       # If the file denoted by link_name is a symlink to a directory,
-      # ln_sfn does not descend into it. Behaves similar to GNU ln(1) or
-      # OpenBSD ln(1) when using "ln -sfn to link_name".
+      # {ln_sfn} does not descend into it. Behaves similar to GNU
+      # ln(1) or OpenBSD ln(1) when using +ln -sfn target link_name+.
       #
-      # Returns nothing.
+      # @param target [String] the link target
+      # @param link_name [String] the link name
+      #
+      # @return [void]
       def self.ln_sfn(target, link_name)
         if ::File.symlink?(link_name) && ::File.directory?(link_name)
           FileUtils.rm(link_name)
