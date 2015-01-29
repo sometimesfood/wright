@@ -8,11 +8,11 @@ require 'tmpdir'
 
 module Wright
   class Provider
-    # Public: File provider. Used as a Provider for Resource::File.
+    # File provider. Used as a provider for {Resource::File}.
     class File < Wright::Provider
-      # Public: Create or update the File.
+      # Creates or updates the file.
       #
-      # Returns nothing.
+      # @return [void]
       def create
         fail Errno::EISDIR, filename if ::File.directory?(filename)
 
@@ -25,9 +25,9 @@ module Wright
         @updated = true
       end
 
-      # Public: Remove the File.
+      # Removes the file.
       #
-      # Returns nothing.
+      # @return [void]
       def remove
         fail Errno::EISDIR, filename if ::File.directory?(filename)
 
