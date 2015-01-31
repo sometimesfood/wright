@@ -1,0 +1,9 @@
+==> Downloading http://linukz.org/download/cd-discid-1.1.tar.gz
+==> Downloading https://trac.macports.org/export/70630/trunk/dports/audio/cd-discid/files/patch-cd-discid.c.diff
+==> Patching
+patching file cd-discid.c
+Hunk #1 succeeded at 94 with fuzz 2 (offset 8 lines).
+Hunk #2 succeeded at 212 (offset 11 lines).
+Hunk #3 succeeded at 232 (offset 11 lines).
+==> make prefix=/usr/local/Cellar/cd-discid/1.1 CC=clang CFLAGS= install
+🍺  /usr/local/Cellar/cd-discid/1.1: 6 files, 48K, built in 4 seconds

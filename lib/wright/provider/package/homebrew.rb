@@ -73,8 +73,9 @@ module Wright
           end
         end
 
-        # @todo warn if version specified (ignored by homebrew)
-        def brew(action, package, _version = nil)
+        def brew(action, package, version = nil)
+          ignore_version(version)
+
           brew_cmd = "brew #{action} #{package}"
 
           _, cmd_stderr, cmd_status = Wright::Util.bundler_clean_env do
@@ -88,6 +89,12 @@ module Wright
 
         def env
           {}
+        end
+
+        def ignore_version(version)
+          return unless version
+          package_info = "#{@resource.name} (#{version})"
+          Wright.log.warn "ignoring package version: '#{package_info}'"
         end
       end
     end
