@@ -42,7 +42,7 @@ module Wright
       COLOR_MAP = {
         none: "\e[0m",
         red: "\e[31m",
-        yellow: "\e[32m"
+        yellow: "\e[33m"
       }
       private_constant :COLOR_MAP
     end
