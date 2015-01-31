@@ -68,6 +68,7 @@ module Wright
       end
     end
 
+    # :nocov:
     def self.bundler_clean_env
       if defined?(Bundler)
         Bundler.with_clean_env { yield }
@@ -75,5 +76,6 @@ module Wright
         yield
       end
     end
+    # :nocov:
   end
 end

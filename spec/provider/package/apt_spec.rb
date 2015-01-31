@@ -2,21 +2,21 @@ require_relative '../../spec_helper'
 
 require 'wright/provider/package/apt'
 
-def dpkg_query(pkg_name)
-  "dpkg-query -s #{pkg_name}"
-end
-
-def apt_get(action, pkg_name, pkg_version = nil)
-  version = pkg_version.nil? ? '' : "=#{pkg_version}"
-  "apt-get #{action} -qy #{pkg_name}#{version}"
-end
-
-def package_provider(pkg_name, pkg_version = nil)
-  pkg_resource = OpenStruct.new(name: pkg_name, version: pkg_version)
-  Wright::Provider::Package::Apt.new(pkg_resource)
-end
-
 describe Wright::Provider::Package::Apt do
+  def dpkg_query(pkg_name)
+    "dpkg-query -s #{pkg_name}"
+  end
+
+  def apt_get(action, pkg_name, pkg_version = nil)
+    version = pkg_version.nil? ? '' : "=#{pkg_version}"
+    "apt-get #{action} -qy #{pkg_name}#{version}"
+  end
+
+  def package_provider(pkg_name, pkg_version = nil)
+    pkg_resource = OpenStruct.new(name: pkg_name, version: pkg_version)
+    Wright::Provider::Package::Apt.new(pkg_resource)
+  end
+
   before :each do
     apt_dir = File.join(File.dirname(__FILE__), 'apt')
     env = { 'DEBIAN_FRONTEND' => 'noninteractive' }
