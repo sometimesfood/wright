@@ -73,6 +73,18 @@ describe Wright::Provider::Package::Apt do
         pkg_provider.installed_versions.must_equal pkg_versions
       end
     end
+
+    it 'should return an empty array for unavailable packages' do
+      pkg_name = 'not-a-real-package'
+      pkg_versions = []
+      pkg_provider = package_provider(pkg_name)
+      dpkg_cmd = dpkg_query(pkg_name)
+
+      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.stub do
+        pkg_provider.installed_versions.must_equal pkg_versions
+      end
+    end
   end
 
   describe '#install' do
