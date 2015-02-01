@@ -66,11 +66,10 @@ Wright::DSL.register_resource(Wright::Resource::Package)
 
 Wright::Config[:resources][:package] ||= {}
 
-case Wright::Util.os_family
-when 'debian'
-  Wright::Config[:resources][:package][:provider] ||=
+Wright::Config[:resources][:package][:provider] ||=
+  case Wright::Util.os_family
+  when 'debian'
     'Wright::Provider::Package::Apt'
-when 'macosx'
-  Wright::Config[:resources][:package][:provider] ||=
+  when 'macosx'
     'Wright::Provider::Package::Homebrew'
-end
+  end
