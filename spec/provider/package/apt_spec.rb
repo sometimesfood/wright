@@ -50,7 +50,7 @@ describe Wright::Provider::Package::Apt do
       end
     end
 
-    it 'should return empty array for missing packages' do
+    it 'should return an empty array for missing packages' do
       pkg_name = 'vlc'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
@@ -62,7 +62,7 @@ describe Wright::Provider::Package::Apt do
       end
     end
 
-    it 'should return nil for removed packages' do
+    it 'should return an empty array for removed packages' do
       pkg_name = 'htop'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
@@ -143,7 +143,7 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should raise exceptions for unknown packages' do
-      pkg_name = 'unknown-package'
+      pkg_name = 'not-a-real-package'
       pkg_provider = package_provider(pkg_name)
       dpkg_cmd = dpkg_query(pkg_name)
       apt_cmd = apt_get(:install, pkg_name)

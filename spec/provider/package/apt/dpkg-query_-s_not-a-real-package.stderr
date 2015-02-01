@@ -1,3 +1,3 @@
-dpkg-query: package 'vlc' is not installed and no information is available
+dpkg-query: package 'not-a-real-package' is not installed and no information is available
 Use dpkg --info (= dpkg-deb --info) to examine archive files,
 and dpkg --contents (= dpkg-deb --contents) to list their contents.
