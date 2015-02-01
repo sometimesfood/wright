@@ -70,4 +70,7 @@ case Wright::Util.os_family
 when 'debian'
   Wright::Config[:resources][:package][:provider] ||=
     'Wright::Provider::Package::Apt'
+when 'macosx'
+  Wright::Config[:resources][:package][:provider] ||=
+    'Wright::Provider::Package::Homebrew'
 end

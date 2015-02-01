@@ -25,6 +25,7 @@ module Wright
 end
 
 def reset_logger(log_level = Wright::Logger::DEBUG)
+  Wright::Config[:log] = { colorize: false }
   Wright.log = Wright::Logger.new
   Wright.log.formatter = Wright::Logger::Formatter.new
   Wright.log.level = log_level

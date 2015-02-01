@@ -1,26 +1,22 @@
 require_relative '../../spec_helper'
 
-require 'wright/provider/package/apt'
+require 'wright/provider/package/homebrew'
 
 describe Wright::Provider::Package::Apt do
-  def dpkg_query(pkg_name)
-    "dpkg-query -s #{pkg_name}"
-  end
-
-  def apt_get(action, pkg_name, pkg_version = nil)
-    version = pkg_version.nil? ? '' : "=#{pkg_version}"
-    "apt-get #{action} -qy #{pkg_name}#{version}"
+  def brew(action, pkg_name)
+    action = 'info --json=v1' if action == :info
+    "brew #{action} #{pkg_name}"
   end
 
   def package_provider(pkg_name, pkg_version = nil)
     pkg_resource = OpenStruct.new(name: pkg_name, version: pkg_version)
-    Wright::Provider::Package::Apt.new(pkg_resource)
+    Wright::Provider::Package::Homebrew.new(pkg_resource)
   end
 
   before :each do
-    apt_dir = File.join(File.dirname(__FILE__), 'apt')
-    env = { 'DEBIAN_FRONTEND' => 'noninteractive' }
-    @fake_capture3 = FakeCapture3.new(apt_dir, env)
+    homebrew_dir = File.join(File.dirname(__FILE__), 'homebrew')
+    env = {}
+    @fake_capture3 = FakeCapture3.new(homebrew_dir, env)
     @install_message = ->(pkg) { "INFO: install package: '#{pkg}'\n" }
     @install_message_dry = lambda do |pkg|
       "INFO: (would) install package: '#{pkg}'\n"
@@ -35,40 +31,31 @@ describe Wright::Provider::Package::Apt do
     @remove_message_debug = lambda do |pkg|
       "DEBUG: package already removed: '#{pkg}'\n"
     end
+    @version_warning = lambda do |pkg, version|
+      "WARN: ignoring package version: '#{pkg} (#{version})'"
+    end
   end
 
   describe '#installed_versions' do
     it 'should return the installed package version via dpkg-query' do
-      pkg_name = 'abcde'
-      pkg_versions = ['2.5.3-1']
+      pkg_name = 'lame'
+      pkg_versions = ['3.99.5']
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_cmd = brew(:info, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(brew_cmd)
       @fake_capture3.stub do
         pkg_provider.installed_versions.must_equal pkg_versions
       end
     end
 
-    it 'should return an empty array for missing packages' do
-      pkg_name = 'vlc'
+    it 'should return an empty array for uninstalled packages' do
+      pkg_name = 'cd-discid'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_cmd = brew(:info, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.stub do
-        pkg_provider.installed_versions.must_equal pkg_versions
-      end
-    end
-
-    it 'should return an empty array for removed packages' do
-      pkg_name = 'htop'
-      pkg_versions = []
-      pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
-
-      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(brew_cmd)
       @fake_capture3.stub do
         pkg_provider.installed_versions.must_equal pkg_versions
       end
@@ -78,9 +65,9 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'not-a-real-package'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_cmd = brew(:info, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(brew_cmd)
       @fake_capture3.stub do
         pkg_provider.installed_versions.must_equal pkg_versions
       end
@@ -89,13 +76,13 @@ describe Wright::Provider::Package::Apt do
 
   describe '#install' do
     it 'should install packages that are not currently installed' do
-      pkg_name = 'htop'
+      pkg_name = 'cd-discid'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:install, pkg_name)
+      brew_info_cmd = brew(:info, pkg_name)
+      brew_install_cmd = brew(:install, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.expect(brew_info_cmd)
+      @fake_capture3.expect(brew_install_cmd)
       @fake_capture3.stub do
         lambda do
           reset_logger
@@ -106,11 +93,11 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should not try to install packages that are already installed' do
-      pkg_name = 'abcde'
+      pkg_name = 'lame'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_info_cmd = brew(:info, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(brew_info_cmd)
       @fake_capture3.stub do
         lambda do
           reset_logger
@@ -120,66 +107,54 @@ describe Wright::Provider::Package::Apt do
       end
     end
 
-    it 'should install package versions that are not currently installed' do
-      pkg_name = 'abcde'
-      pkg_version = '2.5.4-1'
+    it 'should output a warning when specifying a package version' do
+      pkg_name = 'cd-discid'
+      pkg_version = '1.1'
       pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:install, pkg_name, pkg_version)
+      brew_info_cmd = brew(:info, pkg_name)
+      brew_install_cmd = brew(:install, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.expect(apt_cmd)
+      install_message_with_warning =
+        @install_message.call(pkg_name) +
+        @version_warning.call(pkg_name, pkg_version) + "\n"
+
+      @fake_capture3.expect(brew_info_cmd)
+      @fake_capture3.expect(brew_install_cmd)
       @fake_capture3.stub do
         lambda do
           reset_logger
           pkg_provider.install
           pkg_provider.updated?.must_equal true
-        end.must_output @install_message.call(pkg_name)
+        end.must_output install_message_with_warning
       end
     end
 
-    it 'should not try to install package versions already installed' do
-      pkg_name = 'abcde'
-      pkg_version = '2.5.3-1'
-      pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
-
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.stub do
-        lambda do
-          reset_logger
-          pkg_provider.install
-          pkg_provider.updated?.must_equal false
-        end.must_output @install_message_debug.call(pkg_name)
-      end
-    end
-
-    it 'should raise exceptions for unknown packages' do
+    it 'should raise exceptions for unavailable packages' do
       pkg_name = 'not-a-real-package'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:install, pkg_name)
+      brew_info_cmd = brew(:info, pkg_name)
+      brew_install_cmd = brew(:install, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.expect(brew_info_cmd)
+      @fake_capture3.expect(brew_install_cmd)
       @fake_capture3.stub do
         e = -> { pkg_provider.install }.must_raise RuntimeError
         wright_error = "cannot install package '#{pkg_name}'"
-        apt_error = "E: Unable to locate package #{pkg_name}"
-        e.message.must_equal %(#{wright_error}: "#{apt_error}")
+        brew_error = "Error: No available formula for #{pkg_name} "
+        e.message.must_equal %(#{wright_error}: "#{brew_error}")
       end
     end
   end
 
   describe '#remove' do
     it 'should remove packages that are currently installed' do
-      pkg_name = 'abcde'
+      pkg_name = 'lame'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:remove, pkg_name)
+      brew_info_cmd = brew(:info, pkg_name)
+      brew_uninstall_cmd = brew(:uninstall, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.expect(brew_info_cmd)
+      @fake_capture3.expect(brew_uninstall_cmd)
       @fake_capture3.stub do
         lambda do
           reset_logger
@@ -190,11 +165,11 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should not try to remove packages that are already removed' do
-      pkg_name = 'htop'
+      pkg_name = 'cd-discid'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_info_cmd = brew(:info, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
+      @fake_capture3.expect(brew_info_cmd)
       @fake_capture3.stub do
         lambda do
           reset_logger
@@ -205,14 +180,15 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should remove package versions that are currently installed' do
-      pkg_name = 'abcde'
-      pkg_version = '2.5.3-1'
+      pkg_name = 'lame'
+      pkg_version = '3.99.5'
       pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
-      apt_cmd = apt_get(:remove, pkg_name)
+      brew_info_cmd = brew(:info, pkg_name)
+      brew_uninstall_cmd = brew(:uninstall, pkg_name)
 
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.expect(brew_info_cmd)
+      @fake_capture3.expect(brew_uninstall_cmd)
+
       @fake_capture3.stub do
         lambda do
           reset_logger
@@ -221,32 +197,16 @@ describe Wright::Provider::Package::Apt do
         end.must_output @remove_message.call(pkg_name)
       end
     end
-
-    it 'should not try to remove packages that are already removed' do
-      pkg_name = 'htop'
-      pkg_version = '2.5.4-1'
-      pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
-
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.stub do
-        lambda do
-          reset_logger
-          pkg_provider.remove
-          pkg_provider.updated?.must_equal false
-        end.must_output @remove_message_debug.call(pkg_name)
-      end
-    end
   end
 
   describe 'dry_run' do
     it 'should not actually install packages' do
-      pkg_name = 'htop'
+      pkg_name = 'cd-discid'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_cmd = brew(:info, pkg_name)
 
       Wright.dry_run do
-        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.expect(brew_cmd)
         @fake_capture3.stub do
           lambda do
             reset_logger
@@ -257,12 +217,12 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should not try to install packages that are already installed' do
-      pkg_name = 'abcde'
+      pkg_name = 'lame'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_cmd = brew(:info, pkg_name)
 
       Wright.dry_run do
-        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.expect(brew_cmd)
         @fake_capture3.stub do
           lambda do
             reset_logger
@@ -274,12 +234,12 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should not actually remove packages' do
-      pkg_name = 'abcde'
+      pkg_name = 'lame'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_cmd = brew(:info, pkg_name)
 
       Wright.dry_run do
-        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.expect(brew_cmd)
         @fake_capture3.stub do
           lambda do
             reset_logger
@@ -290,12 +250,12 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should not try to remove packages that are already removed' do
-      pkg_name = 'htop'
+      pkg_name = 'cd-discid'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      brew_cmd = brew(:info, pkg_name)
 
       Wright.dry_run do
-        @fake_capture3.expect(dpkg_cmd)
+        @fake_capture3.expect(brew_cmd)
         @fake_capture3.stub do
           lambda do
             reset_logger
