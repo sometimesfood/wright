@@ -49,10 +49,7 @@ module Wright
 
       def create_link
         symlink = symlink_to_s(@resource.name, @resource.to)
-        if Wright.dry_run?
-          Wright.log.info "(would) create symlink: #{symlink}"
-        else
-          Wright.log.info "create symlink: #{symlink}"
+        unless_dry_run("create symlink: #{symlink}") do
           Wright::Util::File.ln_sfn(link_to, link_name)
         end
       end
@@ -62,10 +59,7 @@ module Wright
       end
 
       def remove_symlink
-        if Wright.dry_run?
-          Wright.log.info "(would) remove symlink: '#{@resource.name}'"
-        else
-          Wright.log.info "remove symlink: '#{@resource.name}'"
+        unless_dry_run("remove symlink: '#{@resource.name}'") do
           FileUtils.rm(link_name)
         end
       end

@@ -55,20 +55,14 @@ module Wright
 
         def install_package
           package = @resource.name
-          if Wright.dry_run?
-            Wright.log.info "(would) install package: '#{package}'"
-          else
-            Wright.log.info "install package: '#{package}'"
+          unless_dry_run("install package: '#{package}'") do
             brew(:install, package, @resource.version)
           end
         end
 
         def remove_package
           package = @resource.name
-          if Wright.dry_run?
-            Wright.log.info "(would) remove package: '#{package}'"
-          else
-            Wright.log.info "remove package: '#{package}'"
+          unless_dry_run("remove package: '#{package}'") do
             brew(:uninstall, package)
           end
         end

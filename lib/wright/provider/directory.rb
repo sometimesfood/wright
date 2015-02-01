@@ -47,21 +47,14 @@ module Wright
 
       def create_directory
         dir_permissions = permissions
-
-        if Wright.dry_run?
-          Wright.log.info "(would) create directory: '#{@resource.name}'"
-        else
-          Wright.log.info "create directory: '#{@resource.name}'"
+        unless_dry_run("create directory: '#{@resource.name}'") do
           FileUtils.mkdir_p(dirname)
           dir_permissions.update
         end
       end
 
       def remove_directory
-        if Wright.dry_run?
-          Wright.log.info "(would) remove directory: '#{@resource.name}'"
-        else
-          Wright.log.info "remove directory: '#{@resource.name}'"
+        unless_dry_run("remove directory: '#{@resource.name}'") do
           FileUtils.rmdir(dirname)
         end
       end

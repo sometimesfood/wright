@@ -27,5 +27,21 @@ module Wright
       @updated = false
       updated
     end
+
+    private
+
+    # @api public
+    # Logs an info message and runs a code block unless dry run mode
+    # is active.
+    #
+    # @param message [String] the message that is passed to the logger
+    def unless_dry_run(message)
+      if Wright.dry_run?
+        Wright.log.info "(would) #{message}"
+      else
+        Wright.log.info message
+        yield
+      end
+    end
   end
 end

@@ -43,11 +43,7 @@ module Wright
 
       def create_file
         file_permissions = permissions
-
-        if Wright.dry_run?
-          Wright.log.info "(would) create file: '#{@resource.name}'"
-        else
-          Wright.log.info "create file: '#{@resource.name}'"
+        unless_dry_run("create file: '#{@resource.name}'") do
           write_content_to_file
           file_permissions.update
         end
@@ -68,10 +64,7 @@ module Wright
       end
 
       def remove_file
-        if Wright.dry_run?
-          Wright.log.info "(would) remove file: '#{@resource.name}'"
-        else
-          Wright.log.info "remove file: '#{@resource.name}'"
+        unless_dry_run("remove file: '#{@resource.name}'") do
           FileUtils.rm(filename)
         end
       end
