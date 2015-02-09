@@ -77,8 +77,8 @@ describe FilePermissions do
     end
 
     it 'should update file owners' do
-      user1 = Etc.getpwent
-      user2 = Etc.getpwent
+      user1 = Etc.getpwuid(0)
+      user2 = Etc.getpwuid(1)
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
         FileUtils.chown(user1.name, nil, @file_permissions.filename)

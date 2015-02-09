@@ -5,6 +5,8 @@ require 'wright/util/user'
 include Wright
 
 describe Util::User do
+  before(:each) { Etc.setpwent }
+
   describe 'user_to_uid' do
     it 'should leave integer uids alone' do
       Util::User.user_to_uid(42).must_equal 42

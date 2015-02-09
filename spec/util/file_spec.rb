@@ -8,6 +8,7 @@ describe Util::File do
   before(:each) do
     @file = 'somefile'
     @dir = 'somedir'
+    Etc.setpwent
   end
 
   after(:each) { FakeFS::FileSystem.clear }
