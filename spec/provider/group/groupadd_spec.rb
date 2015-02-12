@@ -142,6 +142,58 @@ describe Wright::Provider::Group::Groupadd do
         end
       end
     end
+
+    it 'should report errors by groupadd' do
+      gid = 'ERROR'
+      group_name = 'newgroup'
+      group_provider = group_provider(group_name, gid)
+      groupadd_cmd = groupadd(group_name, gid)
+
+      @fake_capture3.expect(groupadd_cmd)
+      @fake_capture3.stub do
+        FakeEtc do
+          e = -> { group_provider.create }.must_raise RuntimeError
+          wright_error = "cannot create group '#{group_name}'"
+          groupadd_error = "groupadd: invalid group ID '#{gid}'"
+          e.message.must_equal %(#{wright_error}: "#{groupadd_error}")
+        end
+      end
+    end
+
+    it 'should report errors by groupmod' do
+      gid = 'ERROR'
+      group_name = 'foobar'
+      group_provider = group_provider(group_name, gid)
+      groupmod_cmd = groupmod(group_name, gid)
+
+      @fake_capture3.expect(groupmod_cmd)
+      @fake_capture3.stub do
+        FakeEtc do
+          e = -> { group_provider.create }.must_raise RuntimeError
+          wright_error = "cannot create group '#{group_name}'"
+          groupmod_error = "groupmod: invalid group ID '#{gid}'"
+          e.message.must_equal %(#{wright_error}: "#{groupmod_error}")
+        end
+      end
+    end
+
+    it 'should report errors by gpasswd' do
+      user = 'not-a-user'
+      members = [user]
+      group_name = 'foobar'
+      group_provider = group_provider(group_name, nil, members)
+      gpasswd_cmd = gpasswd(group_name, members)
+
+      @fake_capture3.expect(gpasswd_cmd)
+      @fake_capture3.stub do
+        FakeEtc do
+          e = -> { group_provider.create }.must_raise RuntimeError
+          wright_error = "cannot create group '#{group_name}'"
+          gpasswd_error = "gpasswd: user '#{user}' does not exist"
+          e.message.must_equal %(#{wright_error}: "#{gpasswd_error}")
+        end
+      end
+    end
   end
 
   describe '#remove' do
