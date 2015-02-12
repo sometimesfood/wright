@@ -1,9 +1,9 @@
 require_relative '../../spec_helper'
 
-require 'wright/provider/group/groupadd'
+require 'wright/provider/group/gnu_passwd'
 require 'fakeetc'
 
-describe Wright::Provider::Group::Groupadd do
+describe Wright::Provider::Group::GnuPasswd do
   def groupadd(group_name, gid = nil)
     options = gid.nil? ? '' : "-g #{gid}"
     "groupadd #{options} #{group_name}"
@@ -25,13 +25,13 @@ describe Wright::Provider::Group::Groupadd do
     group_resource = OpenStruct.new(name: group_name,
                                     gid: gid,
                                     members: members)
-    Wright::Provider::Group::Groupadd.new(group_resource)
+    Wright::Provider::Group::GnuPasswd.new(group_resource)
   end
 
   before :each do
-    groupadd_dir = File.join(File.dirname(__FILE__), 'groupadd')
+    gnu_passwd_dir = File.join(File.dirname(__FILE__), 'gnu_passwd')
     env = {}
-    @fake_capture3 = FakeCapture3.new(groupadd_dir, env)
+    @fake_capture3 = FakeCapture3.new(gnu_passwd_dir, env)
     @create_message = ->(group) { "INFO: create group: '#{group}'\n" }
     @create_message_dry = lambda do |group|
       "INFO: (would) create group: '#{group}'\n"

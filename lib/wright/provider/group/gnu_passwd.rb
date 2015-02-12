@@ -9,7 +9,7 @@ module Wright
     class Group
       # GNU passwd group provider. Used as a provider for
       # {Resource::Group} on GNU systems.
-      class Groupadd < Wright::Provider::Group
+      class GnuPasswd < Wright::Provider::Group
         private
 
         def create_group
