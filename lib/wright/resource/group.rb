@@ -9,6 +9,7 @@ module Wright
     #   admins = Wright::Resource::Group.new('admins')
     #   admins.members = ['root']
     #   admins.create
+    # @todo Use GnuPasswd provider on all GNU-flavoured systems
     class Group < Wright::Resource
       # @return [Array<String>] the group's intended members
       attr_accessor :members
@@ -49,3 +50,11 @@ module Wright
 end
 
 Wright::DSL.register_resource(Wright::Resource::Group)
+
+Wright::Config[:resources][:group] ||= {}
+
+Wright::Config[:resources][:group][:provider] ||=
+  case Wright::Util.os_family
+  when 'debian'
+    'Wright::Provider::Group::GnuPasswd'
+  end
