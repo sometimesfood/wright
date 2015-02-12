@@ -228,6 +228,23 @@ describe Wright::Provider::Group::Groupadd do
         end
       end
     end
+
+    it 'should report errors by gpasswd' do
+      group_name = 'bazqux'
+      group_provider = group_provider(group_name)
+      groupdel_cmd = groupdel(group_name)
+
+      @fake_capture3.expect(groupdel_cmd)
+      @fake_capture3.stub do
+        FakeEtc do
+          e = -> { group_provider.remove }.must_raise RuntimeError
+          wright_error = "cannot remove group '#{group_name}'"
+          groupdel_error =
+            "groupdel: cannot remove the primary group of user 'quux'"
+          e.message.must_equal %(#{wright_error}: "#{groupdel_error}")
+        end
+      end
+    end
   end
 
   describe 'dry_run' do
