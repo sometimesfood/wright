@@ -61,8 +61,8 @@ module Wright
           _, cmd_stderr, cmd_status = Open3.capture3(env, groupmod_cmd)
           return if cmd_status.success?
 
-          groupmod_error = cmd_groupmod.chomp
-          fail %(cannot create group '#{group_name}': "{groupmod_error}")
+          groupmod_error = cmd_stderr.chomp
+          fail %(cannot create group '#{group_name}': "#{groupmod_error}")
         end
 
         def remove_group
