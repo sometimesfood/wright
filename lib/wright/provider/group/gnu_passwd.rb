@@ -12,19 +12,7 @@ module Wright
       class GnuPasswd < Wright::Provider::Group
         private
 
-        def create_group
-          group = @resource.name
-          unless_dry_run("create group: '#{group}'") do
-            if group_exists?
-              set_gid(group, @resource.gid) unless gid_uptodate?
-            else
-              groupadd(group, @resource.gid)
-            end
-            set_members(group, @resource.members) unless members_uptodate?
-          end
-        end
-
-        def groupadd(group_name, gid)
+        def add_group(group_name, gid)
           options = ''
           options += "-g #{gid}" if gid
           groupadd_cmd = "groupadd #{options} #{group_name}"

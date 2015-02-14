@@ -54,6 +54,18 @@ module Wright
         end
       end
 
+      def create_group
+        group = @resource.name
+        unless_dry_run("create group: '#{group}'") do
+          if group_exists?
+            set_gid(group, @resource.gid) unless gid_uptodate?
+          else
+            add_group(group, @resource.gid)
+          end
+          set_members(group, @resource.members) unless members_uptodate?
+        end
+      end
+
       def group_data
         Etc.getgrnam(@resource.name)
       rescue ArgumentError
