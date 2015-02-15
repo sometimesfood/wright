@@ -9,7 +9,6 @@ require 'wright/resource/package'
 require 'wright/resource/symlink'
 require 'wright/resource/group'
 
-# @todo add proper documentation
-# Lightweight configuration management.
+# Top-level namespace for wright.
 module Wright
 end
