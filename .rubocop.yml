@@ -1,2 +1,6 @@
 TrivialAccessors:
   AllowPredicates: true
+AllCops:
+  Exclude:
+    - '.bundle/**/*'
+    - 'vendor/**/*'
