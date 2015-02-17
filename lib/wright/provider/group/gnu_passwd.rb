@@ -23,7 +23,7 @@ module Wright
           fail %(cannot create group '#{group_name}': "#{groupadd_error}")
         end
 
-        def groupdel(group_name)
+        def delete_group(group_name)
           groupdel_cmd = "groupdel #{group_name}"
           _, cmd_stderr, cmd_status = Open3.capture3(env, groupdel_cmd)
           return if cmd_status.success?
@@ -56,7 +56,7 @@ module Wright
         def remove_group
           group = @resource.name
           unless_dry_run("remove group: '#{group}'") do
-            groupdel(group)
+            delete_group(group)
           end
         end
 
