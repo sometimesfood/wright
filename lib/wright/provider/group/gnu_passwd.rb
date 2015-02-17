@@ -53,13 +53,6 @@ module Wright
           fail %(cannot create group '#{group_name}': "#{groupmod_error}")
         end
 
-        def remove_group
-          group = @resource.name
-          unless_dry_run("remove group: '#{group}'") do
-            delete_group(group)
-          end
-        end
-
         def env
           {}
         end

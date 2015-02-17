@@ -66,6 +66,13 @@ module Wright
         end
       end
 
+      def remove_group
+        group = @resource.name
+        unless_dry_run("remove group: '#{group}'") do
+          delete_group(group)
+        end
+      end
+
       def group_data
         Etc.getgrnam(@resource.name)
       rescue ArgumentError
