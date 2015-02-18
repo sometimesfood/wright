@@ -22,8 +22,8 @@ Documentation
 There is not too much useful documentation that is targeted towards
 users at the moment.
 
-Run `bundle exec rake rdoc` to generate HTML docs for wright
-developers.
+Run `bundle exec yard` to generate
+[HTML docs for wright developers](http://rubydoc.info/gems/wright/).
 
 Hacking
 -------
