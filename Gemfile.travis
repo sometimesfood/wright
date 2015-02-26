@@ -1,0 +1,3 @@
+gemfile = File.join(File.dirname(__FILE__), 'Gemfile')
+instance_eval(File.read(gemfile))
+gem 'codeclimate-test-reporter', '~> 0.4.6'
