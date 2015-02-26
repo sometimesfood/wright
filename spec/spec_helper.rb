@@ -1,19 +1,12 @@
 require_relative 'spec_helpers/fake_capture3'
+require_relative 'spec_helpers/test_coverage'
 
 require 'ostruct'
 require 'fakefs/safe'
-require 'wright/logger'
 
-begin
-  require 'simplecov'
-  if ENV['COVERAGE']
-    SimpleCov.start do
-      add_filter '/spec/'
-      add_filter '/vendor/'
-      add_filter '/.bundle/'
-    end
-  end
-end
+measure_coverage if coverage?
+
+require 'wright/logger'
 
 module Wright
   # extend Wright::Config to pass on clear for tests
