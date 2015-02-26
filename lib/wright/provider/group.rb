@@ -90,6 +90,22 @@ module Wright
       def group_exists?
         !group_data.nil?
       end
+
+      def set_members
+        group = @resource.name
+        new_members = @resource.members - group_data.mem
+        unwanted_members = group_data.mem - @resource.members
+        new_members.each { |m| add_member(m, group) }
+        unwanted_members.each { |m| remove_member(m, group) }
+      end
+
+      def add_member(_member, _group)
+        fail NotImplementedError
+      end
+
+      def remove_member(_member, _group)
+        fail NotImplementedError
+      end
     end
   end
 end
