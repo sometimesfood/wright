@@ -1,10 +1,10 @@
 wright
 ======
 
-[![Gem Version](http://img.shields.io/gem/v/wright.svg?style=flat-square)][gem]
-[![Build Status](http://img.shields.io/travis/sometimesfood/wright.svg?style=flat-square)][travis]
-[![Code Climate](http://img.shields.io/codeclimate/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
-[![Test Coverage](http://img.shields.io/codeclimate/coverage/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
+[![Gem Version](https://img.shields.io/gem/v/wright.svg?style=flat-square)][gem]
+[![Build Status](https://img.shields.io/travis/sometimesfood/wright.svg?style=flat-square)][travis]
+[![Code Climate](https://img.shields.io/codeclimate/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
+[![Test Coverage](https://img.shields.io/codeclimate/coverage/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
 
 [gem]: https://rubygems.org/gems/wright
 [travis]: https://travis-ci.org/sometimesfood/wright
