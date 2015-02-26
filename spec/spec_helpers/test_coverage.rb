@@ -13,7 +13,7 @@ end
 def measure_coverage
   require 'simplecov'
   formatters = []
-  formatters << SimpleCov::Formatter::HTMLFormatter if coverage?
+  formatters << SimpleCov::Formatter::HTMLFormatter if simplecov?
 
   if codeclimate?
     require 'codeclimate-test-reporter'
