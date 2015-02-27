@@ -1,4 +1,5 @@
 require 'wright/provider'
+require 'wright/util/file'
 require 'fileutils'
 
 module Wright
