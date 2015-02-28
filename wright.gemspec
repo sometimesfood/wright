@@ -12,8 +12,9 @@ EOS
 
   gem.files         = Dir['Rakefile',
                           'README.md',
+                          'CONTRIBUTING.md',
                           'LICENSE',
-                          'NEWS',
+                          'NEWS.md',
                           '{bin,lib,man,spec}/**/*'] \
                       & `git ls-files -z`.split("\0")
   gem.executables   = gem.files.grep(/^bin\//).map { |f| File.basename(f) }
