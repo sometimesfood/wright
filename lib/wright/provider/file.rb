@@ -1,10 +1,10 @@
-require 'wright/provider'
-require 'wright/util/file_permissions'
-require 'wright/util/user'
 require 'fileutils'
 require 'digest'
 require 'tempfile'
 require 'tmpdir'
+require 'wright/provider'
+require 'wright/util/file_permissions'
+require 'wright/util/user'
 
 module Wright
   class Provider

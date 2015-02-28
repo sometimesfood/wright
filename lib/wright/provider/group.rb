@@ -1,5 +1,5 @@
-require 'wright/provider'
 require 'etc'
+require 'wright/provider'
 
 module Wright
   class Provider
