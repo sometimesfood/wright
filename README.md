@@ -77,7 +77,15 @@ dependencies via bundler:
 
 All tests should pass.
 
+Contributing
+------------
+
+Contributions to wright are greatly appreciated. If you would like to
+contribute to wright, please have a look at the
+[contribution guidelines](CONTRIBUTING.md).
+
 Copyright
 ---------
 
-Copyright (c) 2012-2015 Sebastian Boehm. See LICENSE for details.
+Copyright (c) 2012-2015 Sebastian Boehm. See [LICENSE](LICENSE) for
+details.
