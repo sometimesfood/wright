@@ -46,32 +46,36 @@ To start a wright IRB session, simply run:
 
 In order to create some resources using the wright DSL:
 
-    extend Wright::DSL
-    
-    foo_dir = directory '/tmp/foo'
-    fstab = symlink '/tmp/foo/fstab' do |s|
-      s.to = '/etc/fstab'
-    end
-    
-    puts File.directory? '/tmp/foo'
-    puts File.symlink? '/tmp/foo/fstab'
-    
-    fstab.remove
-    foo_dir.remove
+```ruby
+extend Wright::DSL
+
+foo_dir = directory '/tmp/foo'
+fstab = symlink '/tmp/foo/fstab' do |s|
+  s.to = '/etc/fstab'
+end
+
+puts File.directory? '/tmp/foo'
+puts File.symlink? '/tmp/foo/fstab'
+
+fstab.remove
+foo_dir.remove
+```
 
 If you don't want to use the DSL:
 
-    foo_dir = Wright::Resource::Directory.new('/tmp/foo')
-    foo_dir.create
-    fstab = Wright::Resource::Symlink.new('/tmp/foo/fstab')
-    fstab.to = '/etc/fstab'
-    fstab.create
-   
-    puts File.directory? '/tmp/foo'
-    puts File.symlink? '/tmp/foo/fstab'
-    
-    fstab.remove
-    foo_dir.remove
+```ruby
+foo_dir = Wright::Resource::Directory.new('/tmp/foo')
+foo_dir.create
+fstab = Wright::Resource::Symlink.new('/tmp/foo/fstab')
+fstab.to = '/etc/fstab'
+fstab.create
+
+puts File.directory? '/tmp/foo'
+puts File.symlink? '/tmp/foo/fstab'
+
+fstab.remove
+foo_dir.remove
+```
 
 Copyright
 ---------
