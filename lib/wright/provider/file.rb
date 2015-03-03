@@ -80,7 +80,7 @@ module Wright
       def content_uptodate?
         return false unless ::File.exist?(filename)
         content = @resource.content || ''
-        target_checksum = checksum(content)
+        target_checksum = checksum(content.to_s)
         current_checksum = checksum(::File.read(filename))
         current_checksum == target_checksum
       end
