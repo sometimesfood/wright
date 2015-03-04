@@ -22,7 +22,6 @@ module Wright
       # @param name [String] the group's name
       def initialize(name)
         super
-        @members = []
         @action = :create
       end
 
