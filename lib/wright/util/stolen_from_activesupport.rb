@@ -168,6 +168,8 @@ module Wright
       # @return [Class, NilClass] the constant or nil if the name is
       #   not in CamelCase or the constant is unknown
       def self.safe_constantize(camel_cased_word)
+        return nil if camel_cased_word.nil?
+
         constantize(camel_cased_word)
       rescue NameError => e
         error_re = /(uninitialized constant|wrong constant name)/

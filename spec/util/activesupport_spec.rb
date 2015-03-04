@@ -20,5 +20,6 @@ describe Util::ActiveSupport do
     Util::ActiveSupport.constantize('Wright::Util').must_equal Wright::Util
     -> { Util::ActiveSupport.constantize(nonexistent) }.must_raise(NameError)
     Util::ActiveSupport.safe_constantize(nonexistent).must_be_nil
+    Util::ActiveSupport.safe_constantize(nil).must_be_nil
   end
 end
