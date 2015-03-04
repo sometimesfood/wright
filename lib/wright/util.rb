@@ -38,10 +38,14 @@ module Wright
     end
 
     def self.distro
-      os_release = ::File.read('/etc/os-release')
+      default = 'linux'
+      release_file = '/etc/os-release'
+      return default unless ::File.exist?(release_file)
+
+      os_release = ::File.read(release_file)
       /^ID_LIKE=(?<id_like>.*)$/ =~ os_release
       /^ID=(?<id>.*)$/ =~ os_release
-      id_like || id || 'linux'
+      id_like || id || default
     end
     private_class_method :distro
 
