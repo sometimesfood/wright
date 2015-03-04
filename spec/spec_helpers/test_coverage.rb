@@ -20,10 +20,7 @@ def measure_coverage
     formatters << CodeClimate::TestReporter::Formatter
   end
 
+  ignored_directories = ['/spec/', '/vendor/', '/.bundle/']
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[*formatters]
-  SimpleCov.start do
-    add_filter '/spec/'
-    add_filter '/vendor/'
-    add_filter '/.bundle/'
-  end
+  SimpleCov.start { ignored_directories.each { |dir| add_filter(dir) } }
 end
