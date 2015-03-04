@@ -81,10 +81,6 @@ module Wright
           fail %(cannot #{action} package '#{package}': "#{brew_error}")
         end
 
-        def env
-          {}
-        end
-
         def ignore_version(version)
           return unless version
           package_info = "#{@resource.name} (#{version})"

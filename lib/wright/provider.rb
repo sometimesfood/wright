@@ -43,5 +43,9 @@ module Wright
         yield
       end
     end
+
+    def env
+      {}
+    end
   end
 end

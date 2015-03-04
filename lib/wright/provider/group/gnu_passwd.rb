@@ -52,10 +52,6 @@ module Wright
           groupmod_error = cmd_stderr.chomp
           fail %(cannot create group '#{group_name}': "#{groupmod_error}")
         end
-
-        def env
-          {}
-        end
       end
     end
   end
