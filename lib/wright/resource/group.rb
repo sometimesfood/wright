@@ -56,4 +56,6 @@ Wright::Config[:resources][:group][:provider] ||=
   case Wright::Util.os_family
   when 'debian'
     'Wright::Provider::Group::GnuPasswd'
+  when 'macosx'
+    'Wright::Provider::Group::DarwinDirectoryService'
   end

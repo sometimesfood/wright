@@ -1,7 +1,6 @@
 require 'open3'
 
 require 'wright/dry_run'
-require 'wright/provider'
 require 'wright/provider/group'
 
 module Wright
