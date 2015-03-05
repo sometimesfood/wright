@@ -14,42 +14,26 @@ module Wright
         def add_group(group_name, gid)
           options = ''
           options += "-g #{gid}" if gid
-          groupadd_cmd = "groupadd #{options} #{group_name}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, groupadd_cmd)
-          return if cmd_status.success?
-
-          groupadd_error = cmd_stderr.chomp
-          fail %(cannot create group '#{group_name}': "#{groupadd_error}")
+          cmd = "groupadd #{options} #{group_name}"
+          exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
 
         def delete_group(group_name)
-          groupdel_cmd = "groupdel #{group_name}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, groupdel_cmd)
-          return if cmd_status.success?
-
-          groupdel_error = cmd_stderr.chomp
-          fail %(cannot remove group '#{group_name}': "#{groupdel_error}")
+          cmd = "groupdel #{group_name}"
+          exec_or_fail(cmd, "cannot remove group '#{group_name}'")
         end
 
         def set_members(group_name, members)
           return if members.nil?
           options = "-M '#{members.join(',')}'"
-          gpasswd_cmd = "gpasswd #{options} #{group_name}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, gpasswd_cmd)
-          return if cmd_status.success?
-
-          gpasswd_error = cmd_stderr.chomp
-          fail %(cannot create group '#{group_name}': "#{gpasswd_error}")
+          cmd = "gpasswd #{options} #{group_name}"
+          exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
 
         def set_gid(group_name, gid)
           return if gid.nil?
-          groupmod_cmd = "groupmod -g #{gid} #{group_name}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, groupmod_cmd)
-          return if cmd_status.success?
-
-          groupmod_error = cmd_stderr.chomp
-          fail %(cannot create group '#{group_name}': "#{groupmod_error}")
+          cmd = "groupmod -g #{gid} #{group_name}"
+          exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
       end
     end

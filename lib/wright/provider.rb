@@ -44,6 +44,22 @@ module Wright
       end
     end
 
+    # @api public
+    # Runs a command or fails with an error message.
+    #
+    # @param command [String] the command to run
+    # @param error_message [String] the error message to display in
+    #   case of an error
+    # @raise [RuntimeError] if the command did not exit successfully
+    # @return [void]
+    def exec_or_fail(command, error_message)
+      _, cmd_stderr, cmd_status = Open3.capture3(env, command)
+      return if cmd_status.success?
+
+      error = cmd_stderr.chomp
+      fail %(#{error_message}: "#{error}")
+    end
+
     def env
       {}
     end

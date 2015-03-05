@@ -15,42 +15,25 @@ module Wright
           options = ''
           options += "-i #{gid}" if gid
           cmd = "dseditgroup -o create #{options} #{group_name}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, cmd)
-          return if cmd_status.success?
-
-          error = cmd_stderr.chomp
-          fail %(cannot create group '#{group_name}': "#{error}")
+          exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
 
         def delete_group(group_name)
           cmd = "dseditgroup -o delete #{group_name}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, cmd)
-          return if cmd_status.success?
-
-          error = cmd_stderr.chomp
-          fail %(cannot remove group '#{group_name}': "#{error}")
+          exec_or_fail(cmd, "cannot remove group '#{group_name}'")
         end
 
         def set_members(group_name, members)
           return if members.nil?
           options = "GroupMembership '#{members.join(' ')}'"
           cmd = "dscl . create /Groups/#{group_name} #{options}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, cmd)
-          return if cmd_status.success?
-
-          error = cmd_stderr.chomp
-          fail %(cannot create group '#{group_name}': "#{error}")
+          exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
 
         def set_gid(group_name, gid)
           return if gid.nil?
-
           cmd = "dseditgroup -o edit -i #{gid} #{group_name}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, cmd)
-          return if cmd_status.success?
-
-          error = cmd_stderr.chomp
-          fail %(cannot create group '#{group_name}': "#{error}")
+          exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
 
         # Overrides Provider::Group#group_data to work around caching

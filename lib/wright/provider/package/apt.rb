@@ -1,7 +1,6 @@
 require 'open3'
 
 require 'wright/dry_run'
-require 'wright/provider'
 require 'wright/provider/package'
 
 module Wright
@@ -68,12 +67,8 @@ module Wright
 
         def apt_get(action, package, version = nil)
           package_version = version.nil? ? '' : "=#{version}"
-          apt_cmd = "apt-get #{action} -qy #{package}#{package_version}"
-          _, cmd_stderr, cmd_status = Open3.capture3(env, apt_cmd)
-          return if cmd_status.success?
-
-          apt_error = cmd_stderr.chomp
-          fail %(cannot #{action} package '#{package}': "#{apt_error}")
+          cmd = "apt-get #{action} -qy #{package}#{package_version}"
+          exec_or_fail(cmd, "cannot #{action} package '#{package}'")
         end
 
         def env
