@@ -24,14 +24,12 @@ module Wright
         end
 
         def set_members(group_name, members)
-          return if members.nil?
           options = "GroupMembership '#{members.join(' ')}'"
           cmd = "dscl . create /Groups/#{group_name} #{options}"
           exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
 
         def set_gid(group_name, gid)
-          return if gid.nil?
           cmd = "dseditgroup -o edit -i #{gid} #{group_name}"
           exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
