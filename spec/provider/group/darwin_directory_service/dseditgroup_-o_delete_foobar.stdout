@@ -1,0 +1,10 @@
+dsAttrTypeStandard:GeneratedUID -
+		56CE5EAF-4311-4C01-A45E-7FBB28C607CC
+dsAttrTypeStandard:PrimaryGroupID -
+		42
+dsAttrTypeStandard:RecordName -
+		foobar
+dsAttrTypeStandard:RecordType -
+		dsRecTypeStandard:Groups
+dsAttrTypeStandard:AppleMetaNodeLocation -
+		/Local/Default
