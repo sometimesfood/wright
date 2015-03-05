@@ -15,7 +15,7 @@ module Wright
         def installed_versions
           cmd = "brew info --json=v1 #{@resource.name}"
           cmd_stdout, _, cmd_status = Wright::Util.bundler_clean_env do
-            Open3.capture3(env, cmd)
+            Open3.capture3(env, cmd.shellescape)
           end
 
           if cmd_status.success?
@@ -73,7 +73,7 @@ module Wright
           brew_cmd = "brew #{action} #{package}"
 
           _, cmd_stderr, cmd_status = Wright::Util.bundler_clean_env do
-            Open3.capture3(env, brew_cmd)
+            Open3.capture3(env, brew_cmd.shellescape)
           end
           return if cmd_status.success?
 
