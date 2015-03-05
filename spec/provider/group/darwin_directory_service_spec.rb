@@ -153,8 +153,6 @@ describe Wright::Provider::Group::DarwinDirectoryService do
           e = -> { group_provider.create }.must_raise RuntimeError
           wright_error = "cannot create group '#{group_name}'"
           dseditgroup_error = 'GID contains non-numeric characters'
-          # FIXME: should also get errors from stdout!!!!
-          dseditgroup_error = ''
           e.message.must_equal %(#{wright_error}: "#{dseditgroup_error}")
         end
       end
@@ -172,8 +170,6 @@ describe Wright::Provider::Group::DarwinDirectoryService do
           e = -> { group_provider.create }.must_raise RuntimeError
           wright_error = "cannot create group '#{group_name}'"
           dseditgroup_error = 'GID contains non-numeric characters'
-          # FIXME: should also get errors from stdout!!!!
-          dseditgroup_error = ''
           e.message.must_equal %(#{wright_error}: "#{dseditgroup_error}")
         end
       end

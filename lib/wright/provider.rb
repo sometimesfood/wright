@@ -55,10 +55,11 @@ module Wright
     # @raise [RuntimeError] if the command did not exit successfully
     # @return [void]
     def exec_or_fail(command, error_message)
-      _, cmd_stderr, cmd_status = Open3.capture3(env, command.shellescape)
-      return if cmd_status.success?
+      stdout, stderr, status = Open3.capture3(env, command.shellescape)
+      return if status.success?
 
-      error = cmd_stderr.chomp
+      error = stderr.chomp
+      error = stdout.chomp if error.empty?
       fail %(#{error_message}: "#{error}")
     end
 
