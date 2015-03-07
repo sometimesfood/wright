@@ -8,6 +8,7 @@ require 'wright/resource/file'
 require 'wright/resource/package'
 require 'wright/resource/symlink'
 require 'wright/resource/group'
+require 'wright/resource/user'
 
 # Top-level namespace for wright.
 module Wright
