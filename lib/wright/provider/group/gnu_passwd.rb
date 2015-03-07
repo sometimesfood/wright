@@ -11,10 +11,11 @@ module Wright
       class GnuPasswd < Wright::Provider::Group
         private
 
-        def add_group(group_name, gid)
-          options = ''
-          options += "-g #{gid}" if gid
-          cmd = "groupadd #{options} #{group_name}"
+        def add_group(group_name, gid, system)
+          options = []
+          options << '--system' if system
+          options << "-g #{gid}" if gid
+          cmd = "groupadd #{options.join(' ')} #{group_name}"
           exec_or_fail(cmd, "cannot create group '#{group_name}'")
         end
 

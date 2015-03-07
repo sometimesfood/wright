@@ -17,12 +17,17 @@ module Wright
       # @return [Integer] the group's intended group id
       attr_accessor :gid
 
+      # @return [Bool] true if the group should be a system
+      #   group. Ignored if {#gid} is set.
+      attr_accessor :system
+
       # Initializes a Group.
       #
       # @param name [String] the group's name
       def initialize(name)
         super
         @action = :create
+        @system = false
       end
 
       # Creates or updates the group.

@@ -4,8 +4,9 @@ require 'wright/provider/group/darwin_directory_service'
 require 'fakeetc'
 
 describe Wright::Provider::Group::DarwinDirectoryService do
-  def dseditgroup(command, group_name, gid = nil)
+  def dseditgroup(command, group_name, gid = nil, system = false)
     if command != :delete
+      gid ||= 499 if system
       options = gid.nil? ? '' : "-i #{gid}"
       "dseditgroup -o #{command} #{options} #{group_name}"
     else
@@ -18,10 +19,11 @@ describe Wright::Provider::Group::DarwinDirectoryService do
     "dscl . create /Groups/#{group_name} #{options}"
   end
 
-  def group_provider(group_name, gid = nil, members = nil)
+  def group_provider(group_name, gid = nil, members = nil, system = false)
     group_resource = OpenStruct.new(name: group_name,
                                     gid: gid,
-                                    members: members)
+                                    members: members,
+                                    system: system)
     Wright::Provider::Group::DarwinDirectoryService.new(group_resource)
   end
 
@@ -55,6 +57,26 @@ describe Wright::Provider::Group::DarwinDirectoryService do
       group_name = 'newgroup'
       group_provider = group_provider(group_name, gid)
       dseditgroup_cmd = dseditgroup(:create, group_name, gid)
+
+      @fake_capture3.expect(dseditgroup_cmd)
+      @fake_capture3.stub do
+        FakeEtc do
+          lambda do
+            reset_logger
+            group_provider.create
+            group_provider.updated?.must_equal true
+          end.must_output @create_message.call(group_name)
+        end
+      end
+    end
+
+    it 'should create new system groups' do
+      group_name = 'newgroup'
+      gid = nil
+      members = nil
+      system = true
+      group_provider = group_provider(group_name, gid, members, system)
+      dseditgroup_cmd = dseditgroup(:create, group_name, gid, system)
 
       @fake_capture3.expect(dseditgroup_cmd)
       @fake_capture3.stub do

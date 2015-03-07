@@ -60,7 +60,7 @@ module Wright
           if group_exists?
             set_gid(group, @resource.gid) unless gid_uptodate?
           else
-            add_group(group, @resource.gid)
+            add_group(group, @resource.gid, @resource.system)
           end
           set_members(group, @resource.members) unless members_uptodate?
         end

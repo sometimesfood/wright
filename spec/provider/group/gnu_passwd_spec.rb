@@ -4,9 +4,11 @@ require 'wright/provider/group/gnu_passwd'
 require 'fakeetc'
 
 describe Wright::Provider::Group::GnuPasswd do
-  def groupadd(group_name, gid = nil)
-    options = gid.nil? ? '' : "-g #{gid}"
-    "groupadd #{options} #{group_name}"
+  def groupadd(group_name, gid = nil, system = false)
+    options = []
+    options << '--system' if system
+    options << "-g #{gid}" if gid
+    "groupadd #{options.join(' ')} #{group_name}"
   end
 
   def gpasswd(group_name, members)
@@ -21,10 +23,11 @@ describe Wright::Provider::Group::GnuPasswd do
     "groupdel #{group_name}"
   end
 
-  def group_provider(group_name, gid = nil, members = nil)
+  def group_provider(group_name, gid = nil, members = nil, system = false)
     group_resource = OpenStruct.new(name: group_name,
                                     gid: gid,
-                                    members: members)
+                                    members: members,
+                                    system: system)
     Wright::Provider::Group::GnuPasswd.new(group_resource)
   end
 
@@ -57,6 +60,26 @@ describe Wright::Provider::Group::GnuPasswd do
       group_name = 'newgroup'
       group_provider = group_provider(group_name, gid)
       groupadd_cmd = groupadd(group_name, gid)
+
+      @fake_capture3.expect(groupadd_cmd)
+      @fake_capture3.stub do
+        FakeEtc do
+          lambda do
+            reset_logger
+            group_provider.create
+            group_provider.updated?.must_equal true
+          end.must_output @create_message.call(group_name)
+        end
+      end
+    end
+
+    it 'should create new system groups' do
+      group_name = 'newgroup'
+      gid = nil
+      members = nil
+      system = true
+      group_provider = group_provider(group_name, gid, members, system)
+      groupadd_cmd = groupadd(group_name, gid, system)
 
       @fake_capture3.expect(groupadd_cmd)
       @fake_capture3.stub do
