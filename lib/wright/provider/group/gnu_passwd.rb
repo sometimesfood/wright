@@ -1,5 +1,3 @@
-require 'open3'
-
 require 'wright/dry_run'
 require 'wright/provider/group'
 
