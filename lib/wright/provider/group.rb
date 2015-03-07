@@ -80,11 +80,11 @@ module Wright
       end
 
       def gid_uptodate?
-        @resource.gid.nil? ? true : (group_data.gid == @resource.gid)
+        @resource.gid.nil? || group_data.gid == @resource.gid
       end
 
       def members_uptodate?
-        @resource.members.nil? ? true : (group_data.mem == @resource.members)
+        @resource.members.nil? || group_data.mem == @resource.members
       end
 
       def group_exists?
