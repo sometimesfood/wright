@@ -13,9 +13,10 @@ module Wright
       class Homebrew < Wright::Provider::Package
         # @return [Array<String>] the installed package versions
         def installed_versions
-          cmd = "brew info --json=v1 #{@resource.name}"
+          cmd = 'brew'
+          args = ['info', '--json=v1', @resource.name]
           cmd_stdout, _, cmd_status = Wright::Util.bundler_clean_env do
-            Open3.capture3(env, cmd)
+            Open3.capture3(env, cmd, *args)
           end
 
           if cmd_status.success?
@@ -70,10 +71,11 @@ module Wright
         def brew(action, package, version = nil)
           ignore_version(version)
 
-          brew_cmd = "brew #{action} #{package}"
+          cmd = 'brew'
+          args = [action.to_s, package]
 
           _, cmd_stderr, cmd_status = Wright::Util.bundler_clean_env do
-            Open3.capture3(env, brew_cmd)
+            Open3.capture3(env, cmd, *args)
           end
           return if cmd_status.success?
 

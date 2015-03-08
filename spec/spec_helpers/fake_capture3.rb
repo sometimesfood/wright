@@ -8,13 +8,16 @@ class FakeCapture3
     @basedir = basedir
     @env = env
     @mock_open3 = Minitest::Mock.new
-    @capture3_stub = lambda do |stub_env, stub_command|
-      @mock_open3.capture3(stub_env, stub_command)
+    @capture3_stub = lambda do |stub_env, stub_command, *stub_args|
+      @mock_open3.capture3(stub_env, stub_command, *stub_args)
     end
   end
 
-  def expect(command)
-    @mock_open3.expect(:capture3, return_values(command), [@env, command])
+  def expect(command_and_args)
+    command, *args = *command_and_args
+    @mock_open3.expect(:capture3,
+                       return_values(command_and_args),
+                       [@env, command, *args])
   end
 
   def stub
@@ -26,8 +29,8 @@ class FakeCapture3
 
   private
 
-  def return_values(command)
-    filename = command.gsub(' ', '_').gsub('/', 'SLASH')
+  def return_values(command_and_args)
+    filename = command_and_args.join(' ').gsub(' ', '_').gsub('/', 'SLASH')
     command_stdout = File.read("#{@basedir}/#{filename}.stdout")
     command_stderr = File.read("#{@basedir}/#{filename}.stderr")
     command_status = File.read("#{@basedir}/#{filename}.return").chomp == '0'

@@ -7,20 +7,20 @@ describe Wright::Provider::Group::GnuPasswd do
   def groupadd(group_name, gid = nil, system = false)
     options = []
     options << '--system' if system
-    options << "-g #{gid}" if gid
-    "groupadd #{options.join(' ')} #{group_name}"
+    options += ['-g', gid.to_s] if gid
+    ['groupadd', *options, group_name]
   end
 
   def gpasswd(group_name, members)
-    "gpasswd -M '#{members.join(',')}' #{group_name}"
+    ['gpasswd', '-M', "'#{members.join(',')}'", group_name]
   end
 
   def groupmod(group_name, gid)
-    "groupmod -g #{gid} #{group_name}"
+    ['groupmod', '-g', gid.to_s, group_name]
   end
 
   def groupdel(group_name)
-    "groupdel #{group_name}"
+    ['groupdel', group_name]
   end
 
   def group_provider(group_name, gid = nil, members = nil, system = false)

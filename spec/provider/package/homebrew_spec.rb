@@ -2,10 +2,10 @@ require_relative '../../spec_helper'
 
 require 'wright/provider/package/homebrew'
 
-describe Wright::Provider::Package::Apt do
+describe Wright::Provider::Package::Homebrew do
   def brew(action, pkg_name)
-    action = 'info --json=v1' if action == :info
-    "brew #{action} #{pkg_name}"
+    options = action == :info ? ['info', '--json=v1'] : [action.to_s]
+    ['brew', *options, pkg_name]
   end
 
   def package_provider(pkg_name, pkg_version = nil)
@@ -37,7 +37,7 @@ describe Wright::Provider::Package::Apt do
   end
 
   describe '#installed_versions' do
-    it 'should return the installed package version via dpkg-query' do
+    it 'should return the installed package version via brew info' do
       pkg_name = 'lame'
       pkg_versions = ['3.99.5']
       pkg_provider = package_provider(pkg_name)

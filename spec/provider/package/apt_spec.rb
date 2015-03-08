@@ -4,12 +4,12 @@ require 'wright/provider/package/apt'
 
 describe Wright::Provider::Package::Apt do
   def dpkg_query(pkg_name)
-    "dpkg-query -s #{pkg_name}"
+    ['dpkg-query', '-s', pkg_name]
   end
 
   def apt_get(action, pkg_name, pkg_version = nil)
     version = pkg_version.nil? ? '' : "=#{pkg_version}"
-    "apt-get #{action} -qy #{pkg_name}#{version}"
+    ['apt-get', action.to_s, '-qy', pkg_name + version]
   end
 
   def package_provider(pkg_name, pkg_version = nil)

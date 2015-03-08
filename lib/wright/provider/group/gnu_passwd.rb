@@ -1,4 +1,5 @@
 require 'wright/dry_run'
+require 'wright/provider'
 require 'wright/provider/group'
 
 module Wright
@@ -12,24 +13,28 @@ module Wright
         def add_group(group_name, gid, system)
           options = []
           options << '--system' if system
-          options << "-g #{gid}" if gid
-          cmd = "groupadd #{options.join(' ')} #{group_name}"
-          exec_or_fail(cmd, "cannot create group '#{group_name}'")
+          options += ['-g', gid.to_s] if gid
+          cmd = 'groupadd'
+          args = [*options, group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def delete_group(group_name)
-          cmd = "groupdel #{group_name}"
-          exec_or_fail(cmd, "cannot remove group '#{group_name}'")
+          cmd = 'groupdel'
+          args = [group_name]
+          exec_or_fail(cmd, args, "cannot remove group '#{group_name}'")
         end
 
         def set_members(group_name, members)
-          cmd = "gpasswd -M '#{members.join(',')}' #{group_name}"
-          exec_or_fail(cmd, "cannot create group '#{group_name}'")
+          cmd = 'gpasswd'
+          args = ['-M', "'#{members.join(',')}'", group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def set_gid(group_name, gid)
-          cmd = "groupmod -g #{gid} #{group_name}"
-          exec_or_fail(cmd, "cannot create group '#{group_name}'")
+          cmd = 'groupmod'
+          args = ['-g', gid.to_s, group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
       end
     end

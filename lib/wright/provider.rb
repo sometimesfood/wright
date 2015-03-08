@@ -48,12 +48,14 @@ module Wright
     # Runs a command or fails with an error message.
     #
     # @param command [String] the command to run
+    # @param args [Array<String>] the arguments that are passed to the
+    #   command
     # @param error_message [String] the error message to display in
     #   case of an error
     # @raise [RuntimeError] if the command did not exit successfully
     # @return [void]
-    def exec_or_fail(command, error_message)
-      stdout, stderr, status = Open3.capture3(env, command)
+    def exec_or_fail(command, args, error_message)
+      stdout, stderr, status = Open3.capture3(env, command, *args)
       return if status.success?
 
       error = stderr.chomp

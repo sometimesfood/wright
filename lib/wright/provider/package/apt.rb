@@ -1,6 +1,7 @@
 require 'open3'
 
 require 'wright/dry_run'
+require 'wright/provider'
 require 'wright/provider/package'
 
 module Wright
@@ -11,8 +12,9 @@ module Wright
       class Apt < Wright::Provider::Package
         # @return [Array<String>] the installed package versions
         def installed_versions
-          cmd = "dpkg-query -s #{@resource.name}"
-          cmd_stdout, _, cmd_status = Open3.capture3(env, cmd)
+          cmd = 'dpkg-query'
+          args = ['-s', @resource.name]
+          cmd_stdout, _, cmd_status = Open3.capture3(env, cmd, *args)
           installed_re = /^Status: install ok installed$/
 
           if cmd_status.success? && installed_re =~ cmd_stdout
@@ -67,8 +69,9 @@ module Wright
 
         def apt_get(action, package, version = nil)
           package_version = version.nil? ? '' : "=#{version}"
-          cmd = "apt-get #{action} -qy #{package}#{package_version}"
-          exec_or_fail(cmd, "cannot #{action} package '#{package}'")
+          cmd = 'apt-get'
+          args = [action.to_s, '-qy', package + package_version]
+          exec_or_fail(cmd, args, "cannot #{action} package '#{package}'")
         end
 
         def env

@@ -7,16 +7,16 @@ describe Wright::Provider::Group::DarwinDirectoryService do
   def dseditgroup(command, group_name, gid = nil, system = false)
     if command != :delete
       gid ||= 499 if system
-      options = gid.nil? ? '' : "-i #{gid}"
-      "dseditgroup -o #{command} #{options} #{group_name}"
+      options = gid.nil? ? [] : ['-i', gid]
+      ['dseditgroup', '-o', command.to_s, *options, group_name]
     else
-      "dseditgroup -o #{command} #{group_name}"
+      ['dseditgroup', '-o', command.to_s, group_name]
     end
   end
 
   def dscl_set_members(group_name, members)
-    options = "GroupMembership '#{members.join(' ')}'"
-    "dscl . create /Groups/#{group_name} #{options}"
+    options = ['GroupMembership', "'#{members.join(' ')}'"]
+    ['dscl', '.', 'create', "/Groups/#{group_name}", *options]
   end
 
   def group_provider(group_name, gid = nil, members = nil, system = false)

@@ -1,4 +1,5 @@
 require 'wright/dry_run'
+require 'wright/provider'
 require 'wright/provider/group'
 
 module Wright
@@ -11,25 +12,31 @@ module Wright
 
         def add_group(group_name, gid, system)
           gid ||= next_system_gid if system
-          options = gid.nil? ? '' : "-i #{gid}"
-          cmd = "dseditgroup -o create #{options} #{group_name}"
-          exec_or_fail(cmd, "cannot create group '#{group_name}'")
+          options = gid.nil? ? [] : ['-i', gid]
+          cmd = 'dseditgroup'
+          args = ['-o', 'create', *options, group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def delete_group(group_name)
-          cmd = "dseditgroup -o delete #{group_name}"
-          exec_or_fail(cmd, "cannot remove group '#{group_name}'")
+          cmd = 'dseditgroup'
+          args = ['-o', 'delete', group_name]
+          exec_or_fail(cmd, args, "cannot remove group '#{group_name}'")
         end
 
         def set_members(group_name, members)
-          options = "GroupMembership '#{members.join(' ')}'"
-          cmd = "dscl . create /Groups/#{group_name} #{options}"
-          exec_or_fail(cmd, "cannot create group '#{group_name}'")
+          options = ['GroupMembership', "'#{members.join(' ')}'"]
+          args = ['.', 'create', "/Groups/#{group_name}", *options]
+          cmd = 'dscl'
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def set_gid(group_name, gid)
-          cmd = "dseditgroup -o edit -i #{gid} #{group_name}"
-          exec_or_fail(cmd, "cannot create group '#{group_name}'")
+          cmd = 'dseditgroup'
+          args = ['-o', 'edit',
+                  '-i', gid,
+                  group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         # Overrides Provider::Group#group_data to work around caching
