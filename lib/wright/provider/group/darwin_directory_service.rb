@@ -12,7 +12,7 @@ module Wright
 
         def add_group(group_name, gid, system)
           gid ||= next_system_gid if system
-          options = gid.nil? ? [] : ['-i', gid]
+          options = gid.nil? ? [] : ['-i', gid.to_s]
           cmd = 'dseditgroup'
           args = ['-o', 'create', *options, group_name]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
@@ -34,7 +34,7 @@ module Wright
         def set_gid(group_name, gid)
           cmd = 'dseditgroup'
           args = ['-o', 'edit',
-                  '-i', gid,
+                  '-i', gid.to_s,
                   group_name]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end

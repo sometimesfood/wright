@@ -7,7 +7,7 @@ describe Wright::Provider::Group::DarwinDirectoryService do
   def dseditgroup(command, group_name, gid = nil, system = false)
     if command != :delete
       gid ||= 499 if system
-      options = gid.nil? ? [] : ['-i', gid]
+      options = gid.nil? ? [] : ['-i', gid.to_s]
       ['dseditgroup', '-o', command.to_s, *options, group_name]
     else
       ['dseditgroup', '-o', command.to_s, group_name]
