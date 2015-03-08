@@ -25,9 +25,9 @@ module Wright
         end
 
         def set_members(group_name, members)
-          options = ['GroupMembership', "'#{members.join(' ')}'"]
-          args = ['.', 'create', "/Groups/#{group_name}", *options]
+          options = ['GroupMembership', *members]
           cmd = 'dscl'
+          args = ['.', 'create', "/Groups/#{group_name}", *options]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 

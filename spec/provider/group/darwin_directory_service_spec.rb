@@ -15,7 +15,7 @@ describe Wright::Provider::Group::DarwinDirectoryService do
   end
 
   def dscl_set_members(group_name, members)
-    options = ['GroupMembership', "'#{members.join(' ')}'"]
+    options = ['GroupMembership', *members]
     ['dscl', '.', 'create', "/Groups/#{group_name}", *options]
   end
 
