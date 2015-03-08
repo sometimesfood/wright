@@ -1,5 +1,3 @@
-require 'shellwords'
-
 require 'wright/config'
 require 'wright/util/recursive_autoloader'
 
@@ -55,7 +53,7 @@ module Wright
     # @raise [RuntimeError] if the command did not exit successfully
     # @return [void]
     def exec_or_fail(command, error_message)
-      stdout, stderr, status = Open3.capture3(env, command.shellescape)
+      stdout, stderr, status = Open3.capture3(env, command)
       return if status.success?
 
       error = stderr.chomp

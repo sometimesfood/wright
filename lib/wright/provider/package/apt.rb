@@ -12,7 +12,7 @@ module Wright
         # @return [Array<String>] the installed package versions
         def installed_versions
           cmd = "dpkg-query -s #{@resource.name}"
-          cmd_stdout, _, cmd_status = Open3.capture3(env, cmd.shellescape)
+          cmd_stdout, _, cmd_status = Open3.capture3(env, cmd)
           installed_re = /^Status: install ok installed$/
 
           if cmd_status.success? && installed_re =~ cmd_stdout

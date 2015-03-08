@@ -1,6 +1,5 @@
 require 'minitest/mock'
 require 'open3'
-require 'shellwords'
 
 # Open3::capture3 replacement that reads stdout, stderr and return
 # values from the filesystem
@@ -15,9 +14,7 @@ class FakeCapture3
   end
 
   def expect(command)
-    @mock_open3.expect(:capture3,
-                       return_values(command),
-                       [@env, command.shellescape])
+    @mock_open3.expect(:capture3, return_values(command), [@env, command])
   end
 
   def stub
