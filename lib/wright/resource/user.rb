@@ -68,9 +68,9 @@ end
 
 Wright::DSL.register_resource(Wright::Resource::User)
 
+user_providers = {
+  'debian' => 'Wright::Provider::User::GnuPasswd',
+}
 Wright::Config[:resources][:user] ||= {}
 Wright::Config[:resources][:user][:provider] ||=
-  case Wright::Util.os_family
-  when 'debian'
-    'Wright::Provider::User::GnuPasswd'
-  end
+  user_providers[Wright::Util.os_family]
