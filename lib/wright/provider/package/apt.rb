@@ -25,32 +25,6 @@ module Wright
           end
         end
 
-        # Installs the package.
-        #
-        # @return [void]
-        def install
-          if uptodate?(:install)
-            Wright.log.debug "package already installed: '#{@resource.name}'"
-            return
-          end
-
-          install_package
-          @updated = true
-        end
-
-        # Removes the package.
-        #
-        # @return [void]
-        def remove
-          if uptodate?(:remove)
-            Wright.log.debug "package already removed: '#{@resource.name}'"
-            return
-          end
-
-          remove_package
-          @updated = true
-        end
-
         private
 
         def install_package

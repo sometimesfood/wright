@@ -5,6 +5,32 @@ module Wright
     # Package provider. Used as a base class for Resource::Package
     # providers.
     class Package < Wright::Provider
+      # Installs the package.
+      #
+      # @return [void]
+      def install
+        if uptodate?(:install)
+          Wright.log.debug "package already installed: '#{@resource.name}'"
+          return
+        end
+
+        install_package
+        @updated = true
+      end
+
+      # Removes the package.
+      #
+      # @return [void]
+      def remove
+        if uptodate?(:remove)
+          Wright.log.debug "package already removed: '#{@resource.name}'"
+          return
+        end
+
+        remove_package
+        @updated = true
+      end
+
       private
 
       # @api public
