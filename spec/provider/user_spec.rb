@@ -45,7 +45,7 @@ describe Wright::Provider::User do
       @resource.uid = uid
       provider = Wright::Provider::User.new(@resource)
 
-      FakeEtc.add_users('johndoe' => { uid: uid + 1})
+      FakeEtc.add_users('johndoe' => { uid: uid + 1 })
       FakeEtc do
         provider.uptodate?(:create).must_equal false
         provider.uptodate?(:remove).must_equal false
