@@ -9,8 +9,10 @@ describe Wright::Provider::User do
     username = 'johndoe'
     @resource = OpenStruct.new(name: username)
     @create_message = "INFO: create user: '#{username}'\n"
+    @create_message_dry = "INFO: (would) create user: '#{username}'\n"
     @create_message_debug = "DEBUG: user already created: '#{username}'\n"
     @remove_message = "INFO: remove user: '#{username}'\n"
+    @remove_message_dry = "INFO: (would) remove user: '#{username}'\n"
     @remove_message_debug = "DEBUG: user already removed: '#{username}'\n"
     Wright::Provider::User.send(:public, :uptodate?)
   end
@@ -260,11 +262,23 @@ describe Wright::Provider::User do
       mock_provider.verify
     end
 
-    # TODO: check for @create_message_dry
+    it 'should set the update status in dry-run mode' do
+      provider = Wright::Provider::User.new(@resource)
+
+      Wright.dry_run do
+        FakeEtc do
+          lambda do
+            reset_logger
+            provider.create
+            provider.updated?.must_equal true
+          end.must_output @create_message_dry
+        end
+      end
+    end
   end
 
   describe '#remove' do
-    it 'should set the update status when the user is removed' do
+    it 'should set the update status when the user is already removed' do
       provider = Wright::Provider::User.new(@resource)
 
       FakeEtc do
@@ -294,6 +308,19 @@ describe Wright::Provider::User do
       mock_provider.verify
     end
 
-    # TODO: check for @remove_message_dry
+    it 'should set the update status in dry-run mode' do
+      provider = Wright::Provider::User.new(@resource)
+
+      Wright.dry_run do
+        FakeEtc.add_users('johndoe' => {})
+        FakeEtc do
+          lambda do
+            reset_logger
+            provider.remove
+            provider.updated?.must_equal true
+          end.must_output @remove_message_dry
+        end
+      end
+    end
   end
 end
