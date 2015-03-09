@@ -67,7 +67,7 @@ module Wright
       def create_user
         unless_dry_run("create user: '#{@resource.name}'") do
           if user_exists?
-            update_user unless uptodate?(:create)
+            update_user
           else
             add_user
           end

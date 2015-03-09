@@ -6,7 +6,12 @@ require 'wright/provider/group'
 
 describe Wright::Provider::User do
   before(:each) do
-    @resource = OpenStruct.new(name: 'johndoe')
+    username = 'johndoe'
+    @resource = OpenStruct.new(name: username)
+    @create_message = "INFO: create user: '#{username}'\n"
+    @create_message_debug = "DEBUG: user already created: '#{username}'\n"
+    @remove_message = "INFO: remove user: '#{username}'\n"
+    @remove_message_debug = "DEBUG: user already removed: '#{username}'\n"
     Wright::Provider::User.send(:public, :uptodate?)
   end
 
@@ -203,5 +208,92 @@ describe Wright::Provider::User do
         provider.send(:delete_user)
       end.must_raise NotImplementedError
     end
+  end
+
+  describe '#create' do
+    it 'should set the update status when the user is up-to-date' do
+      provider = Wright::Provider::User.new(@resource)
+
+      FakeEtc.add_users('johndoe' => {})
+      FakeEtc do
+        lambda do
+          reset_logger
+          provider.create
+          provider.updated?.must_equal false
+        end.must_output @create_message_debug
+      end
+    end
+
+    it 'should set the update status when the user has to be created' do
+      provider = Wright::Provider::User.new(@resource)
+      mock_provider = Minitest::Mock.new
+
+      mock_provider.expect(:add_user, nil)
+      provider.stub :add_user, -> { mock_provider.add_user } do
+        FakeEtc do
+          lambda do
+            reset_logger
+            provider.create
+            provider.updated?.must_equal true
+          end.must_output @create_message
+        end
+      end
+      mock_provider.verify
+    end
+
+    it 'should set the update status when the user has to be updated' do
+      @resource.shell = '/bin/csh'
+      provider = Wright::Provider::User.new(@resource)
+      mock_provider = Minitest::Mock.new
+
+      mock_provider.expect(:update_user, nil)
+      provider.stub :update_user, -> { mock_provider.update_user } do
+        FakeEtc.add_users('johndoe' => { shell: '/bin/bash' })
+        FakeEtc do
+          lambda do
+            reset_logger
+            provider.create
+            provider.updated?.must_equal true
+          end.must_output @create_message
+        end
+      end
+      mock_provider.verify
+    end
+
+    # TODO: check for @create_message_dry
+  end
+
+  describe '#remove' do
+    it 'should set the update status when the user is removed' do
+      provider = Wright::Provider::User.new(@resource)
+
+      FakeEtc do
+        lambda do
+          reset_logger
+          provider.remove
+          provider.updated?.must_equal false
+        end.must_output @remove_message_debug
+      end
+    end
+
+    it 'should set the update status when the user has to be removed' do
+      provider = Wright::Provider::User.new(@resource)
+      mock_provider = Minitest::Mock.new
+
+      mock_provider.expect(:delete_user, nil)
+      provider.stub :delete_user, -> { mock_provider.delete_user } do
+        FakeEtc.add_users('johndoe' => {})
+        FakeEtc do
+          lambda do
+            reset_logger
+            provider.remove
+            provider.updated?.must_equal true
+          end.must_output @remove_message
+        end
+      end
+      mock_provider.verify
+    end
+
+    # TODO: check for @remove_message_dry
   end
 end
