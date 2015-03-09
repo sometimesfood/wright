@@ -3,7 +3,7 @@ require 'wright/provider'
 
 module Wright
   class Provider
-    # Package provider. Used as a base class for Resource::Package
+    # Group provider. Used as a base class for {Resource::Group}
     # providers.
     class Group < Wright::Provider
       # Adds the group.
