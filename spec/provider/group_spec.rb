@@ -99,7 +99,7 @@ describe Wright::Provider::Group do
   end
 
   describe '#set_members' do
-    it 'should do something' do
+    it 'should use add_member and remove_member to update the member list' do
       group_name = 'foo'
       current_members = %w(user1 user2 user3)
       target_members = %w(user3 user4 user5)
