@@ -30,8 +30,7 @@ describe Wright::Provider::Group::DarwinDirectoryService do
   before :each do
     darwin_directory_service_dir = File.join(File.dirname(__FILE__),
                                              'darwin_directory_service')
-    env = {}
-    @fake_capture3 = FakeCapture3.new(darwin_directory_service_dir, env)
+    @fake_capture3 = FakeCapture3.new(darwin_directory_service_dir)
     @create_message = ->(group) { "INFO: create group: '#{group}'\n" }
     @create_message_dry = lambda do |group|
       "INFO: (would) create group: '#{group}'\n"

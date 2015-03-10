@@ -15,8 +15,7 @@ describe Wright::Provider::Package::Homebrew do
 
   before :each do
     homebrew_dir = File.join(File.dirname(__FILE__), 'homebrew')
-    env = {}
-    @fake_capture3 = FakeCapture3.new(homebrew_dir, env)
+    @fake_capture3 = FakeCapture3.new(homebrew_dir)
     @install_message = ->(pkg) { "INFO: install package: '#{pkg}'\n" }
     @install_message_dry = lambda do |pkg|
       "INFO: (would) install package: '#{pkg}'\n"

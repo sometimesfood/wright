@@ -33,8 +33,7 @@ describe Wright::Provider::Group::GnuPasswd do
 
   before :each do
     gnu_passwd_dir = File.join(File.dirname(__FILE__), 'gnu_passwd')
-    env = {}
-    @fake_capture3 = FakeCapture3.new(gnu_passwd_dir, env)
+    @fake_capture3 = FakeCapture3.new(gnu_passwd_dir)
     @create_message = ->(group) { "INFO: create group: '#{group}'\n" }
     @create_message_dry = lambda do |group|
       "INFO: (would) create group: '#{group}'\n"
