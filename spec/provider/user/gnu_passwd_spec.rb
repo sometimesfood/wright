@@ -35,6 +35,33 @@ describe Wright::Provider::User do
         FakeEtc { provider.add_user }
       end
     end
+
+    it 'should add users with options' do
+      username = @resource.name
+      resource = OpenStruct.new({ name: username,
+                                  uid: 42,
+                                  primary_group: 'anonymous',
+                                  full_name: 'John Doe',
+                                  groups: [],
+                                  shell: '/bin/bash',
+                                  home: "/home/#{username}",
+                                  system: true })
+      provider = Wright::Provider::User::GnuPasswd.new(resource)
+
+      expected_args = %W(-u #{resource.uid}
+                         -g #{resource.primary_group}
+                         -c #{resource.full_name},,,
+                         -G #{resource.groups.join(',')}
+                         -s #{resource.shell}
+                         -d #{resource.home}
+                         -r
+                         #{resource.name})
+      FakeEtc.add_groups('anonymous' => { gid: 123 })
+      @fake_capture3.expect(['useradd', *expected_args], 'useradd_with_options')
+      @fake_capture3.stub do
+        FakeEtc { provider.add_user }
+      end
+    end
   end
 
   describe '#update_user' do
