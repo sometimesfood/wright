@@ -14,16 +14,17 @@ describe Wright::Provider::User do
     @remove_message = "INFO: remove user: '#{username}'\n"
     @remove_message_dry = "INFO: (would) remove user: '#{username}'\n"
     @remove_message_debug = "DEBUG: user already removed: '#{username}'\n"
-    Wright::Provider::User.send(:public, :uptodate?)
   end
 
   after(:each) do
-    Wright::Provider::User.send(:private, :uptodate?)
     FakeEtc.clear_users
     FakeEtc.clear_groups
   end
 
   describe '#uptodate?' do
+    before(:each) { Wright::Provider::User.send(:public, :uptodate?) }
+    after(:each) { Wright::Provider::User.send(:private, :uptodate?) }
+
     it 'should return the correct status' do
       provider = Wright::Provider::User.new(@resource)
 
