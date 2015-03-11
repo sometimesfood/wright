@@ -27,6 +27,7 @@ To start a wright IRB session, simply run:
 In order to create some resources using the wright DSL:
 
 ```ruby
+require 'wright'
 extend Wright::DSL
 
 foo_dir = directory '/tmp/foo'
@@ -44,6 +45,8 @@ foo_dir.remove
 If you don't want to use the DSL:
 
 ```ruby
+require 'wright'
+
 foo_dir = Wright::Resource::Directory.new('/tmp/foo')
 foo_dir.create
 fstab = Wright::Resource::Symlink.new('/tmp/foo/fstab')
