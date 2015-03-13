@@ -1,4 +1,15 @@
 # wright NEWS
+## 0.2.0 (2015-03-13)
+- Add Homebrew package provider for OS X
+- Add group resource
+  - Add group provider for GNU systems
+  - Add group provider for OS X
+- Add user resource (provider)
+  - Add user provider for GNU systems
+- Fix name error in symlink provider
+- Add `Provider#exec_or_fail`
+- Pass arguments to `Open3::capture3` properly
+
 ## 0.1.2 (2015-01-31)
 - Convert docs to YARD
 - Fix color code for warnings
