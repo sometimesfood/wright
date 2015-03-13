@@ -104,7 +104,7 @@ describe Wright::Provider::Group do
       current_members = %w(user1 user2 user3)
       target_members = %w(user3 user4 user5)
       resource = OpenStruct.new(name: group_name,
-                                      members: target_members)
+                                members: target_members)
       provider = Wright::Provider::Group.new(resource)
       Wright::Provider::Group.send(:public, :set_members)
 

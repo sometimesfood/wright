@@ -38,14 +38,14 @@ describe Wright::Provider::User do
 
     it 'should add users with options' do
       username = @resource.name
-      resource = OpenStruct.new({ name: username,
-                                  uid: 42,
-                                  primary_group: 'anonymous',
-                                  full_name: 'John Doe',
-                                  groups: [],
-                                  shell: '/bin/bash',
-                                  home: "/home/#{username}",
-                                  system: true })
+      resource = OpenStruct.new(name: username,
+                                uid: 42,
+                                primary_group: 'anonymous',
+                                full_name: 'John Doe',
+                                groups: [],
+                                shell: '/bin/bash',
+                                home: "/home/#{username}",
+                                system: true)
       provider = Wright::Provider::User::GnuPasswd.new(resource)
 
       expected_args = %W(-u #{resource.uid}

@@ -69,7 +69,7 @@ end
 Wright::DSL.register_resource(Wright::Resource::User)
 
 user_providers = {
-  'debian' => 'Wright::Provider::User::GnuPasswd',
+  'debian' => 'Wright::Provider::User::GnuPasswd'
 }
 Wright::Config[:resources][:user] ||= {}
 Wright::Config[:resources][:user][:provider] ||=
