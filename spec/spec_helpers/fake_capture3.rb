@@ -13,10 +13,10 @@ class FakeCapture3
     end
   end
 
-  def expect(command_and_args)
+  def expect(command_and_args, base_filename = nil)
     command, *args = *command_and_args
     @mock_open3.expect(:capture3,
-                       return_values(command_and_args),
+                       return_values(command_and_args, base_filename),
                        [@env, command, *args])
   end
 
@@ -29,8 +29,9 @@ class FakeCapture3
 
   private
 
-  def return_values(command_and_args)
-    filename = command_and_args.join(' ').gsub(' ', '_').gsub('/', 'SLASH')
+  def return_values(command_and_args, base_filename)
+    filename = base_filename ||
+               command_and_args.join(' ').gsub(' ', '_').gsub('/', 'SLASH')
     command_stdout = File.read("#{@basedir}/#{filename}.stdout")
     command_stderr = File.read("#{@basedir}/#{filename}.stderr")
     command_status = File.read("#{@basedir}/#{filename}.return").chomp == '0'
