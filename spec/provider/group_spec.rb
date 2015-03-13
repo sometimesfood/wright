@@ -16,84 +16,84 @@ describe Wright::Provider::Group do
 
   describe '#uptodate?' do
     it 'should return the correct status' do
-      group_resource = OpenStruct.new(name: 'foo', gid: nil, members: nil)
-      group_provider = Wright::Provider::Group.new(group_resource)
+      resource = OpenStruct.new(name: 'foo')
+      provider = Wright::Provider::Group.new(resource)
 
-      FakeEtc.add_groups('foo' => { gid: 42, mem: [] })
+      FakeEtc.add_groups('foo' => { gid: 42, mem: %w(user1 user2) })
       FakeEtc do
-        group_provider.uptodate?(:create).must_equal true
-        group_provider.uptodate?(:remove).must_equal false
+        provider.uptodate?(:create).must_equal true
+        provider.uptodate?(:remove).must_equal false
       end
 
       FakeEtc.clear_groups
       FakeEtc do
-        group_provider.uptodate?(:create).must_equal false
-        group_provider.uptodate?(:remove).must_equal true
+        provider.uptodate?(:create).must_equal false
+        provider.uptodate?(:remove).must_equal true
       end
     end
 
     it 'should return the correct status when given a specific gid' do
       gid = 52
-      group_resource = OpenStruct.new(name: 'foo', gid: gid, members: nil)
-      group_provider = Wright::Provider::Group.new(group_resource)
+      resource = OpenStruct.new(name: 'foo', gid: gid, members: nil)
+      provider = Wright::Provider::Group.new(resource)
 
       FakeEtc.add_groups('foo' => { gid: 42, mem: [] })
       FakeEtc do
-        group_provider.uptodate?(:create).must_equal false
-        group_provider.uptodate?(:remove).must_equal false
+        provider.uptodate?(:create).must_equal false
+        provider.uptodate?(:remove).must_equal false
       end
 
       FakeEtc.clear_groups
       FakeEtc.add_groups('foo' => { gid: gid, mem: [] })
       FakeEtc do
-        group_provider.uptodate?(:create).must_equal true
-        group_provider.uptodate?(:remove).must_equal false
+        provider.uptodate?(:create).must_equal true
+        provider.uptodate?(:remove).must_equal false
       end
     end
 
     it 'should return the correct status when given a specific member list' do
       members = %w(user1 user2)
-      group_resource = OpenStruct.new(name: 'foo', gid: nil, members: members)
-      group_provider = Wright::Provider::Group.new(group_resource)
+      resource = OpenStruct.new(name: 'foo', gid: nil, members: members)
+      provider = Wright::Provider::Group.new(resource)
 
       FakeEtc.add_groups('foo' => { gid: 42, mem: [] })
       FakeEtc do
-        group_provider.uptodate?(:create).must_equal false
-        group_provider.uptodate?(:remove).must_equal false
+        provider.uptodate?(:create).must_equal false
+        provider.uptodate?(:remove).must_equal false
       end
 
       FakeEtc.clear_groups
       FakeEtc.add_groups('foo' => { gid: 42, mem: members })
       FakeEtc do
-        group_provider.uptodate?(:create).must_equal true
-        group_provider.uptodate?(:remove).must_equal false
+        provider.uptodate?(:create).must_equal true
+        provider.uptodate?(:remove).must_equal false
       end
     end
 
     it 'should raise exceptions for invalid actions' do
-      group_resource = OpenStruct.new(name: 'foo')
-      group_provider = Wright::Provider::Group.new(group_resource)
-      e = -> { group_provider.uptodate?(:foobarbaz) }.must_raise ArgumentError
+      resource = OpenStruct.new(name: 'foo')
+      provider = Wright::Provider::Group.new(resource)
+      e = -> { provider.uptodate?(:foobarbaz) }.must_raise ArgumentError
       e.message.must_equal "invalid action 'foobarbaz'"
     end
   end
 
   describe '#add_member' do
     it 'should raise an exception' do
-      group_resource = OpenStruct.new(name: 'foo')
-      group_provider = Wright::Provider::Group.new(group_resource)
+      resource = OpenStruct.new(name: 'foo')
+      provider = Wright::Provider::Group.new(resource)
       lambda do
-        group_provider.send(:add_member, 'member', 'group')
+        provider.send(:add_member, 'member', 'group')
       end.must_raise NotImplementedError
     end
   end
 
   describe '#remove_member' do
     it 'should raise an exception' do
-      group_resource = OpenStruct.new(name: 'foo')
-      group_provider = Wright::Provider::Group.new(group_resource)
+      resource = OpenStruct.new(name: 'foo')
+      provider = Wright::Provider::Group.new(resource)
       lambda do
-        group_provider.send(:remove_member, 'member', 'group')
+        provider.send(:remove_member, 'member', 'group')
       end.must_raise NotImplementedError
     end
   end
@@ -103,9 +103,9 @@ describe Wright::Provider::Group do
       group_name = 'foo'
       current_members = %w(user1 user2 user3)
       target_members = %w(user3 user4 user5)
-      group_resource = OpenStruct.new(name: group_name,
+      resource = OpenStruct.new(name: group_name,
                                       members: target_members)
-      group_provider = Wright::Provider::Group.new(group_resource)
+      provider = Wright::Provider::Group.new(resource)
       Wright::Provider::Group.send(:public, :set_members)
 
       mock_provider = Minitest::Mock.new
@@ -119,9 +119,9 @@ describe Wright::Provider::Group do
 
       FakeEtc.add_groups('foo' => { gid: 42, mem: current_members })
       FakeEtc do
-        group_provider.stub(:add_member, add_member_stub) do
-          group_provider.stub(:remove_member, remove_member_stub) do
-            group_provider.set_members
+        provider.stub(:add_member, add_member_stub) do
+          provider.stub(:remove_member, remove_member_stub) do
+            provider.set_members
           end
         end
       end
