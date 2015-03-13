@@ -55,12 +55,10 @@ end
 
 Wright::DSL.register_resource(Wright::Resource::Group)
 
+group_providers = {
+  'debian' => 'Wright::Provider::Group::GnuPasswd',
+  'macosx' => 'Wright::Provider::Group::DarwinDirectoryService'
+}
 Wright::Config[:resources][:group] ||= {}
-
 Wright::Config[:resources][:group][:provider] ||=
-  case Wright::Util.os_family
-  when 'debian'
-    'Wright::Provider::Group::GnuPasswd'
-  when 'macosx'
-    'Wright::Provider::Group::DarwinDirectoryService'
-  end
+  group_providers[Wright::Util.os_family]
