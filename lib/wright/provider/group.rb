@@ -10,26 +10,20 @@ module Wright
       #
       # @return [void]
       def create
-        if uptodate?(:create)
-          Wright.log.debug "group already created: '#{@resource.name}'"
-          return
+        group = @resource.name
+        unless_uptodate(:create, "group already created: '#{group}'") do
+          create_group
         end
-
-        create_group
-        @updated = true
       end
 
       # Removes the group.
       #
       # @return [void]
       def remove
-        if uptodate?(:remove)
-          Wright.log.debug "group already removed: '#{@resource.name}'"
-          return
+        group = @resource.name
+        unless_uptodate(:remove, "group already removed: '#{group}'") do
+          remove_group
         end
-
-        remove_group
-        @updated = true
       end
 
       private

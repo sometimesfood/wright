@@ -9,26 +9,20 @@ module Wright
       #
       # @return [void]
       def install
-        if uptodate?(:install)
-          Wright.log.debug "package already installed: '#{@resource.name}'"
-          return
+        package = @resource.name
+        unless_uptodate(:install, "package already installed: '#{package}'") do
+          install_package
         end
-
-        install_package
-        @updated = true
       end
 
       # Removes the package.
       #
       # @return [void]
       def remove
-        if uptodate?(:remove)
-          Wright.log.debug "package already removed: '#{@resource.name}'"
-          return
+        package = @resource.name
+        unless_uptodate(:remove, "package already removed: '#{package}'") do
+          remove_package
         end
-
-        remove_package
-        @updated = true
       end
 
       private
