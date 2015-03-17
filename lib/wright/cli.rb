@@ -1,6 +1,8 @@
 require 'optparse'
 require 'wright'
 
+$main = self
+
 module Wright
   class CLI
     # @todo Show usage if no arguments given
@@ -15,6 +17,7 @@ module Wright
 
       ARGV.shift
 
+      $main.extend Wright::DSL
       load arguments.first unless arguments.empty?
     end
   end
