@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+require 'wright/cli'
+
+wright = Wright::CLI.new
+wright.run(ARGV)
