@@ -5,23 +5,34 @@ $main = self
 
 module Wright
   class CLI
-    # @todo Show usage if no arguments given
+    def initialize
+      @commands = []
+    end
+
     def run(argv)
       @parser = OptionParser.new do |opts|
+        opts.on('-e COMMAND', 'Run COMMAND') do |e|
+          @commands << e
+        end
+
         opts.on_tail('-v', '--version', 'Show wright version') do
           puts "wright version #{Wright::VERSION}"
           return
         end
       end
 
-      # use OptionParser#order instead of #parse so CLI#run does not
+      # use OptionParser#order! instead of #parse! so CLI#run does not
       # consume --arguments passed to wright scripts
-      arguments = @parser.order(argv)
-
-      ARGV.shift
+      arguments = @parser.order!(argv)
 
       $main.extend Wright::DSL
-      load arguments.first unless arguments.empty?
+
+      if @commands.empty?
+        script = arguments.shift
+        load script if script
+      else
+        eval(@commands.join("\n"), $main.send(:binding), '<main>', 1)
+      end
     end
   end
 end

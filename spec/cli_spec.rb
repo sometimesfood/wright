@@ -11,17 +11,16 @@ describe Wright::CLI do
 
   describe '#run' do
     it 'parses --version' do
-      argv = '--version'
+      argv = ['--version']
       expected = "wright version #{Wright::VERSION}\n"
 
       -> { @cli.run(argv) }.must_output expected
     end
 
     it 'loads files' do
+      argv = [File.join(@cli_dir, 'shebang.rb')]
       expected = 'loaded shebang.rb'
-      lambda do
-        @cli.run(File.join @cli_dir, 'shebang.rb')
-      end.must_output expected
+      -> { @cli.run(argv) }.must_output expected
     end
   end
 end
