@@ -11,26 +11,20 @@ module Wright
       #
       # @return [void]
       def create
-        if uptodate?(:create)
-          Wright.log.debug "user already created: '#{@resource.name}'"
-          return
+        user = @resource.name
+        unless_uptodate(:create, "user already created: '#{user}'") do
+          create_user
         end
-
-        create_user
-        @updated = true
       end
 
       # Removes the user.
       #
       # @return [void]
       def remove
-        if uptodate?(:remove)
-          Wright.log.debug "user already removed: '#{@resource.name}'"
-          return
+        user = @resource.name
+        unless_uptodate(:remove, "user already removed: '#{user}'") do
+          remove_user
         end
-
-        remove_user
-        @updated = true
       end
 
       private

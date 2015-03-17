@@ -46,6 +46,22 @@ module Wright
     end
 
     # @api public
+    # Checks if the provider is up-to-date, runs a code block and sets
+    # `@updated` to `true` if it is not.
+    #
+    # @param action [String] the target action
+    # @param message [String] a log message that is displayed if the
+    #   provider is up-to-date
+    def unless_uptodate(action, message)
+      if uptodate?(action)
+        Wright.log.debug message
+      else
+        yield
+        @updated = true
+      end
+    end
+
+    # @api public
     # Runs a command or fails with an error message.
     #
     # @param command [String] the command to run
