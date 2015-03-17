@@ -29,7 +29,7 @@ module Wright
         script = arguments.shift
         load script if script
       else
-        eval(@commands.join("\n"), $main.send(:binding), '<main>', 1)
+        $main.instance_eval(@commands.join("\n"), '<main>', 1)
       end
     end
 
