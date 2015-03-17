@@ -13,7 +13,10 @@ module Wright
           return
         end
       end
-      arguments = @parser.parse(argv)
+
+      # use OptionParser#order instead of #parse so CLI#run does not
+      # consume --arguments passed to wright scripts
+      arguments = @parser.order(argv)
 
       ARGV.shift
 
