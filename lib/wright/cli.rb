@@ -7,9 +7,6 @@ module Wright
   class CLI
     def initialize
       @commands = []
-    end
-
-    def run(argv)
       @parser = OptionParser.new do |opts|
         opts.on('-e COMMAND', 'Run COMMAND') do |e|
           @commands << e
@@ -17,13 +14,14 @@ module Wright
 
         opts.on_tail('-v', '--version', 'Show wright version') do
           puts "wright version #{Wright::VERSION}"
-          return
+          @quit = true
         end
       end
+    end
 
-      # use OptionParser#order! instead of #parse! so CLI#run does not
-      # consume --arguments passed to wright scripts
-      arguments = @parser.order!(argv)
+    def run(argv)
+      arguments = parse(argv)
+      return if @quit
 
       $main.extend Wright::DSL
 
@@ -33,6 +31,16 @@ module Wright
       else
         eval(@commands.join("\n"), $main.send(:binding), '<main>', 1)
       end
+    end
+
+    private
+
+    attr_reader :commands
+
+    def parse(argv)
+      # use OptionParser#order! instead of #parse! so CLI#run does not
+      # consume --arguments passed to wright scripts
+      @parser.order!(argv)
     end
   end
 end
