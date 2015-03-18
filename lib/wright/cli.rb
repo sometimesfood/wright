@@ -4,6 +4,7 @@ require 'wright'
 $main = self
 
 module Wright
+  # Wright command-line interface.
   class CLI
     def initialize
       @commands = []
@@ -19,6 +20,9 @@ module Wright
       end
     end
 
+    # Runs a wright script with the supplied arguments.
+    #
+    # @param argv [Array<String>] the arguments passed to bin/wright
     def run(argv)
       arguments = parse(argv)
       return if @quit
