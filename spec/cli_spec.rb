@@ -14,9 +14,9 @@ describe Wright::CLI do
     after(:each) { Wright::CLI.send(:private, :parse) }
 
     it 'parses -e COMMAND' do
-      argv = %w[-e foo -e bar -- --baz]
-      @cli.parse(argv).must_equal %w[--baz]
-      @cli.send(:commands).must_equal %w[foo bar]
+      argv = %w(-e foo -e bar -- --baz)
+      @cli.parse(argv).must_equal %w(--baz)
+      @cli.send(:commands).must_equal %w(foo bar)
     end
   end
 
