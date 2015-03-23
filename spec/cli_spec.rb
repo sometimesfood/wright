@@ -3,9 +3,11 @@ require_relative 'spec_helper'
 require 'wright/cli'
 require 'wright/version'
 
+main = self
+
 describe Wright::CLI do
   before(:each) do
-    @cli = Wright::CLI.new
+    @cli = Wright::CLI.new(main)
     @cli_dir = File.expand_path('../cli', __FILE__)
   end
 

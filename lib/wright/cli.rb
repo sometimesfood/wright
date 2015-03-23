@@ -1,23 +1,13 @@
 require 'optparse'
 require 'wright'
 
-$main = self
-
 module Wright
   # Wright command-line interface.
   class CLI
-    def initialize
+    def initialize(main)
       @commands = []
-      @parser = OptionParser.new do |opts|
-        opts.on('-e COMMAND', 'Run COMMAND') do |e|
-          @commands << e
-        end
-
-        opts.on_tail('-v', '--version', 'Show wright version') do
-          puts "wright version #{Wright::VERSION}"
-          @quit = true
-        end
-      end
+      @main = main
+      @parser = option_parser
     end
 
     # Runs a wright script with the supplied arguments.
@@ -27,13 +17,13 @@ module Wright
       arguments = parse(argv)
       return if @quit
 
-      $main.extend Wright::DSL
+      @main.extend Wright::DSL
 
       if @commands.empty?
         script = arguments.shift
         load script if script
       else
-        $main.instance_eval(@commands.join("\n"), '<main>', 1)
+        @main.instance_eval(@commands.join("\n"), '<main>', 1)
       end
     end
 
@@ -45,6 +35,19 @@ module Wright
       # use OptionParser#order! instead of #parse! so CLI#run does not
       # consume --arguments passed to wright scripts
       @parser.order!(argv)
+    end
+
+    def option_parser
+      OptionParser.new do |opts|
+        opts.on('-e COMMAND', 'Run COMMAND') do |e|
+          @commands << e
+        end
+
+        opts.on_tail('-v', '--version', 'Show wright version') do
+          puts "wright version #{Wright::VERSION}"
+          @quit = true
+        end
+      end
     end
   end
 end
