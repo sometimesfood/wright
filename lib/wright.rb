@@ -2,6 +2,7 @@ require 'wright/config'
 require 'wright/dsl'
 require 'wright/provider'
 require 'wright/resource'
+require 'wright/version'
 
 require 'wright/resource/directory'
 require 'wright/resource/file'
