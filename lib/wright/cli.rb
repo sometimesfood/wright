@@ -7,16 +7,7 @@ module Wright
     def initialize(main)
       @commands = []
       @main = main
-      @parser = OptionParser.new do |opts|
-        opts.on('-e COMMAND', 'Run COMMAND') do |e|
-          @commands << e
-        end
-
-        opts.on_tail('-v', '--version', 'Show wright version') do
-          puts "wright version #{Wright::VERSION}"
-          @quit = true
-        end
-      end
+      @parser = option_parser
     end
 
     # Runs a wright script with the supplied arguments.
@@ -44,6 +35,19 @@ module Wright
       # use OptionParser#order! instead of #parse! so CLI#run does not
       # consume --arguments passed to wright scripts
       @parser.order!(argv)
+    end
+
+    def option_parser
+      OptionParser.new do |opts|
+        opts.on('-e COMMAND', 'Run COMMAND') do |e|
+          @commands << e
+        end
+
+        opts.on_tail('-v', '--version', 'Show wright version') do
+          puts "wright version #{Wright::VERSION}"
+          @quit = true
+        end
+      end
     end
   end
 end
