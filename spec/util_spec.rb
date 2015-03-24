@@ -3,13 +3,31 @@ require_relative 'spec_helper'
 require 'minitest/stub_const'
 require 'wright/util'
 
-def stub_os(target_os)
-  RbConfig.stub_const(:CONFIG, 'target_os' => target_os) do
-    yield
-  end
-end
-
 describe Wright::Util do
+  def stub_os(target_os)
+    RbConfig.stub_const(:CONFIG, 'target_os' => target_os) do
+      yield
+    end
+  end
+
+  def without_bundler
+    if defined?(Bundler)
+      Object.stub_remove_const(:Bundler) { yield }
+    else
+      yield
+    end
+  end
+
+  def with_bundler
+    if defined?(Bundler)
+      yield
+    else
+      fake_bundler = Class.new
+      def fake_bundler.with_clean_env; end
+      Object.stub_const(:Bundler, fake_bundler) { yield }
+    end
+  end
+
   describe 'filename_to_classname' do
     it 'should convert filenames to class names' do
       classname = Wright::Util.filename_to_classname('foo_bar/baz')
@@ -75,6 +93,32 @@ EOS
       stub_os('and now for something completely different') do
         Wright::Util.os_family.must_equal 'other'
       end
+    end
+  end
+
+  describe 'bundler_clean_env' do
+    it 'should call a block when not using bundler' do
+      mock = Minitest::Mock.new
+
+      mock.expect(:inside_block, [])
+      without_bundler do
+        Wright::Util.bundler_clean_env { mock.inside_block }
+      end
+      mock.verify
+    end
+
+    it 'should call a block using Bundler.with_clean_env when using bundler' do
+      mock = Minitest::Mock.new
+      with_clean_env_stub = -> { mock.with_clean_env }
+
+      mock.expect(:with_clean_env, [])
+      mock.expect(:inside_block, [])
+      with_bundler do
+        Bundler.stub(:with_clean_env, with_clean_env_stub) do
+          Wright::Util.bundler_clean_env { mock.inside_block }
+        end
+      end
+      mock.verify
     end
   end
 end
