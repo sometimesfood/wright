@@ -40,5 +40,13 @@ describe Wright::CLI do
       argv = ['-e print :foo']
       -> { @cli.run(argv) }.must_output 'foo'
     end
+
+    it 'evals commands from $stdin' do
+      argv = []
+      stdin_orig = $stdin
+      $stdin = StringIO.new("print :bar\ntrue")
+      -> { @cli.run(argv) }.must_output 'bar'
+      $stdin = stdin_orig
+    end
   end
 end

@@ -19,11 +19,12 @@ module Wright
 
       @main.extend Wright::DSL
 
-      if @commands.empty?
+      if @commands.empty? && arguments.any?
         script = arguments.shift
-        load script if script
+        load script
       else
-        @main.instance_eval(@commands.join("\n"), '<main>', 1)
+        commands = @commands.empty? ? $stdin.read : @commands.join("\n")
+        @main.instance_eval(commands, '<main>', 1)
       end
     end
 
