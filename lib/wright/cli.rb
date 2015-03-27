@@ -48,7 +48,7 @@ module Wright
           @commands << e
         end
 
-        opts.on_tail('-v', '--version', 'Show wright version') do
+        opts.on_tail('--version', 'Show wright version') do
           puts "wright version #{Wright::VERSION}"
           @quit = true
         end
