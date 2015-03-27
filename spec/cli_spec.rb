@@ -20,6 +20,18 @@ describe Wright::CLI do
       @cli.parse(argv).must_equal %w(--baz)
       @cli.send(:commands).must_equal %w(foo bar)
     end
+
+    it 'parses --verbose' do
+      argv = ['--verbose']
+      @cli.parse(argv)
+      @cli.send(:log_level).must_equal Wright::Logger::DEBUG
+    end
+
+    it 'parses --quiet' do
+      argv = ['--quiet']
+      @cli.parse(argv)
+      @cli.send(:log_level).must_equal Wright::Logger::ERROR
+    end
   end
 
   describe '#run' do

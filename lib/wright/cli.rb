@@ -17,6 +17,7 @@ module Wright
       arguments = parse(argv)
       return if @quit
 
+      Wright.log.level = @log_level if @log_level
       @main.extend Wright::DSL
 
       run_script(arguments)
@@ -25,6 +26,7 @@ module Wright
     private
 
     attr_reader :commands
+    attr_reader :log_level
 
     def parse(argv)
       # use OptionParser#order! instead of #parse! so CLI#run does not
@@ -46,6 +48,14 @@ module Wright
       OptionParser.new do |opts|
         opts.on('-e COMMAND', 'Run COMMAND') do |e|
           @commands << e
+        end
+
+        opts.on('-v', '--verbose', 'Increase verbosity') do
+          @log_level = Wright::Logger::DEBUG
+        end
+
+        opts.on('-q', '--quiet', 'Decrease verbosity') do
+          @log_level = Wright::Logger::ERROR
         end
 
         opts.on_tail('--version', 'Show wright version') do
