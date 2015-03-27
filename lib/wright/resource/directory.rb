@@ -30,8 +30,8 @@ module Wright
       def owner=(owner)
         target_owner, target_group =
           Wright::Util::User.owner_to_owner_group(owner)
-        @owner = target_owner unless target_owner.nil?
-        @group = target_group unless target_group.nil?
+        @owner = target_owner if target_owner
+        @group = target_group if target_group
       end
 
       # @return [String] the directory's group
