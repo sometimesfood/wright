@@ -19,13 +19,7 @@ module Wright
 
       @main.extend Wright::DSL
 
-      if @commands.empty? && arguments.any?
-        script = arguments.shift
-        load script
-      else
-        commands = @commands.empty? ? $stdin.read : @commands.join("\n")
-        @main.instance_eval(commands, '<main>', 1)
-      end
+      run_script(arguments)
     end
 
     private
@@ -36,6 +30,16 @@ module Wright
       # use OptionParser#order! instead of #parse! so CLI#run does not
       # consume --arguments passed to wright scripts
       @parser.order!(argv)
+    end
+
+    def run_script(arguments)
+      if @commands.empty? && arguments.any?
+        script = arguments.shift
+        load script
+      else
+        commands = @commands.empty? ? $stdin.read : @commands.join("\n")
+        @main.instance_eval(commands, '<main>', 1)
+      end
     end
 
     def option_parser
