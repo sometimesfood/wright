@@ -5,10 +5,12 @@ wright
 [![Build Status](https://img.shields.io/travis/sometimesfood/wright.svg?style=flat-square)][travis]
 [![Code Climate](https://img.shields.io/codeclimate/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
 [![Test Coverage](https://img.shields.io/codeclimate/coverage/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
+[![Gem Dependencies](https://img.shields.io/gemnasium/sometimesfood/wright.svg?style=flat-square)][gemnasium]
 
 [gem]: https://rubygems.org/gems/wright
 [travis]: https://travis-ci.org/sometimesfood/wright
 [codeclimate]: https://codeclimate.com/github/sometimesfood/wright
+[gemnasium]: https://gemnasium.com/sometimesfood/wright
 
 Lightweight configuration management.
 
