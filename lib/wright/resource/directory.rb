@@ -24,23 +24,10 @@ module Wright
       attr_accessor :mode
 
       # @return [String] the directory's owner
-      attr_reader :owner
-
-      # Sets the directory's owner.
-      def owner=(owner)
-        target_owner, target_group =
-          Wright::Util::User.owner_to_owner_group(owner)
-        @owner = target_owner if target_owner
-        @group = target_group if target_group
-      end
+      attr_accessor :owner
 
       # @return [String] the directory's group
-      attr_reader :group
-
-      # Sets the directory's group.
-      def group=(group)
-        @group = Wright::Util::User.group_to_gid(group)
-      end
+      attr_accessor :group
 
       # Creates or updates the directory.
       #

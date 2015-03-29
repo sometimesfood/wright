@@ -20,7 +20,7 @@ module Wright
       attr_accessor :mode
 
       # @return [String] the file's intended owner
-      attr_reader :owner
+      attr_accessor :owner
 
       # Initializes a File.
       #
@@ -32,14 +32,6 @@ module Wright
         @owner = nil
         @group = nil
         @action = :create
-      end
-
-      # Sets the file's owner.
-      def owner=(owner)
-        target_owner, target_group =
-          Wright::Util::User.owner_to_owner_group(owner)
-        @owner = target_owner if target_owner
-        @group = target_group if target_group
       end
 
       # Creates or updates the file.
