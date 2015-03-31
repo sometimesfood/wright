@@ -27,10 +27,19 @@ module Wright
       # @return [String, Integer] the directory's intended mode
       attr_accessor :mode
 
+      # @!attribute owner
+      #   @return [String, Integer] the directory's intended owner
+      # @!method owner=
+      #   @see #owner
       def_delegator :@owner, :user_and_group=, :owner=
       def_delegator :@owner, :user, :owner
-      def_delegator :@owner, :group=
+
+      # @!attribute group
+      #   @return [String, Integer] the directory's intended group
+      # @!method group=
+      #   @see #group
       def_delegator :@owner, :group
+      def_delegator :@owner, :group=
 
       # Creates or updates the directory.
       #
