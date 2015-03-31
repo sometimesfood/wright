@@ -1,5 +1,8 @@
+require 'forwardable'
+
 require 'wright/resource'
 require 'wright/dsl'
+require 'wright/util/file_owner'
 
 module Wright
   class Resource
@@ -9,25 +12,25 @@ module Wright
     #   dir = Wright::Resource::Directory.new('/tmp/foobar')
     #   dir.create
     class Directory < Wright::Resource
+      extend Forwardable
+
       # Initializes a Directory.
       #
       # @param name [String] the directory's name
       def initialize(name)
         super
         @mode = nil
-        @owner = nil
-        @group = nil
+        @owner = Wright::Util::FileOwner.new
         @action = :create
       end
 
-      # @return [String, Integer] the directory's mode
+      # @return [String, Integer] the directory's intended mode
       attr_accessor :mode
 
-      # @return [String] the directory's owner
-      attr_accessor :owner
-
-      # @return [String] the directory's group
-      attr_accessor :group
+      def_delegator :@owner, :user_and_group=, :owner=
+      def_delegator :@owner, :user, :owner
+      def_delegator :@owner, :group=
+      def_delegator :@owner, :group
 
       # Creates or updates the directory.
       #

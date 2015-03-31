@@ -118,7 +118,12 @@ describe Wright::Resource::File do
       end
     end
 
-    it 'should raise an exception when setting invalid an owner/group' do
+    it 'should reject owner:group strings with invalid notation' do
+      file = Wright::Resource::File.new(@filename)
+      -> { file.owner = 'foo:bar:baz' }.must_raise ArgumentError
+    end
+
+    it 'should raise an exception when creating files with invalid owners' do
       file = Wright::Resource::File.new(@filename)
       user = 'this_user_doesnt_exist'
       group = 'this_group_doesnt_exist'

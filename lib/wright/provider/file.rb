@@ -45,7 +45,7 @@ module Wright
         file_permissions = permissions
         unless_dry_run("create file: '#{@resource.name}'") do
           write_content_to_file
-          file_permissions.update
+          file_permissions.update unless file_permissions.uptodate?
         end
       end
 

@@ -100,7 +100,13 @@ describe Wright::Resource::Directory do
       end
     end
 
-    it 'should raise an exception when setting an invalid owner or group' do
+    it 'should reject owner:group strings with invalid notation' do
+      file = Wright::Resource::Directory.new(@filename)
+      -> { file.owner = 'foo:bar:baz' }.must_raise ArgumentError
+    end
+
+
+    it 'should raise an exception when creating dirs with invalid owners' do
       dir = Wright::Resource::Directory.new(@dirname)
       user = 'this_user_doesnt_exist'
       group = 'this_group_doesnt_exist'

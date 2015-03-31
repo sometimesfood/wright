@@ -17,11 +17,8 @@ module Wright
       def self.create_from_resource(resource, filetype)
         filepath = ::File.expand_path(resource.name)
         p = Wright::Util::FilePermissions.new(filepath, filetype)
+        p.owner = resource.owner
         p.group = resource.group
-        target_owner, target_group =
-          Wright::Util::User.owner_to_owner_group(resource.owner)
-        p.owner = target_owner if target_owner
-        p.group = target_group if target_group
         p.mode = resource.mode
         p
       end

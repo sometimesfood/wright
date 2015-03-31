@@ -49,7 +49,7 @@ module Wright
         dir_permissions = permissions
         unless_dry_run("create directory: '#{@resource.name}'") do
           FileUtils.mkdir_p(dirname)
-          dir_permissions.update
+          dir_permissions.update unless dir_permissions.uptodate?
         end
       end
 
