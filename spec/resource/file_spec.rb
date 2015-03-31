@@ -104,25 +104,6 @@ describe Wright::Resource::File do
       end
     end
 
-    it 'should support owner:group notation' do
-      FakeFS do
-        FileUtils.touch(@filename)
-        FileUtils.chown(23, 45, @filename)
-        owner = Etc.getpwuid(Process.uid).name
-        group = Etc.getgrgid(Process.gid).name
-        file = Wright::Resource::File.new(@filename)
-        file.owner = "#{owner}:#{group}"
-        file.create
-        Wright::Util::File.file_owner(@filename).must_equal Process.uid
-        Wright::Util::File.file_group(@filename).must_equal Process.gid
-      end
-    end
-
-    it 'should reject owner:group strings with invalid notation' do
-      file = Wright::Resource::File.new(@filename)
-      -> { file.owner = 'foo:bar:baz' }.must_raise ArgumentError
-    end
-
     it 'should raise an exception when creating files with invalid owners' do
       file = Wright::Resource::File.new(@filename)
       user = 'this_user_doesnt_exist'
@@ -213,6 +194,22 @@ describe Wright::Resource::File do
         file.remove
         File.exist?(File.expand_path(filename)).must_equal false
       end
+    end
+  end
+
+  describe '#owner=' do
+    it 'should support owner:group notation' do
+      file = Wright::Resource::File.new(@filename)
+      file.owner = 'foo:bar'
+      file.owner.must_equal 'foo'
+      file.group.must_equal 'bar'
+      file.group = 'baz'
+      file.group.must_equal 'baz'
+    end
+
+    it 'should reject owner:group strings with invalid notation' do
+      file = Wright::Resource::File.new(@filename)
+      -> { file.owner = 'foo:bar:baz' }.must_raise ArgumentError
     end
   end
 end
