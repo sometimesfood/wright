@@ -86,21 +86,7 @@ describe Wright::Resource::Directory do
       end
     end
 
-    it 'should support owner:group notation' do
-      FakeFS do
-        FileUtils.mkdir_p(@dirname)
-        FileUtils.chown(23, 45, @dirname)
-        owner = Etc.getpwuid(Process.uid).name
-        group = Etc.getgrgid(Process.gid).name
-        dir = Wright::Resource::Directory.new(@dirname)
-        dir.owner = "#{owner}:#{group}"
-        dir.create
-        Wright::Util::File.file_owner(@dirname).must_equal Process.uid
-        Wright::Util::File.file_group(@dirname).must_equal Process.gid
-      end
-    end
-
-    it 'should raise an exception when setting an invalid owner or group' do
+    it 'should raise an exception when creating dirs with invalid owners' do
       dir = Wright::Resource::Directory.new(@dirname)
       user = 'this_user_doesnt_exist'
       group = 'this_group_doesnt_exist'
@@ -182,6 +168,22 @@ describe Wright::Resource::Directory do
         dir.remove
         Dir.exist?(File.expand_path(dirname)).must_equal false
       end
+    end
+  end
+
+  describe '#owner=' do
+    it 'should support owner:group notation' do
+      dir = Wright::Resource::Directory.new(@dirname)
+      dir.owner = 'foo:bar'
+      dir.owner.must_equal 'foo'
+      dir.group.must_equal 'bar'
+      dir.group = 'baz'
+      dir.group.must_equal 'baz'
+    end
+
+    it 'should reject owner:group strings with invalid notation' do
+      dir = Wright::Resource::Directory.new(@dirname)
+      -> { dir.owner = 'foo:bar:baz' }.must_raise ArgumentError
     end
   end
 end

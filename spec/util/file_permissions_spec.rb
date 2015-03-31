@@ -82,12 +82,12 @@ describe FilePermissions do
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
         FileUtils.chown(user1.name, nil, @file_permissions.filename)
-        @file_permissions.current_owner.must_equal user1.uid
-        @file_permissions.owner = user2.name
+        @file_permissions.current_uid.must_equal user1.uid
+        @file_permissions.uid = user2.uid
         @file_permissions.uptodate?.must_equal false
         @file_permissions.update
         @file_permissions.uptodate?.must_equal true
-        @file_permissions.current_owner.must_equal user2.uid
+        @file_permissions.current_uid.must_equal user2.uid
       end
     end
 
@@ -97,12 +97,12 @@ describe FilePermissions do
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
         FileUtils.chown(nil, group1.name, @file_permissions.filename)
-        @file_permissions.current_group.must_equal group1.gid
-        @file_permissions.group = group2.name
+        @file_permissions.current_gid.must_equal group1.gid
+        @file_permissions.gid = group2.gid
         @file_permissions.uptodate?.must_equal false
         @file_permissions.update
         @file_permissions.uptodate?.must_equal true
-        @file_permissions.current_group.must_equal group2.gid
+        @file_permissions.current_gid.must_equal group2.gid
       end
     end
 

@@ -28,21 +28,4 @@ describe Util::User do
       Util::User.group_to_gid(group.name).must_equal group.gid
     end
   end
-
-  describe 'owner_to_owner_group' do
-    it 'should return non-string owners unmodified' do
-      Util::User.owner_to_owner_group(23).must_equal [23, nil]
-    end
-
-    it 'should convert owner strings to [owner, group] arrays' do
-      Util::User.owner_to_owner_group('foo').must_equal ['foo', nil]
-      Util::User.owner_to_owner_group('foo:bar').must_equal %w(foo bar)
-    end
-
-    it 'should raise exceptions for invalid owner strings' do
-      lambda do
-        Util::User.owner_to_owner_group('foo:bar:baz')
-      end.must_raise ArgumentError
-    end
-  end
 end
