@@ -1,4 +1,7 @@
 # wright NEWS
+## unreleased
+- Add bin/wright
+
 ## 0.2.0 (2015-03-13)
 - Add Homebrew package provider for OS X
 - Add group resource
