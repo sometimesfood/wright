@@ -5,7 +5,7 @@ require 'wright/provider'
 require 'wright/provider/user'
 require 'wright/provider/user/gnu_passwd'
 
-describe Wright::Provider::User do
+describe Wright::Provider::User::GnuPasswd do
   before(:each) do
     username = 'johndoe'
     @resource = OpenStruct.new(name: username)
@@ -24,7 +24,7 @@ describe Wright::Provider::User do
     end
 
     after(:each) do
-      Wright::Provider::User.send(:private, :add_user)
+      Wright::Provider::User::GnuPasswd.send(:private, :add_user)
     end
 
     it 'should add users' do
@@ -70,7 +70,7 @@ describe Wright::Provider::User do
     end
 
     after(:each) do
-      Wright::Provider::User.send(:private, :update_user)
+      Wright::Provider::User::GnuPasswd.send(:private, :update_user)
     end
 
     it 'should update users' do
@@ -91,7 +91,7 @@ describe Wright::Provider::User do
     end
 
     after(:each) do
-      Wright::Provider::User.send(:private, :delete_user)
+      Wright::Provider::User::GnuPasswd.send(:private, :delete_user)
     end
 
     it 'should delete users' do
