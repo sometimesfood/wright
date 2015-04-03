@@ -85,7 +85,7 @@ describe Wright::Provider::User::GnuPasswd do
     end
   end
 
-  describe '#update_user' do
+  describe '#delete_user' do
     before(:each) do
       Wright::Provider::User::GnuPasswd.send(:public, :delete_user)
     end
