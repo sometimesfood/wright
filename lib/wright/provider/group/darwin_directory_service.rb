@@ -45,6 +45,7 @@ module Wright
           Etc.group { |g| break g if g.name == @resource.name }
         end
 
+        # @todo Move this to Util::User
         def next_system_gid
           system_gid_range = (1...500)
           used_system_gids = []
