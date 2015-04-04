@@ -39,6 +39,42 @@ module Wright
         return nil if group.nil?
         group.is_a?(String) ? Etc.getgrnam(group).gid : group.to_i
       end
+
+      # Returns the the next free uid in a range.
+      #
+      # @param uid_range [Range] the uid range
+      #
+      # @example
+      #   Wright::Util::User.next_free_uid(1...500)
+      #   # => 2
+      #
+      # @return [Integer] the next free uid
+      # @raise [RuntimeError] if there are no free uids in the range
+      def self.next_free_uid(uid_range)
+        used_uids = []
+        Etc.passwd { |u| used_uids << u.uid if uid_range.include?(u.uid) }
+        free_uids = uid_range.to_a - used_uids
+        fail "No free uids in uid range #{uid_range}" if free_uids.empty?
+        free_uids.min
+      end
+
+      # Returns the the next free gid in a range.
+      #
+      # @param gid_range [Range] the gid range
+      #
+      # @example
+      #   Wright::Util::User.next_free_gid(1...500)
+      #   # => 11
+      #
+      # @return [Integer] the next free gid
+      # @raise [RuntimeError] if there are no free gids in the range
+      def self.next_free_gid(gid_range)
+        used_gids = []
+        Etc.group { |g| used_gids << g.gid if gid_range.include?(g.gid) }
+        free_gids = gid_range.to_a - used_gids
+        fail "No free gids in gid range #{gid_range}" if free_gids.empty?
+        free_gids.max
+      end
     end
   end
 end

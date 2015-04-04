@@ -35,7 +35,7 @@ module Wright
         def default_attributes
           uid_range = @resource.system ? 1...500 : 500...1000
           {
-            'UniqueID' => next_uid(uid_range),
+            'UniqueID' => Wright::Util::User.next_free_uid(uid_range),
             'UserShell' => '/bin/bash',
             'RealName' => '',
             'NFSHomeDirectory' => "/Users/#{@resource.name}",
@@ -53,17 +53,6 @@ module Wright
             'NFSHomeDirectory' => @resource.home,
             'PrimaryGroupID' => gid,
           }.reject { |_k, v| v.nil? }
-        end
-
-        # @todo Move this to Util::User
-        def next_uid(uid_range)
-          used_uids = []
-          Etc.passwd do |u|
-            used_uids << u.uid if uid_range.include?(u.uid)
-          end
-          free_uids = uid_range.to_a - used_uids
-          fail 'No free uids in range' if free_uids.empty?
-          free_uids.min
         end
       end
     end

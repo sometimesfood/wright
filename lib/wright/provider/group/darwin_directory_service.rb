@@ -45,16 +45,9 @@ module Wright
           Etc.group { |g| break g if g.name == @resource.name }
         end
 
-        # @todo Move this to Util::User
         def next_system_gid
           system_gid_range = (1...500)
-          used_system_gids = []
-          Etc.group do |g|
-            used_system_gids << g.gid if system_gid_range.include?(g.gid)
-          end
-          free_system_gids = system_gid_range.to_a - used_system_gids
-          fail 'No free gids in system gid range' if free_system_gids.empty?
-          free_system_gids.max
+          Wright::Util::User.next_free_gid(system_gid_range)
         end
       end
     end
