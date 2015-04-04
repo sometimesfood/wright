@@ -6,7 +6,7 @@ require 'fakeetc'
 describe Wright::Provider::Group::DarwinDirectoryService do
   def dseditgroup(command, group_name, gid = nil, system = false)
     if command != :delete
-      gid ||= 499 if system
+      gid ||= @groups['daemon'][:gid]+1 if system
       options = gid.nil? ? [] : ['-i', gid.to_s]
       ['dseditgroup', '-o', command.to_s, *options, group_name]
     else
@@ -45,7 +45,8 @@ describe Wright::Provider::Group::DarwinDirectoryService do
     @remove_message_debug = lambda do |group|
       "DEBUG: group already removed: '#{group}'\n"
     end
-    @groups = { 'foobar' => { gid: 42, mem: %w(foo bar) },
+    @groups = { 'daemon' => { gid: 1, mem: [] },
+                'foobar' => { gid: 42, mem: %w(foo bar) },
                 'bazqux' => { gid: 43, mem: %w(baz qux) } }
     FakeEtc.add_groups(@groups)
   end
