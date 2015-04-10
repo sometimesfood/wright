@@ -1,0 +1,7 @@
+abcde:
+  Installed: 2.5.3-1
+  Candidate: 2.5.3-1
+  Version table:
+ *** 2.5.3-1 0
+        500 http://debian.inode.at/debian/ wheezy/main amd64 Packages
+        100 /var/lib/dpkg/status

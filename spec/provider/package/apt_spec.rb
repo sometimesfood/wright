@@ -3,8 +3,8 @@ require_relative '../../spec_helper'
 require 'wright/provider/package/apt'
 
 describe Wright::Provider::Package::Apt do
-  def dpkg_query(pkg_name)
-    ['dpkg-query', '-s', pkg_name]
+  def apt_cache(pkg_name)
+    ['apt-cache', 'policy', pkg_name]
   end
 
   def apt_get(action, pkg_name, pkg_version = nil)
@@ -42,7 +42,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'abcde'
       pkg_versions = ['2.5.3-1']
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
@@ -51,22 +51,10 @@ describe Wright::Provider::Package::Apt do
     end
 
     it 'should return an empty array for missing packages' do
-      pkg_name = 'vlc'
-      pkg_versions = []
-      pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
-
-      @fake_capture3.expect(dpkg_cmd)
-      @fake_capture3.stub do
-        pkg_provider.installed_versions.must_equal pkg_versions
-      end
-    end
-
-    it 'should return an empty array for removed packages' do
       pkg_name = 'htop'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
@@ -78,7 +66,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'not-a-real-package'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
@@ -91,7 +79,7 @@ describe Wright::Provider::Package::Apt do
     it 'should install packages that are not currently installed' do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
       apt_cmd = apt_get(:install, pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
@@ -108,7 +96,7 @@ describe Wright::Provider::Package::Apt do
     it 'should not try to install packages that are already installed' do
       pkg_name = 'abcde'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
@@ -124,7 +112,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'abcde'
       pkg_version = '2.5.4-1'
       pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
       apt_cmd = apt_get(:install, pkg_name, pkg_version)
 
       @fake_capture3.expect(dpkg_cmd)
@@ -142,7 +130,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'abcde'
       pkg_version = '2.5.3-1'
       pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
@@ -157,7 +145,7 @@ describe Wright::Provider::Package::Apt do
     it 'should raise exceptions for unknown packages' do
       pkg_name = 'not-a-real-package'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
       apt_cmd = apt_get(:install, pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
@@ -175,7 +163,7 @@ describe Wright::Provider::Package::Apt do
     it 'should remove packages that are currently installed' do
       pkg_name = 'abcde'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
       apt_cmd = apt_get(:remove, pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
@@ -192,7 +180,7 @@ describe Wright::Provider::Package::Apt do
     it 'should not try to remove packages that are already removed' do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
@@ -208,7 +196,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'abcde'
       pkg_version = '2.5.3-1'
       pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
       apt_cmd = apt_get(:remove, pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
@@ -226,7 +214,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'htop'
       pkg_version = '2.5.4-1'
       pkg_provider = package_provider(pkg_name, pkg_version)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       @fake_capture3.expect(dpkg_cmd)
       @fake_capture3.stub do
@@ -243,7 +231,7 @@ describe Wright::Provider::Package::Apt do
     it 'should not actually install packages' do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       Wright.dry_run do
         @fake_capture3.expect(dpkg_cmd)
@@ -259,7 +247,7 @@ describe Wright::Provider::Package::Apt do
     it 'should not try to install packages that are already installed' do
       pkg_name = 'abcde'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       Wright.dry_run do
         @fake_capture3.expect(dpkg_cmd)
@@ -276,7 +264,7 @@ describe Wright::Provider::Package::Apt do
     it 'should not actually remove packages' do
       pkg_name = 'abcde'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       Wright.dry_run do
         @fake_capture3.expect(dpkg_cmd)
@@ -292,7 +280,7 @@ describe Wright::Provider::Package::Apt do
     it 'should not try to remove packages that are already removed' do
       pkg_name = 'htop'
       pkg_provider = package_provider(pkg_name)
-      dpkg_cmd = dpkg_query(pkg_name)
+      dpkg_cmd = apt_cache(pkg_name)
 
       Wright.dry_run do
         @fake_capture3.expect(dpkg_cmd)
