@@ -12,18 +12,14 @@ module Wright
       class Apt < Wright::Provider::Package
         # @return [Array<String>] the installed package versions
         def installed_versions
-          cmd = 'apt-cache'
-          args = ['policy', @resource.name]
-          cmd_stdout, _, cmd_status = Open3.capture3(env, cmd, *args)
+          package = @resource.name
+          err = "Cannot determine installed versions for package '#{package}'"
+          apt_policy = exec_or_fail('apt-cache', ['policy', package], err)
 
           version_re = /(?!\(none\)).*/
           installed_re = /^  Installed: (?<version>#{version_re})$/
-
-          if cmd_status.success? && match = installed_re.match(cmd_stdout)
-            [match['version']]
-          else
-            []
-          end
+          match = installed_re.match(apt_policy)
+          match ? [match['version']] : []
         end
 
         private
