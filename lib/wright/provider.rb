@@ -70,10 +70,10 @@ module Wright
     # @param error_message [String] the error message to display in
     #   case of an error
     # @raise [RuntimeError] if the command did not exit successfully
-    # @return [void]
+    # @return [String] the stdout output of the command
     def exec_or_fail(command, args, error_message)
       stdout, stderr, status = Open3.capture3(env, command, *args)
-      return if status.success?
+      return stdout if status.success?
 
       error = stderr.chomp
       error = stdout.chomp if error.empty?
