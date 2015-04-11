@@ -2,6 +2,7 @@
 ## unreleased
 - Add bin/wright
 - Add OS X user provider
+- Improve performance of the apt provider
 
 ## 0.2.0 (2015-03-13)
 - Add Homebrew package provider for OS X
