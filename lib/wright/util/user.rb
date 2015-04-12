@@ -57,7 +57,7 @@ module Wright
       # @return [Integer] the next free uid
       # @raise [RuntimeError] if there are no free uids in the range
       def self.next_free_uid(uid_range)
-        next_free_id(:uid, uid_range)
+        next_free_id(uid_range, :uid)
       end
 
       # Returns the the next free gid in a range.
@@ -71,10 +71,10 @@ module Wright
       # @return [Integer] the next free gid
       # @raise [RuntimeError] if there are no free gids in the range
       def self.next_free_gid(gid_range)
-        next_free_id(:gid, gid_range)
+        next_free_id(gid_range, :gid)
       end
 
-      def self.next_free_id(id_type, id_range)
+      def self.next_free_id(id_range, id_type)
         fail ArgumentError unless [:uid, :gid].include?(id_type)
         used_ids = []
         iterator = id_type == :uid ? Etc.method(:passwd) : Etc.method(:group)
