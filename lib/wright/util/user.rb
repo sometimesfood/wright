@@ -18,8 +18,7 @@ module Wright
       # @return [Integer] the integer uid of the given user or nil if
       #   user was nil
       def self.user_to_uid(user)
-        return nil if user.nil?
-        user.is_a?(String) ? Etc.getpwnam(user).uid : user.to_i
+        to_id(user, :user)
       end
 
       # Returns a group's gid.
@@ -36,9 +35,16 @@ module Wright
       # @return [Integer] the integer gid of the given group or nil if
       #   group was nil
       def self.group_to_gid(group)
-        return nil if group.nil?
-        group.is_a?(String) ? Etc.getgrnam(group).gid : group.to_i
+        to_id(group, :group)
       end
+
+      def self.to_id(object, type)
+        fail ArgumentError unless [:group, :user].include?(type)
+        return nil if object.nil?
+        return object.to_i unless object.is_a?(String)
+        type == :user ? Etc.getpwnam(object).uid : Etc.getgrnam(object).gid
+      end
+      private_class_method :to_id
 
       # Returns the the next free uid in a range.
       #
