@@ -1,4 +1,3 @@
-require 'wright/dry_run'
 require 'wright/provider'
 require 'wright/provider/group'
 

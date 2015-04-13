@@ -1,3 +1,6 @@
+require 'wright/provider'
+require 'wright/provider/user'
+
 module Wright
   class Provider
     class User
