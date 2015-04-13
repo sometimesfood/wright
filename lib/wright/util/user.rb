@@ -75,9 +75,8 @@ module Wright
       end
 
       def self.next_free_id(id_range, id_type)
-        fail ArgumentError unless [:uid, :gid].include?(id_type)
+        iterator = id_iterator(id_type)
         used_ids = []
-        iterator = id_type == :uid ? Etc.method(:passwd) : Etc.method(:group)
         iterator.call do |o|
           id = o.method(id_type).call
           used_ids << id if id_range.include?(id)
@@ -87,6 +86,12 @@ module Wright
         free_ids.min
       end
       private_class_method(:next_free_id)
+
+      def self.id_iterator(id_type)
+        fail ArgumentError unless [:uid, :gid].include?(id_type)
+        id_type == :uid ? Etc.method(:passwd) : Etc.method(:group)
+      end
+      private_class_method :id_iterator
     end
   end
 end
