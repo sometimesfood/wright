@@ -119,11 +119,13 @@ describe Wright::Provider::User::DarwinDirectoryService do
 
   describe '#update_user' do
     before(:each) do
-      Wright::Provider::User::DarwinDirectoryService.send(:public, :update_user)
+      Wright::Provider::User::DarwinDirectoryService.send(:public,
+                                                          :update_user)
     end
 
     after(:each) do
-      Wright::Provider::User::DarwinDirectoryService.send(:private, :update_user)
+      Wright::Provider::User::DarwinDirectoryService.send(:private,
+                                                          :update_user)
     end
 
     it 'should update users' do
@@ -142,11 +144,13 @@ describe Wright::Provider::User::DarwinDirectoryService do
 
   describe '#delete_user' do
     before(:each) do
-      Wright::Provider::User::DarwinDirectoryService.send(:public, :delete_user)
+      Wright::Provider::User::DarwinDirectoryService.send(:public,
+                                                          :delete_user)
     end
 
     after(:each) do
-      Wright::Provider::User::DarwinDirectoryService.send(:private, :delete_user)
+      Wright::Provider::User::DarwinDirectoryService.send(:private,
+                                                          :delete_user)
     end
 
     it 'should delete users' do

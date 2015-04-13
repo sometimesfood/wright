@@ -53,7 +53,7 @@ module Wright
             'UserShell' => @resource.shell,
             'RealName' => @resource.full_name,
             'NFSHomeDirectory' => @resource.home,
-            'PrimaryGroupID' => gid,
+            'PrimaryGroupID' => gid
           }.reject { |_k, v| v.nil? }
         end
       end
