@@ -1,5 +1,4 @@
 require 'wright/util/stolen_from_activesupport'
-require 'open3'
 
 module Wright
   # @api private

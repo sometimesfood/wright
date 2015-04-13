@@ -1,5 +1,3 @@
-require 'open3'
-
 require 'wright/provider'
 require 'wright/provider/package'
 
