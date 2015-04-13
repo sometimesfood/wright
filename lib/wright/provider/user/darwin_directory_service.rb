@@ -1,6 +1,8 @@
 module Wright
   class Provider
     class User
+      # Darwin DirectoryService user provider. Used as a provider for
+      # {Resource::User} on OS X systems.
       class DarwinDirectoryService < User
         private
 
