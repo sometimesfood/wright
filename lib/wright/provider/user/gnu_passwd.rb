@@ -12,16 +12,16 @@ module Wright
 
         def add_user
           user = @resource.name
-          cmd = 'useradd'
-          args = [*user_options, user]
-          exec_or_fail(cmd, args, "cannot create user '#{user}'")
+          exec_or_fail('useradd',
+                       [*user_options, user],
+                       "cannot create user '#{user}'")
         end
 
         def update_user
           user = @resource.name
-          cmd = 'usermod'
-          args = [*user_options, user]
-          exec_or_fail(cmd, args, "cannot create user '#{user}'")
+          exec_or_fail('usermod',
+                       [*user_options, user],
+                       "cannot create user '#{user}'")
         end
 
         def user_options
