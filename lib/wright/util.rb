@@ -43,9 +43,10 @@ module Wright
       return default unless ::File.exist?(release_file)
 
       os_release = ::File.read(release_file)
-      /^ID_LIKE=(?<id_like>.*)$/ =~ os_release
-      /^ID=(?<id>.*)$/ =~ os_release
-      id_like || id || default
+      /^ID_LIKE="?(?<id_like>[^"]*)"?$/ =~ os_release
+      /^ID="?(?<id>[^"]*)"?$/ =~ os_release
+      return id_like.split(' ').first if id_like
+      id || default
     end
     private_class_method :distro
 

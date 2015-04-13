@@ -63,6 +63,18 @@ ID_LIKE=debian
 PRETTY_NAME="Ubuntu precise (12.04.4 LTS)"
 VERSION_ID="12.04"
 EOS
+      @centos_os_release = <<EOS
+NAME="CentOS Linux"
+VERSION="7 (Core)"
+ID="centos"
+ID_LIKE="rhel fedora"
+VERSION_ID="7"
+PRETTY_NAME="CentOS Linux 7 (Core)"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:centos:centos:7"
+HOME_URL="https://www.centos.org/"
+BUG_REPORT_URL="https://bugs.centos.org/"
+EOS
     end
 
     after(:each) { FakeFS::FileSystem.clear }
@@ -85,6 +97,9 @@ EOS
 
           File.write('/etc/os-release', @ubuntu_os_release)
           Wright::Util.os_family.must_equal 'debian'
+
+          File.write('/etc/os-release', @centos_os_release)
+          Wright::Util.os_family.must_equal 'rhel'
         end
       end
     end
