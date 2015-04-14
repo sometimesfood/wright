@@ -1,0 +1,114 @@
+WRIGHT(1)
+=========
+:doctype: manpage
+
+
+NAME
+----
+wright - lightweight config management utility
+
+
+SYNOPSIS
+--------
+*wright* ['OPTIONS'] 'FILE' ['ARGUMENT'...]
+
+*wright* ['OPTIONS'] *-e* 'COMMAND' ['ARGUMENT'...]
+
+
+DESCRIPTION
+-----------
+wright is a lightweight configuration management utility. It can be
+used to perform common sysadmin tasks such as installing packages,
+creating files, setting up groups and users and so on by running short
+Ruby scripts.
+
+Although wright is typically used to run script files, it can also
+execute short code snippets passed on the command line. Another way to
+run wright scripts is to make your script executable and use wright as
+the interpreter by setting an appropriate "#!" line.
+
+
+OPTIONS
+-------
+*-e* 'COMMAND'::
+    Run 'COMMAND' as a wright script. When multiple commands are
+    passed, they are joined and run in sequence.
+
+*-v, --verbose*::
+    Print debugging information.
+
+*-q, --quiet*::
+    Suppress non-error output.
+
+*--version*::
+    Print wright version.
+
+
+EXAMPLES
+--------
+Install tmux via the system package manager:
+
+  wright -e 'package "tmux"'
+
+Create a system user named "foobard":
+
+  wright -e 'user("foobard") { |u| u.system = true }'
+
+Create a system group named "foobard":
+
+  wright -e 'group("foobard") { |u| u.system = true }'
+
+Create a file named '/etc/issue' containing the current wright
+version:
+
+  wright -e 'file("/etc/issue") { |f| f.content = Wright::VERSION }'
+
+Create a directory named '/tmp/foo/bar/baz':
+
+  wright -e 'directory "/tmp/foo/bar/baz"'
+
+Create a symlink from '.bash_profile' to '.profile' in the current
+user's home directory:
+
+  wright -e 'symlink("~/.bash_profile") { |s| s.to = "~/.profile" }'
+
+To install tmux and update its config file from a wright script,
+create the following file:
+
+  package 'tmux'
+  
+  file '/etc/tmux.conf' do |f|
+    f.content = <<EOF
+  unbind C-b
+  set -g prefix C-a
+  bind-key a send-prefix
+  EOF
+    f.mode = '444'
+    f.on_update = -> { puts 'Updated /etc/tmux.conf' }
+  end
+
+When saved as 'install-tmux.rb', the script can then be run via
+
+  wright --quiet install-tmux.rb
+
+wright can also be used as an interpreter. The example below
+creates and runs a standalone wright script:
+
+  cat <<EOF > create-dir.rb
+  #!/usr/bin/env wright
+  directory '/tmp/foo/bar/baz'
+  EOF
+  chmod +x create-dir.rb
+  ./create-dir.rb
+
+
+AUTHOR
+------
+Sebastian Boehm <sebastian@sometimesfood.org>
+
+
+COPYING
+-------
+Copyright \(C) 2012-2015 Sebastian Boehm. Free use of this software is
+granted under the terms of the MIT License (also known as the "Expat
+License").

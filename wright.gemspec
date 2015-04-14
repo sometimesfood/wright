@@ -15,7 +15,8 @@ EOS
                           'CONTRIBUTING.md',
                           'LICENSE',
                           'NEWS.md',
-                          '{bin,lib,man,spec}/**/*'] \
+                          'man/wright.1',
+                          '{bin,lib,spec}/**/*'] \
                       & `git ls-files -z`.split("\0")
   gem.executables   = gem.files.grep(/^bin\//).map { |f| File.basename(f) }
   gem.test_files    = gem.files.grep(/^(test|spec|features)\//)
