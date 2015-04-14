@@ -22,9 +22,14 @@ describe Wright::DSL do
 
     @wright_dsl.register_resource(resource_class)
 
-    resource_name = 'resource_klass'
-    @recipe.must_respond_to(resource_name)
-    resource = @recipe.send(resource_name)
+    resource_method_name = 'resource_klass'
+    resource_name = 'just a name'
+    @recipe.must_respond_to(resource_method_name)
+
+    e = -> { @recipe.send(resource_method_name) }.must_raise ArgumentError
+    e.message.must_equal 'wrong number of arguments (0 for 1)'
+
+    resource = @recipe.send(resource_method_name, resource_name)
     resource.must_be_instance_of(resource_class)
   end
 
