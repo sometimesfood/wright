@@ -27,6 +27,7 @@ module Wright
       # @return [Bool] true if the symlink was updated and false
       #   otherwise
       def create
+        raise ArgumentError, 'Symlink target undefined' unless @to
         might_update_resource do
           @provider.create
         end
