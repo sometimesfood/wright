@@ -3,6 +3,8 @@
 - Add bin/wright
 - Add OS X user provider
 - Improve performance of the apt provider
+- Improve error message for resources without names (#5)
+- Improve error message for symlinks without target (#6)
 
 ## 0.2.0 (2015-03-13)
 - Add Homebrew package provider for OS X
