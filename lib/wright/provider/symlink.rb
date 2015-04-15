@@ -10,42 +10,36 @@ module Wright
       #
       # @return [void]
       def create
-        if exist?
-          symlink = symlink_to_s(@resource.name, @resource.to)
-          Wright.log.debug "symlink already created: #{symlink}"
-          return
-        end
-
         fail Errno::EEXIST, link_name if regular_file?
-        create_link
-        @updated = true
+
+        symlink = symlink_to_s(@resource.name, @resource.to)
+        unless_uptodate(:create, "symlink already created: #{symlink}") do
+          create_link
+        end
       end
 
       # Removes the symlink.
       #
       # @return [void]
       def remove
-        if ::File.exist?(link_name) && !::File.symlink?(link_name)
-          fail "'#{link_name}' is not a symlink"
-        end
+        fail "'#{link_name}' is not a symlink" if regular_file?
 
-        if ::File.symlink?(link_name)
+        symlink = @resource.name
+        unless_uptodate(:remove, "symlink already removed: '#{symlink}'") do
           remove_symlink
-          @updated = true
-        else
-          Wright.log.debug "symlink already removed: '#{@resource.name}'"
         end
       end
 
       private
 
-      # Checks if the specified link exists.
-      #
-      # Returns true if the link exists and points to the specified
-      # target and false otherwise.
-      def exist?
-        ::File.symlink?(link_name) &&
-          ::File.readlink(link_name) == link_to
+      def uptodate?(action)
+        case action
+        when :create
+          ::File.symlink?(link_name) &&
+            ::File.readlink(link_name) == link_to
+        when :remove
+          !::File.exist?(link_name) && !::File.symlink?(link_name)
+        end
       end
 
       def create_link
@@ -70,6 +64,7 @@ module Wright
       end
 
       def link_to
+        return nil if @resource.to.nil?
         Wright::Util::File.expand_tilde_path(@resource.to)
       end
 
