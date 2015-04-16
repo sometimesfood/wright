@@ -38,7 +38,7 @@ module Wright
           ::File.symlink?(link_name) &&
             ::File.readlink(link_name) == link_to
         when :remove
-          !::File.exist?(link_name) && !::File.symlink?(link_name)
+          !::File.symlink?(link_name)
         end
       end
 

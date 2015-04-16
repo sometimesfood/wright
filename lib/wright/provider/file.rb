@@ -2,6 +2,7 @@ require 'fileutils'
 require 'digest'
 require 'tempfile'
 require 'tmpdir'
+
 require 'wright/provider'
 require 'wright/util/file_permissions'
 require 'wright/util/user'
@@ -16,13 +17,10 @@ module Wright
       def create
         fail Errno::EISDIR, filename if ::File.directory?(filename)
 
-        if uptodate?
-          Wright.log.debug "file already created: '#{@resource.name}'"
-          return
+        file = @resource.name
+        unless_uptodate(:create, "file already created: '#{file}'") do
+          create_file
         end
-
-        create_file
-        @updated = true
       end
 
       # Removes the file.
@@ -31,11 +29,9 @@ module Wright
       def remove
         fail Errno::EISDIR, filename if ::File.directory?(filename)
 
-        if ::File.exist?(filename) || ::File.symlink?(filename)
+        file = @resource.name
+        unless_uptodate(:remove, "file already removed: '#{file}'") do
           remove_file
-          @updated = true
-        else
-          Wright.log.debug "file already removed: '#{@resource.name}'"
         end
       end
 
@@ -85,8 +81,13 @@ module Wright
         current_checksum == target_checksum
       end
 
-      def uptodate?
-        content_uptodate? && permissions.uptodate?
+      def uptodate?(action)
+        case action
+        when :create
+          content_uptodate? && permissions.uptodate?
+        when :remove
+          !::File.exist?(filename) && !::File.symlink?(filename)
+        end
       end
 
       def filename
