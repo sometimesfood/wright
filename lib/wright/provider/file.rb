@@ -17,8 +17,7 @@ module Wright
       # @raise [Errno::EISDIR] if there is already a directory with
       #   the specified name
       def create
-        fail Errno::EISDIR, filename if ::File.directory?(filename)
-
+        fail_if_directory
         file = @resource.name
         unless_uptodate(:create, "file already created: '#{file}'") do
           create_file
@@ -31,8 +30,7 @@ module Wright
       # @raise [Errno::EISDIR] if there is a directory with the
       #   specified name
       def remove
-        fail Errno::EISDIR, filename if ::File.directory?(filename)
-
+        fail_if_directory
         file = @resource.name
         unless_uptodate(:remove, "file already removed: '#{file}'") do
           remove_file
@@ -96,6 +94,10 @@ module Wright
 
       def filename
         ::File.expand_path(@resource.name)
+      end
+
+      def fail_if_directory
+        fail Errno::EISDIR, filename if ::File.directory?(filename)
       end
     end
   end
