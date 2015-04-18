@@ -72,6 +72,12 @@ module Wright
       end
     end
 
+    # Runs a code block in a clean bundler environment.
+    #
+    # @example
+    #   Wright::Util.bundler_clean_env { `brew search /^git$/` }
+    #   # => "git\n"
+    # @return [Object] the return value of the code block
     def self.bundler_clean_env
       if defined?(Bundler)
         Bundler.with_clean_env { yield }

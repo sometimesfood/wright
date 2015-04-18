@@ -14,6 +14,8 @@ module Wright
       # Creates or updates the file.
       #
       # @return [void]
+      # @raise [Errno::EISDIR] if there is already a directory with
+      #   the specified name
       def create
         fail Errno::EISDIR, filename if ::File.directory?(filename)
 
@@ -26,6 +28,8 @@ module Wright
       # Removes the file.
       #
       # @return [void]
+      # @raise [Errno::EISDIR] if there is a directory with the
+      #   specified name
       def remove
         fail Errno::EISDIR, filename if ::File.directory?(filename)
 
