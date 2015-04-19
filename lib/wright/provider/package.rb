@@ -23,7 +23,9 @@ module Wright
       def remove
         package = @resource.name
         unless_uptodate(:remove, "package already removed: '#{package}'") do
-          remove_package
+          unless_dry_run("remove package: '#{package}'") do
+            remove_package
+          end
         end
       end
 
@@ -63,6 +65,10 @@ module Wright
       end
 
       def install_package
+        fail NotImplementedError
+      end
+
+      def remove_package
         fail NotImplementedError
       end
     end

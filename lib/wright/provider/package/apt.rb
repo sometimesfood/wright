@@ -26,10 +26,7 @@ module Wright
         end
 
         def remove_package
-          package = @resource.name
-          unless_dry_run("remove package: '#{package}'") do
-            apt_get(:remove, package)
-          end
+          apt_get(:remove, @resource.name)
         end
 
         def apt_get(action, package, version = nil)

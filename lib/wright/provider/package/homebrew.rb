@@ -32,10 +32,7 @@ module Wright
         end
 
         def remove_package
-          package = @resource.name
-          unless_dry_run("remove package: '#{package}'") do
-            brew(:uninstall, package)
-          end
+          brew(:uninstall, @resource.name)
         end
 
         def brew(action, package, version = nil)
