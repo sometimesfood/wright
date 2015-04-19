@@ -4,15 +4,15 @@ require 'wright/provider'
 require 'wright/provider/package'
 
 describe Wright::Provider::Package do
-  before(:each) do
-    Wright::Provider::Package.send(:public, :uptodate?)
-  end
-
-  after(:each) do
-    Wright::Provider::Package.send(:private, :uptodate?)
-  end
-
   describe '#uptodate?' do
+    before(:each) do
+      Wright::Provider::Package.send(:public, :uptodate?)
+    end
+
+    after(:each) do
+      Wright::Provider::Package.send(:private, :uptodate?)
+    end
+
     it 'should return the correct status' do
       pkg_resource = OpenStruct.new(name: 'foo')
       pkg_provider = Wright::Provider::Package.new(pkg_resource)
