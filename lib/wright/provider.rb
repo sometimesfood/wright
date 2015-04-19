@@ -1,3 +1,5 @@
+require 'open3'
+
 require 'wright/config'
 require 'wright/dry_run'
 require 'wright/util/recursive_autoloader'
