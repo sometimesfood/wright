@@ -11,7 +11,9 @@ module Wright
       def install
         package = @resource.name
         unless_uptodate(:install, "package already installed: '#{package}'") do
-          install_package
+          unless_dry_run("install package: '#{package}'") do
+            install_package
+          end
         end
       end
 
@@ -23,6 +25,11 @@ module Wright
         unless_uptodate(:remove, "package already removed: '#{package}'") do
           remove_package
         end
+      end
+
+      # @return [Array<String>] the installed package versions
+      def installed_versions
+        fail NotImplementedError
       end
 
       private
@@ -53,6 +60,10 @@ module Wright
         else
           !installed_versions.empty?
         end
+      end
+
+      def install_package
+        fail NotImplementedError
       end
     end
   end
