@@ -31,7 +31,7 @@ EOS
   gem.add_development_dependency 'fakeetc', '~> 0.2.0'
   gem.add_development_dependency 'rake', '~> 10.4.2'
   gem.add_development_dependency 'yard', '~> 0.8.7.6'
-  gem.add_development_dependency 'simplecov', '~> 0.9.2'
+  gem.add_development_dependency 'simplecov', '~> 0.10.0'
   gem.add_development_dependency 'pry', '~> 0.10.1'
   gem.add_development_dependency 'rubocop', '~> 0.29.1'
 end

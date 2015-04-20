@@ -22,5 +22,5 @@ def measure_coverage
 
   ignored_directories = ['/spec/', '/vendor/', '/.bundle/']
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[*formatters]
-  SimpleCov.start { ignored_directories.each { |dir| add_filter(dir) } }
+  SimpleCov.start { add_filter(ignored_directories) }
 end
