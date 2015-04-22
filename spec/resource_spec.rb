@@ -106,7 +106,7 @@ describe Wright::Resource do
       name = :farnsworth
       resource = Updater.new(name)
       resource_info = "#{resource.resource_name} '#{name}'"
-      output = "INFO: Would trigger update action for #{resource_info}\n"
+      output = "INFO: (would) run update action for #{resource_info}\n"
       lambda do
         reset_logger
         resource.on_update = @say_hello
