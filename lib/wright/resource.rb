@@ -125,7 +125,7 @@ module Wright
 
       if Wright.dry_run?
         resource = "#{@resource_name} '#{@name}'"
-        Wright.log.info "Would trigger update action for #{resource}"
+        Wright.log.info "(would) run update action for #{resource}"
       else
         @on_update.call
       end
