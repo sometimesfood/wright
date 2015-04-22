@@ -28,17 +28,11 @@ module Wright
         private
 
         def install_package
-          package = @resource.name
-          unless_dry_run("install package: '#{package}'") do
-            brew(:install, package, @resource.version)
-          end
+          brew(:install, @resource.name, @resource.version)
         end
 
         def remove_package
-          package = @resource.name
-          unless_dry_run("remove package: '#{package}'") do
-            brew(:uninstall, package)
-          end
+          brew(:uninstall, @resource.name)
         end
 
         def brew(action, package, version = nil)

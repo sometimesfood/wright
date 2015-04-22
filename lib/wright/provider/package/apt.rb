@@ -22,17 +22,11 @@ module Wright
         private
 
         def install_package
-          package = @resource.name
-          unless_dry_run("install package: '#{package}'") do
-            apt_get(:install, package, @resource.version)
-          end
+          apt_get(:install, @resource.name, @resource.version)
         end
 
         def remove_package
-          package = @resource.name
-          unless_dry_run("remove package: '#{package}'") do
-            apt_get(:remove, package)
-          end
+          apt_get(:remove, @resource.name)
         end
 
         def apt_get(action, package, version = nil)
