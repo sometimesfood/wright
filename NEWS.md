@@ -1,6 +1,7 @@
 # wright NEWS
 ## unreleased
 - Add bin/wright
+- Add wright(1) manpage
 - Add OS X user provider
 - Improve performance of the apt provider
 - Improve error message for resources without names (#5)
