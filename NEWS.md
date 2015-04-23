@@ -1,5 +1,5 @@
 # wright NEWS
-## unreleased
+## 0.3.0 (2015-04-23)
 - Add bin/wright
 - Add wright(1) manpage
 - Add OS X user provider
