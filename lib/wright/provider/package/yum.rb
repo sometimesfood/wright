@@ -8,8 +8,6 @@ module Wright
     class Package
       # Yum package provider. Used as a provider for
       # {Resource::Package} on Fedora-based systems.
-      #
-      # @todo implement #remove_package
       class Yum < Wright::Provider::Package
         # @return [Array<String>] the installed package versions
         def installed_versions
@@ -25,7 +23,11 @@ module Wright
           yum(:install, ['-y'], package_name, package_version)
         end
 
-        def yum(action, options, package, version)
+        def remove_package
+          yum(:remove, ['-y'], package_name)
+        end
+
+        def yum(action, options, package, version = nil)
           cmd = 'yum'
           package_version = version.nil? ? '' : "-#{version}"
           args = [action.to_s, *options, package + package_version]

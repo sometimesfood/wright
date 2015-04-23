@@ -14,9 +14,8 @@ describe Wright::Provider::Package::Yum do
   end
 
   def yum(action, pkg_name, pkg_version = nil)
-    options = action == :install ? ['-y'] : []
     version = pkg_version.nil? ? '' : "-#{pkg_version}"
-    ['yum', action.to_s, *options, pkg_name + version]
+    ['yum', action.to_s, '-y', pkg_name + version]
   end
 
   before :each do
@@ -85,6 +84,19 @@ describe Wright::Provider::Package::Yum do
         wright_error = "cannot install package '#{pkg_name}'"
         yum_error = "Error: Nothing to do"
         e.message.must_equal %(#{wright_error}: "#{yum_error}")
+      end
+    end
+  end
+
+  describe '#remove_package' do
+    it 'should remove packages' do
+      pkg_name = 'screen'
+      pkg_provider = package_provider(pkg_name)
+      yum_cmd = yum(:remove, pkg_name)
+
+      @fake_capture3.expect(yum_cmd)
+      @fake_capture3.stub do
+        pkg_provider.send(:remove_package)
       end
     end
   end
