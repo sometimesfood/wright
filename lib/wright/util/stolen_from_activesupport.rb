@@ -85,7 +85,7 @@ module Wright
       # @return [String] the camelized string
       def self.camelize(s)
         s.to_s
-          .gsub(/\/(.?)/) { "::#{Regexp.last_match[1].upcase}" }
+          .gsub(%r{/(.?)}) { "::#{Regexp.last_match[1].upcase}" }
           .gsub(/(?:^|_)(.)/) { Regexp.last_match[1].upcase }
       end
 

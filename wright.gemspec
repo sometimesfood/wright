@@ -18,8 +18,8 @@ EOS
                           'man/wright.1',
                           '{bin,lib,spec}/**/*'] \
                       & `git ls-files -z`.split("\0")
-  gem.executables   = gem.files.grep(/^bin\//).map { |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(/^(test|spec|features)\//)
+  gem.executables   = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
+  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = 'wright'
   gem.require_paths = ['lib']
   gem.version       = Wright::VERSION

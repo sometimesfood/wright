@@ -10,4 +10,4 @@ file 'man/wright.1' => 'man/wright.1.txt' do
   sh 'a2x --format manpage man/wright.1.txt'
 end
 
-task :build => 'man/wright.1'
+task build: 'man/wright.1'
