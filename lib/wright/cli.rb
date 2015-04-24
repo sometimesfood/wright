@@ -17,6 +17,7 @@ module Wright
       arguments = parse(argv)
       return if @quit
 
+      Wright.activate_dry_run if @dry_run
       Wright.log.level = @log_level if @log_level
       @main.extend Wright::DSL
 
@@ -25,8 +26,7 @@ module Wright
 
     private
 
-    attr_reader :commands
-    attr_reader :log_level
+    attr_reader :commands, :dry_run, :log_level
 
     def parse(argv)
       # use OptionParser#order! instead of #parse! so CLI#run does not
@@ -44,10 +44,10 @@ module Wright
       end
     end
 
-    # @todo Move to a separate class
     def set_up_parser
       @parser = OptionParser.new
       set_up_command_option
+      set_up_dry_run_option
       set_up_verbosity_options
       set_up_version_option
     end
@@ -55,6 +55,12 @@ module Wright
     def set_up_command_option
       @parser.on('-e COMMAND', 'Run COMMAND') do |e|
         @commands << e
+      end
+    end
+
+    def set_up_dry_run_option
+      @parser.on('-n', '--dry-run', 'Enable dry-run mode') do
+        @dry_run = true
       end
     end
 

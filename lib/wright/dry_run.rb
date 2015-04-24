@@ -29,4 +29,9 @@ module Wright # rubocop:disable Documentation
   ensure
     @dry_run = saved_dry_run
   end
+
+  # @api private
+  def self.activate_dry_run
+    @dry_run = true
+  end
 end
