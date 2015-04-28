@@ -7,7 +7,7 @@ module Wright
     def initialize(main)
       @commands = []
       @main = main
-      @parser = option_parser
+      set_up_parser
     end
 
     # Runs a wright script with the supplied arguments.
@@ -44,24 +44,34 @@ module Wright
       end
     end
 
-    def option_parser
-      OptionParser.new do |opts|
-        opts.on('-e COMMAND', 'Run COMMAND') do |e|
-          @commands << e
-        end
+    # @todo Move to a separate class
+    def set_up_parser
+      @parser = OptionParser.new
+      set_up_command_option
+      set_up_verbosity_options
+      set_up_version_option
+    end
 
-        opts.on('-v', '--verbose', 'Increase verbosity') do
-          @log_level = Wright::Logger::DEBUG
-        end
+    def set_up_command_option
+      @parser.on('-e COMMAND', 'Run COMMAND') do |e|
+        @commands << e
+      end
+    end
 
-        opts.on('-q', '--quiet', 'Decrease verbosity') do
-          @log_level = Wright::Logger::ERROR
-        end
+    def set_up_verbosity_options
+      @parser.on('-v', '--verbose', 'Increase verbosity') do
+        @log_level = Wright::Logger::DEBUG
+      end
 
-        opts.on_tail('--version', 'Show wright version') do
-          puts "wright version #{Wright::VERSION}"
-          @quit = true
-        end
+      @parser.on('-q', '--quiet', 'Decrease verbosity') do
+        @log_level = Wright::Logger::ERROR
+      end
+    end
+
+    def set_up_version_option
+      @parser.on_tail('--version', 'Show wright version') do
+        puts "wright version #{Wright::VERSION}"
+        @quit = true
       end
     end
   end
