@@ -6,15 +6,15 @@ require 'wright/provider'
 require 'wright/provider/group'
 
 describe Wright::Provider::Group do
-  before(:each) do
-    Wright::Provider::Group.send(:public, :uptodate?)
-  end
-
-  after(:each) do
-    Wright::Provider::Group.send(:private, :uptodate?)
-  end
-
   describe '#uptodate?' do
+    before(:each) do
+      Wright::Provider::Group.send(:public, :uptodate?)
+    end
+
+    after(:each) do
+      Wright::Provider::Group.send(:private, :uptodate?)
+    end
+
     it 'should return the correct status' do
       resource = OpenStruct.new(name: 'foo')
       provider = Wright::Provider::Group.new(resource)
