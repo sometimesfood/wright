@@ -34,6 +34,12 @@ OPTIONS
     Run 'COMMAND' as a wright script. When multiple commands are
     passed, they are joined and run in sequence.
 
+*-n, --dry-run*::
+
+    Enable dry-run mode. In dry-run mode, wright resources do not
+    modify the system, but you still have to make sure your own code
+    does not cause any unwanted changes.
+
 *-v, --verbose*::
     Print debugging information.
 

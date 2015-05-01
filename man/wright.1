@@ -2,12 +2,12 @@
 .\"     Title: wright
 .\"    Author: [see the "AUTHOR" section]
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 04/22/2015
+.\"      Date: 05/01/2015
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "WRIGHT" "1" "04/22/2015" "\ \&" "\ \&"
+.TH "WRIGHT" "1" "05/01/2015" "\ \&" "\ \&"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -46,6 +46,11 @@ Although wright is typically used to run script files, it can also execute short
 Run
 \fICOMMAND\fR
 as a wright script\&. When multiple commands are passed, they are joined and run in sequence\&.
+.RE
+.PP
+\fB\-n, \-\-dry\-run\fR
+.RS 4
+Enable dry\-run mode\&. In dry\-run mode, wright resources do not modify the system, but you still have to make sure your own code does not cause any unwanted changes\&.
 .RE
 .PP
 \fB\-v, \-\-verbose\fR
