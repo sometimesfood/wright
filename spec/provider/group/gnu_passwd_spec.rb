@@ -31,29 +31,23 @@ describe Wright::Provider::Group::GnuPasswd do
     Wright::Provider::Group::GnuPasswd.new(group_resource)
   end
 
-  before :each do
+  before(:each) do
     gnu_passwd_dir = File.join(File.dirname(__FILE__), 'gnu_passwd')
     @fake_capture3 = FakeCapture3.new(gnu_passwd_dir)
-    @create_message = ->(group) { "INFO: create group: '#{group}'\n" }
-    @create_message_dry = lambda do |group|
-      "INFO: (would) create group: '#{group}'\n"
-    end
-    @create_message_debug = lambda do |group|
-      "DEBUG: group already created: '#{group}'\n"
-    end
-    @remove_message = ->(group) { "INFO: remove group: '#{group}'\n" }
-    @remove_message_dry = lambda do |group|
-      "INFO: (would) remove group: '#{group}'\n"
-    end
-    @remove_message_debug = lambda do |group|
-      "DEBUG: group already removed: '#{group}'\n"
-    end
     @groups = { 'foobar' => { gid: 42, mem: %w(foo bar) },
                 'bazqux' => { gid: 43, mem: %w(baz qux) } }
     FakeEtc.add_groups(@groups)
   end
 
-  describe '#create' do
+  describe '#create_group' do
+    before(:each) do
+      Wright::Provider::Group::GnuPasswd.send(:public, :create_group)
+    end
+
+    after(:each) do
+      Wright::Provider::Group::GnuPasswd.send(:private, :create_group)
+    end
+
     it 'should create new groups' do
       gid = 1234
       group_name = 'newgroup'
@@ -63,11 +57,7 @@ describe Wright::Provider::Group::GnuPasswd do
       @fake_capture3.expect(groupadd_cmd)
       @fake_capture3.stub do
         FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.create
-            group_provider.updated?.must_equal true
-          end.must_output @create_message.call(group_name)
+          group_provider.create_group
         end
       end
     end
@@ -83,28 +73,7 @@ describe Wright::Provider::Group::GnuPasswd do
       @fake_capture3.expect(groupadd_cmd)
       @fake_capture3.stub do
         FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.create
-            group_provider.updated?.must_equal true
-          end.must_output @create_message.call(group_name)
-        end
-      end
-    end
-
-    it 'should not try to create existing groups' do
-      group_name = 'foobar'
-      gid = @groups[group_name][:gid]
-      members = @groups[group_name][:mem]
-      group_provider = group_provider(group_name, gid, members)
-
-      @fake_capture3.stub do
-        FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.create
-            group_provider.updated?.must_equal false
-          end.must_output @create_message_debug.call(group_name)
+          group_provider.create_group
         end
       end
     end
@@ -119,11 +88,7 @@ describe Wright::Provider::Group::GnuPasswd do
       @fake_capture3.expect(gpasswd_cmd)
       @fake_capture3.stub do
         FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.create
-            group_provider.updated?.must_equal true
-          end.must_output @create_message.call(group_name)
+          group_provider.create
         end
       end
     end
@@ -138,11 +103,7 @@ describe Wright::Provider::Group::GnuPasswd do
       @fake_capture3.expect(gpasswd_cmd)
       @fake_capture3.stub do
         FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.create
-            group_provider.updated?.must_equal true
-          end.must_output @create_message.call(group_name)
+          group_provider.create
         end
       end
     end
@@ -156,11 +117,7 @@ describe Wright::Provider::Group::GnuPasswd do
       @fake_capture3.expect(groupmod_cmd)
       @fake_capture3.stub do
         FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.create
-            group_provider.updated?.must_equal true
-          end.must_output @create_message.call(group_name)
+          group_provider.create
         end
       end
     end
@@ -218,6 +175,26 @@ describe Wright::Provider::Group::GnuPasswd do
     end
   end
 
+  describe '#set_gid' do
+    before(:each) do
+      Wright::Provider::Group::GnuPasswd.send(:public, :set_gid)
+    end
+
+    after(:each) do
+      Wright::Provider::Group::GnuPasswd.send(:private, :set_gid)
+    end
+  end
+
+  describe '#set_members' do
+    before(:each) do
+      Wright::Provider::Group::GnuPasswd.send(:public, :set_members)
+    end
+
+    after(:each) do
+      Wright::Provider::Group::GnuPasswd.send(:private, :set_members)
+    end
+  end
+
   describe '#remove' do
     it 'should remove existing groups' do
       group_name = 'foobar'
@@ -227,26 +204,7 @@ describe Wright::Provider::Group::GnuPasswd do
       @fake_capture3.expect(groupdel_cmd)
       @fake_capture3.stub do
         FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.remove
-            group_provider.updated?.must_equal true
-          end.must_output @remove_message.call(group_name)
-        end
-      end
-    end
-
-    it 'should not try to remove groups that are already removed' do
-      group_name = 'not-a-group'
-      group_provider = group_provider(group_name)
-
-      @fake_capture3.stub do
-        FakeEtc do
-          lambda do
-            reset_logger
-            group_provider.remove
-            group_provider.updated?.must_equal false
-          end.must_output @remove_message_debug.call(group_name)
+          group_provider.remove
         end
       end
     end
@@ -264,117 +222,6 @@ describe Wright::Provider::Group::GnuPasswd do
           groupdel_error =
             "groupdel: cannot remove the primary group of user 'quux'"
           e.message.must_equal %(#{wright_error}: "#{groupdel_error}")
-        end
-      end
-    end
-  end
-
-  describe 'dry_run' do
-    it 'should not actually create new groups' do
-      gid = 1234
-      group_name = 'newgroup'
-      group_provider = group_provider(group_name, gid)
-
-      @fake_capture3.stub do
-        Wright.dry_run do
-          FakeEtc do
-            lambda do
-              reset_logger
-              group_provider.create
-              group_provider.updated?.must_equal true
-            end.must_output @create_message_dry.call(group_name)
-          end
-        end
-      end
-    end
-
-    it 'should not actually update existing groups' do
-      gid = 1234
-      group_name = 'foobar'
-      members = %w(user1 user2)
-      group_provider = group_provider(group_name, gid, members)
-
-      @fake_capture3.stub do
-        Wright.dry_run do
-          FakeEtc do
-            lambda do
-              reset_logger
-              group_provider.create
-              group_provider.updated?.must_equal true
-            end.must_output @create_message_dry.call(group_name)
-          end
-        end
-      end
-    end
-
-    it 'should not try to create existing groups' do
-      group_name = 'foobar'
-      gid = @groups[group_name][:gid]
-      members = @groups[group_name][:mem]
-      group_provider = group_provider(group_name, gid, members)
-
-      @fake_capture3.stub do
-        Wright.dry_run do
-          FakeEtc do
-            lambda do
-              reset_logger
-              group_provider.create
-              group_provider.updated?.must_equal false
-            end.must_output @create_message_debug.call(group_name)
-          end
-        end
-      end
-    end
-
-    it 'should not actually update existing groups' do
-      group_name = 'foobar'
-      gid = @groups[group_name][:gid] + 10
-      members = %w(user1 user2)
-      group_provider = group_provider(group_name, gid, members)
-
-      @fake_capture3.stub do
-        Wright.dry_run do
-          FakeEtc do
-            lambda do
-              reset_logger
-              group_provider.create
-              group_provider.updated?.must_equal true
-            end.must_output @create_message_dry.call(group_name)
-          end
-        end
-      end
-    end
-
-    it 'should not actually remove groups' do
-      group_name = 'foobar'
-      group_provider = group_provider(group_name)
-
-      @fake_capture3.stub do
-        Wright.dry_run do
-          FakeEtc do
-            lambda do
-              reset_logger
-              group_provider.remove
-              group_provider.updated?.must_equal true
-            end.must_output @remove_message_dry.call(group_name)
-          end
-        end
-      end
-    end
-
-    it 'should not try to remove groups that are already removed' do
-      group_name = 'not-a-group'
-      group_provider = group_provider(group_name)
-
-      @fake_capture3.stub do
-        Wright.dry_run do
-          FakeEtc do
-            lambda do
-              reset_logger
-              group_provider.remove
-              group_provider.updated?.must_equal false
-            end.must_output @remove_message_debug.call(group_name)
-          end
         end
       end
     end

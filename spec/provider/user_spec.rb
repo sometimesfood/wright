@@ -305,7 +305,7 @@ describe Wright::Provider::User do
 
       mock_provider.expect(:remove_user, nil)
       provider.stub :remove_user, -> { mock_provider.remove_user } do
-        FakeEtc.add_users('johndoe' => {})
+        FakeEtc.add_users(@resource.name => {})
         FakeEtc do
           lambda do
             reset_logger
@@ -321,7 +321,7 @@ describe Wright::Provider::User do
       provider = Wright::Provider::User.new(@resource)
 
       Wright.dry_run do
-        FakeEtc.add_users('johndoe' => {})
+        FakeEtc.add_users(@resource.name => {})
         FakeEtc do
           lambda do
             reset_logger
