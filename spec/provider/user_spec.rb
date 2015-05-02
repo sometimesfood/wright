@@ -1,19 +1,13 @@
 require_relative '../spec_helper'
 
 require 'fakeetc'
+
 require 'wright/provider'
 require 'wright/provider/group'
 
 describe Wright::Provider::User do
   before(:each) do
-    username = 'johndoe'
-    @resource = OpenStruct.new(name: username)
-    @create_message = "INFO: create user: '#{username}'\n"
-    @create_message_dry = "INFO: (would) create user: '#{username}'\n"
-    @create_message_debug = "DEBUG: user already created: '#{username}'\n"
-    @remove_message = "INFO: remove user: '#{username}'\n"
-    @remove_message_dry = "INFO: (would) remove user: '#{username}'\n"
-    @remove_message_debug = "DEBUG: user already removed: '#{username}'\n"
+    @resource = OpenStruct.new(name: 'johndoe')
   end
 
   after(:each) do
@@ -214,6 +208,13 @@ describe Wright::Provider::User do
   end
 
   describe '#create' do
+    before(:each) do
+      username = @resource.name
+      @create_message = "INFO: create user: '#{username}'\n"
+      @create_message_dry = "INFO: (would) create user: '#{username}'\n"
+      @create_message_debug = "DEBUG: user already created: '#{username}'\n"
+    end
+
     it 'should set the update status when the user is up-to-date' do
       provider = Wright::Provider::User.new(@resource)
 
@@ -279,6 +280,13 @@ describe Wright::Provider::User do
   end
 
   describe '#remove' do
+    before(:each) do
+      username = @resource.name
+      @remove_message = "INFO: remove user: '#{username}'\n"
+      @remove_message_dry = "INFO: (would) remove user: '#{username}'\n"
+      @remove_message_debug = "DEBUG: user already removed: '#{username}'\n"
+    end
+
     it 'should set the update status when the user is already removed' do
       provider = Wright::Provider::User.new(@resource)
 
