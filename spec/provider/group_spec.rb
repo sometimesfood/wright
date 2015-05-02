@@ -129,4 +129,31 @@ describe Wright::Provider::Group do
       Wright::Provider::Group.send(:private, :set_members)
     end
   end
+
+  describe '#create_group' do
+    it 'should raise an exception' do
+      provider = Wright::Provider::Group.new(@resource)
+      lambda do
+        provider.send(:create_group)
+      end.must_raise NotImplementedError
+    end
+  end
+
+  describe '#remove_group' do
+    it 'should raise an exception' do
+      provider = Wright::Provider::Group.new(@resource)
+      lambda do
+        provider.send(:remove_group)
+      end.must_raise NotImplementedError
+    end
+  end
+
+  describe '#set_gid' do
+    it 'should raise an exception' do
+      provider = Wright::Provider::Group.new(@resource)
+      lambda do
+        provider.send(:set_gid)
+      end.must_raise NotImplementedError
+    end
+  end
 end

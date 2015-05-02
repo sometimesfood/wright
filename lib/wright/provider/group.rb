@@ -6,13 +6,16 @@ module Wright
     # Group provider. Used as a base class for {Resource::Group}
     # providers.
     class Group < Wright::Provider
-      # Adds the group.
+      # Creates the group.
       #
       # @return [void]
       def create
         group = @resource.name
         unless_uptodate(:create, "group already created: '#{group}'") do
-          create_group
+          unless_dry_run("create group: '#{group}'") do
+            ensure_group_exists
+            set_members unless members_uptodate?
+          end
         end
       end
 
@@ -22,11 +25,21 @@ module Wright
       def remove
         group = @resource.name
         unless_uptodate(:remove, "group already removed: '#{group}'") do
-          remove_group
+          unless_dry_run("remove group: '#{group}'") do
+            remove_group
+          end
         end
       end
 
       private
+
+      def ensure_group_exists
+        if group_exists?
+          set_gid unless gid_uptodate?
+        else
+          create_group
+        end
+      end
 
       # @api public
       # Checks if the group is up-to-date for a given action.
@@ -45,25 +58,6 @@ module Wright
           !group_exists?
         else
           fail ArgumentError, "invalid action '#{action}'"
-        end
-      end
-
-      def create_group
-        group = @resource.name
-        unless_dry_run("create group: '#{group}'") do
-          if group_exists?
-            set_gid(group, @resource.gid) unless gid_uptodate?
-          else
-            add_group(group, @resource.gid, @resource.system)
-          end
-          set_members(group, @resource.members) unless members_uptodate?
-        end
-      end
-
-      def remove_group
-        group = @resource.name
-        unless_dry_run("remove group: '#{group}'") do
-          delete_group(group)
         end
       end
 
@@ -91,6 +85,18 @@ module Wright
         unwanted_members = group_data.mem - @resource.members
         new_members.each { |m| add_member(m, group) }
         unwanted_members.each { |m| remove_member(m, group) }
+      end
+
+      def create_group
+        fail NotImplementedError
+      end
+
+      def remove_group
+        fail NotImplementedError
+      end
+
+      def set_gid
+        fail NotImplementedError
       end
 
       def add_member(_member, _group)

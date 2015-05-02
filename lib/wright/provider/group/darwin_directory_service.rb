@@ -9,33 +9,38 @@ module Wright
       class DarwinDirectoryService < Wright::Provider::Group
         private
 
-        def add_group(group_name, gid, system)
-          gid ||= next_system_gid if system
+        def create_group
+          group = @resource.name
+          gid = @resource.gid
+          gid ||= next_system_gid if @resource.system
           options = gid.nil? ? [] : ['-i', gid.to_s]
           cmd = 'dseditgroup'
-          args = ['-o', 'create', *options, group_name]
-          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
+          args = ['-o', 'create', *options, group]
+          exec_or_fail(cmd, args, "cannot create group '#{group}'")
         end
 
-        def delete_group(group_name)
+        def remove_group
+          group = @resource.name
           cmd = 'dseditgroup'
-          args = ['-o', 'delete', group_name]
-          exec_or_fail(cmd, args, "cannot remove group '#{group_name}'")
+          args = ['-o', 'delete', group]
+          exec_or_fail(cmd, args, "cannot remove group '#{group}'")
         end
 
-        def set_members(group_name, members)
-          options = ['GroupMembership', *members]
+        def set_members
+          group = @resource.name
+          options = ['GroupMembership', *@resource.members]
           cmd = 'dscl'
-          args = ['.', 'create', "/Groups/#{group_name}", *options]
-          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
+          args = ['.', 'create', "/Groups/#{group}", *options]
+          exec_or_fail(cmd, args, "cannot create group '#{group}'")
         end
 
-        def set_gid(group_name, gid)
+        def set_gid
+          group = @resource.name
           cmd = 'dseditgroup'
           args = ['-o', 'edit',
-                  '-i', gid.to_s,
-                  group_name]
-          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
+                  '-i', @resource.gid.to_s,
+                  group]
+          exec_or_fail(cmd, args, "cannot create group '#{group}'")
         end
 
         # Overrides Provider::Group#group_data to work around caching

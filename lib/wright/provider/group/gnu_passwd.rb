@@ -9,31 +9,36 @@ module Wright
       class GnuPasswd < Wright::Provider::Group
         private
 
-        def add_group(group_name, gid, system)
+        def create_group
+          group = @resource.name
+          gid = @resource.gid
           options = []
-          options << '--system' if system
+          options << '--system' if @resource.system
           options += ['-g', gid.to_s] if gid
           cmd = 'groupadd'
-          args = [*options, group_name]
-          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
+          args = [*options, group]
+          exec_or_fail(cmd, args, "cannot create group '#{group}'")
         end
 
-        def delete_group(group_name)
+        def remove_group
+          group = @resource.name
           cmd = 'groupdel'
-          args = [group_name]
-          exec_or_fail(cmd, args, "cannot remove group '#{group_name}'")
+          args = [group]
+          exec_or_fail(cmd, args, "cannot remove group '#{group}'")
         end
 
-        def set_members(group_name, members)
+        def set_members
+          group = @resource.name
           cmd = 'gpasswd'
-          args = ['-M', "'#{members.join(',')}'", group_name]
-          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
+          args = ['-M', "'#{@resource.members.join(',')}'", group]
+          exec_or_fail(cmd, args, "cannot create group '#{group}'")
         end
 
-        def set_gid(group_name, gid)
+        def set_gid
+          group = @resource.name
           cmd = 'groupmod'
-          args = ['-g', gid.to_s, group_name]
-          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
+          args = ['-g', @resource.gid.to_s, group]
+          exec_or_fail(cmd, args, "cannot create group '#{group}'")
         end
       end
     end
