@@ -14,7 +14,9 @@ module Wright
 
         symlink = symlink_to_s(@resource.name, @resource.to)
         unless_uptodate(:create, "symlink already created: #{symlink}") do
-          create_link
+          unless_dry_run("create symlink: #{symlink}") do
+            Wright::Util::File.ln_sfn(link_to, link_name)
+          end
         end
       end
 
@@ -26,7 +28,9 @@ module Wright
 
         symlink = @resource.name
         unless_uptodate(:remove, "symlink already removed: '#{symlink}'") do
-          remove_symlink
+          unless_dry_run("remove symlink: '#{@resource.name}'") do
+            FileUtils.rm(link_name)
+          end
         end
       end
 
@@ -42,21 +46,8 @@ module Wright
         end
       end
 
-      def create_link
-        symlink = symlink_to_s(@resource.name, @resource.to)
-        unless_dry_run("create symlink: #{symlink}") do
-          Wright::Util::File.ln_sfn(link_to, link_name)
-        end
-      end
-
       def symlink_to_s(link_name, target)
         "'#{link_name}' -> '#{target}'"
-      end
-
-      def remove_symlink
-        unless_dry_run("remove symlink: '#{@resource.name}'") do
-          FileUtils.rm(link_name)
-        end
       end
 
       def regular_file?
