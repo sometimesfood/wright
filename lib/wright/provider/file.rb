@@ -19,8 +19,12 @@ module Wright
       def create
         fail_if_directory
         file = @resource.name
+        file_permissions = permissions
         unless_uptodate(:create, "file already created: '#{file}'") do
-          create_file
+          unless_dry_run("create file: '#{@resource.name}'") do
+            write_content_to_file
+            file_permissions.update unless file_permissions.uptodate?
+          end
         end
       end
 
@@ -33,19 +37,13 @@ module Wright
         fail_if_directory
         file = @resource.name
         unless_uptodate(:remove, "file already removed: '#{file}'") do
-          remove_file
+          unless_dry_run("remove file: '#{@resource.name}'") do
+            FileUtils.rm(filename)
+          end
         end
       end
 
       private
-
-      def create_file
-        file_permissions = permissions
-        unless_dry_run("create file: '#{@resource.name}'") do
-          write_content_to_file
-          file_permissions.update unless file_permissions.uptodate?
-        end
-      end
 
       def write_content_to_file
         tempfile = Tempfile.new(::File.basename(filename))
@@ -59,12 +57,6 @@ module Wright
         # do not overwrite existing files if content was not specified
         return if @resource.content.nil? && ::File.exist?(filename)
         FileUtils.mv(tempfile.path, filename)
-      end
-
-      def remove_file
-        unless_dry_run("remove file: '#{@resource.name}'") do
-          FileUtils.rm(filename)
-        end
       end
 
       def permissions
