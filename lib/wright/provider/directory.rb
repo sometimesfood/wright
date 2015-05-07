@@ -15,8 +15,12 @@ module Wright
         fail Errno::EEXIST, dirname if regular_file?
 
         dir = @resource.name
+        dir_permissions = permissions
         unless_uptodate(:create, "directory already created: '#{dir}'") do
-          create_directory
+          unless_dry_run("create directory: '#{@resource.name}'") do
+            FileUtils.mkdir_p(dirname)
+            dir_permissions.update unless dir_permissions.uptodate?
+          end
         end
       end
 
@@ -30,7 +34,9 @@ module Wright
 
         dir = @resource.name
         unless_uptodate(:remove, "directory already removed: '#{dir}'") do
-          remove_directory
+          unless_dry_run("remove directory: '#{@resource.name}'") do
+            FileUtils.rmdir(dirname)
+          end
         end
       end
 
@@ -48,20 +54,6 @@ module Wright
       def permissions
         Wright::Util::FilePermissions.create_from_resource(@resource,
                                                            :directory)
-      end
-
-      def create_directory
-        dir_permissions = permissions
-        unless_dry_run("create directory: '#{@resource.name}'") do
-          FileUtils.mkdir_p(dirname)
-          dir_permissions.update unless dir_permissions.uptodate?
-        end
-      end
-
-      def remove_directory
-        unless_dry_run("remove directory: '#{@resource.name}'") do
-          FileUtils.rmdir(dirname)
-        end
       end
 
       def regular_file?
