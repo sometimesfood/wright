@@ -11,9 +11,8 @@ module Wright
       #
       # @return [void]
       def create
-        user = @resource.name
-        unless_uptodate(:create, "user already created: '#{user}'") do
-          unless_dry_run("create user: '#{@resource.name}'") do
+        unless_uptodate(:create, "user already created: '#{user_name}'") do
+          unless_dry_run("create user: '#{user_name}'") do
             if user_exists?
               update_user
             else
@@ -27,15 +26,46 @@ module Wright
       #
       # @return [void]
       def remove
-        user = @resource.name
-        unless_uptodate(:remove, "user already removed: '#{user}'") do
-          unless_dry_run("remove user: '#{@resource.name}'") do
+        unless_uptodate(:remove, "user already removed: '#{user_name}'") do
+          unless_dry_run("remove user: '#{user_name}'") do
             remove_user
           end
         end
       end
 
       private
+
+      def user_name
+        @resource.name
+      end
+
+      def uid
+        @resource.uid
+      end
+
+      def primary_group
+        @resource.primary_group
+      end
+
+      def full_name
+        @resource.full_name
+      end
+
+      def groups
+        @resource.groups
+      end
+
+      def shell
+        @resource.shell
+      end
+
+      def home
+        @resource.home
+      end
+
+      def system_user?
+        @resource.system
+      end
 
       # @api public
       # Checks if the user is up-to-date for a given action.
@@ -67,13 +97,13 @@ module Wright
       end
 
       def user_data
-        Etc.getpwnam(@resource.name)
+        Etc.getpwnam(user_name)
       rescue ArgumentError
         nil
       end
 
       def uid_uptodate?
-        @resource.uid.nil? || user_data.uid == @resource.uid
+        uid.nil? || user_data.uid == uid
       end
 
       def full_name_uptodate?
@@ -84,12 +114,12 @@ module Wright
       def groups_uptodate?
         return true if @resource.groups.nil?
         groups = []
-        Etc.group { |g| groups << g.name if g.mem.include?(@resource.name) }
+        Etc.group { |g| groups << g.name if g.mem.include?(user_name) }
         groups.uniq.sort == @resource.groups.uniq.sort
       end
 
       def shell_uptodate?
-        @resource.shell.nil? || user_data.shell == @resource.shell
+        shell.nil? || user_data.shell == shell
       end
 
       def home_uptodate?
