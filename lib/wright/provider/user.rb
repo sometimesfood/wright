@@ -109,7 +109,7 @@ module Wright
       end
 
       def groups_uptodate?
-        return true if @resource.groups.nil?
+        return true if groups.nil?
         target_groups = []
         Etc.group { |g| target_groups << g.name if g.mem.include?(user_name) }
         target_groups.sort.uniq == groups.sort.uniq

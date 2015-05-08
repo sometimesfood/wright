@@ -26,9 +26,8 @@ module Wright
       def remove
         fail "'#{link_name_expanded}' is not a symlink" if regular_file?
 
-        symlink = @resource.name
-        unless_uptodate(:remove, "symlink already removed: '#{symlink}'") do
-          unless_dry_run("remove symlink: '#{@resource.name}'") do
+        unless_uptodate(:remove, "symlink already removed: '#{link_name}'") do
+          unless_dry_run("remove symlink: '#{link_name}'") do
             FileUtils.rm(link_name_expanded)
           end
         end
