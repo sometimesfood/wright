@@ -9,7 +9,7 @@ module Wright
       class DarwinDirectoryService < User
         private
 
-        def add_user
+        def create_user
           user = @resource.name
           attributes = default_attributes.merge(resource_attributes)
           attributes.each do |k, v|
@@ -26,7 +26,7 @@ module Wright
           end
         end
 
-        def delete_user
+        def remove_user
           user = @resource.name
           exec_or_fail('dscl',
                        %W(. -delete /Users/#{user}),

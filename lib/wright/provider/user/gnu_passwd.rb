@@ -9,7 +9,7 @@ module Wright
       class GnuPasswd < Wright::Provider::User
         private
 
-        def add_user
+        def create_user
           user = @resource.name
           exec_or_fail('useradd',
                        [*user_options, user],
@@ -21,6 +21,11 @@ module Wright
           exec_or_fail('usermod',
                        [*user_options, user],
                        "cannot create user '#{user}'")
+        end
+
+        def remove_user
+          user = @resource.name
+          exec_or_fail('userdel', [user], "cannot remove user '#{user}'")
         end
 
         def user_options
@@ -42,11 +47,6 @@ module Wright
 
         def groups
           @resource.groups.nil? ? nil : @resource.groups.join(',')
-        end
-
-        def delete_user
-          user = @resource.name
-          exec_or_fail('userdel', [user], "cannot remove user '#{user}'")
         end
       end
     end

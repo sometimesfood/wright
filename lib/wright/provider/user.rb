@@ -7,13 +7,19 @@ module Wright
     # User provider. Used as a base class for {Resource::User}
     # providers.
     class User < Wright::Provider
-      # Adds the user.
+      # Creates or updates the user.
       #
       # @return [void]
       def create
         user = @resource.name
         unless_uptodate(:create, "user already created: '#{user}'") do
-          create_user
+          unless_dry_run("create user: '#{@resource.name}'") do
+            if user_exists?
+              update_user
+            else
+              create_user
+            end
+          end
         end
       end
 
@@ -23,7 +29,9 @@ module Wright
       def remove
         user = @resource.name
         unless_uptodate(:remove, "user already removed: '#{user}'") do
-          remove_user
+          unless_dry_run("remove user: '#{@resource.name}'") do
+            remove_user
+          end
         end
       end
 
@@ -56,22 +64,6 @@ module Wright
           shell_uptodate? &&
           home_uptodate? &&
           primary_group_uptodate?
-      end
-
-      def create_user
-        unless_dry_run("create user: '#{@resource.name}'") do
-          if user_exists?
-            update_user
-          else
-            add_user
-          end
-        end
-      end
-
-      def remove_user
-        unless_dry_run("remove user: '#{@resource.name}'") do
-          delete_user
-        end
       end
 
       def user_data
@@ -115,7 +107,7 @@ module Wright
         !user_data.nil?
       end
 
-      def add_user
+      def create_user
         fail NotImplementedError
       end
 
@@ -123,7 +115,7 @@ module Wright
         fail NotImplementedError
       end
 
-      def delete_user
+      def remove_user
         fail NotImplementedError
       end
     end

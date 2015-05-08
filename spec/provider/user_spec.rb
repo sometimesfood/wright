@@ -180,11 +180,11 @@ describe Wright::Provider::User do
     end
   end
 
-  describe '#add_user' do
+  describe '#create_user' do
     it 'should raise an exception' do
       provider = Wright::Provider::User.new(@resource)
       lambda do
-        provider.send(:add_user)
+        provider.send(:create_user)
       end.must_raise NotImplementedError
     end
   end
@@ -198,11 +198,11 @@ describe Wright::Provider::User do
     end
   end
 
-  describe '#delete_user' do
+  describe '#remove_user' do
     it 'should raise an exception' do
       provider = Wright::Provider::User.new(@resource)
       lambda do
-        provider.send(:delete_user)
+        provider.send(:remove_user)
       end.must_raise NotImplementedError
     end
   end
@@ -232,8 +232,8 @@ describe Wright::Provider::User do
       provider = Wright::Provider::User.new(@resource)
       mock_provider = Minitest::Mock.new
 
-      mock_provider.expect(:add_user, nil)
-      provider.stub :add_user, -> { mock_provider.add_user } do
+      mock_provider.expect(:create_user, nil)
+      provider.stub :create_user, -> { mock_provider.create_user } do
         FakeEtc do
           lambda do
             reset_logger
@@ -303,8 +303,8 @@ describe Wright::Provider::User do
       provider = Wright::Provider::User.new(@resource)
       mock_provider = Minitest::Mock.new
 
-      mock_provider.expect(:delete_user, nil)
-      provider.stub :delete_user, -> { mock_provider.delete_user } do
+      mock_provider.expect(:remove_user, nil)
+      provider.stub :remove_user, -> { mock_provider.remove_user } do
         FakeEtc.add_users('johndoe' => {})
         FakeEtc do
           lambda do
