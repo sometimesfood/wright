@@ -46,7 +46,7 @@ module Wright
       end
       private_class_method :to_id
 
-      # Returns the the next free uid in a range.
+      # Returns the next free uid in a range.
       #
       # @param uid_range [Range] the uid range
       #
@@ -60,7 +60,7 @@ module Wright
         next_free_id(uid_range, :uid)
       end
 
-      # Returns the the next free gid in a range.
+      # Returns the next free gid in a range.
       #
       # @param gid_range [Range] the gid range
       #
@@ -92,6 +92,38 @@ module Wright
         id_type == :uid ? Etc.method(:passwd) : Etc.method(:group)
       end
       private_class_method :id_iterator
+
+      # Returns a user entry.
+      #
+      # @param username [String] the name of the user
+      #
+      # @example
+      #   Wright::Util::User.safe_getpwnam('this_user_does_not_exist')
+      #   # => nil
+      #
+      # @return [Struct::Passwd, nil] the user entry or nil if the
+      #   user does not exist
+      def self.safe_getpwnam(username)
+        Etc.getpwnam(username)
+      rescue ArgumentError
+        nil
+      end
+
+      # Returns a group entry.
+      #
+      # @param groupname [String] the name of the group
+      #
+      # @example
+      #   Wright::Util::User.safe_getgrnam('this_group_does_not_exist')
+      #   # => nil
+      #
+      # @return [Struct::Group, nil] the group entry or nil if the
+      #   group does not exist
+      def self.safe_getgrnam(groupname)
+        Etc.getgrnam(groupname)
+      rescue ArgumentError
+        nil
+      end
     end
   end
 end

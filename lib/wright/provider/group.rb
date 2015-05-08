@@ -76,9 +76,7 @@ module Wright
       end
 
       def group_data
-        Etc.getgrnam(group_name)
-      rescue ArgumentError
-        nil
+        Wright::Util::User.safe_getgrnam(group_name)
       end
 
       def gid_uptodate?

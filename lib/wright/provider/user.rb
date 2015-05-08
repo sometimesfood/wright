@@ -97,9 +97,7 @@ module Wright
       end
 
       def user_data
-        Etc.getpwnam(user_name)
-      rescue ArgumentError
-        nil
+        Wright::Util::User.safe_getpwnam(user_name)
       end
 
       def uid_uptodate?
@@ -107,15 +105,14 @@ module Wright
       end
 
       def full_name_uptodate?
-        @resource.full_name.nil? ||
-          user_data.gecos.split(',').first == @resource.full_name
+        full_name.nil? || user_data.gecos.split(',').first == full_name
       end
 
       def groups_uptodate?
         return true if @resource.groups.nil?
-        groups = []
-        Etc.group { |g| groups << g.name if g.mem.include?(user_name) }
-        groups.uniq.sort == @resource.groups.uniq.sort
+        target_groups = []
+        Etc.group { |g| target_groups << g.name if g.mem.include?(user_name) }
+        target_groups.sort.uniq == groups.sort.uniq
       end
 
       def shell_uptodate?
@@ -123,14 +120,12 @@ module Wright
       end
 
       def home_uptodate?
-        @resource.home.nil? || user_data.dir == @resource.home
+        home.nil? || user_data.dir == home
       end
 
       def primary_group_uptodate?
-        return true if @resource.primary_group.nil?
-
-        gid = Wright::Util::User.group_to_gid(@resource.primary_group)
-        user_data.gid == gid
+        return true if primary_group.nil?
+        user_data.gid == Wright::Util::User.group_to_gid(primary_group)
       end
 
       def user_exists?
