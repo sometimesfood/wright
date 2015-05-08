@@ -10,43 +10,39 @@ module Wright
         private
 
         def create_group
-          group = @resource.name
-          gid = @resource.gid
-          gid ||= next_system_gid if @resource.system
-          options = gid.nil? ? [] : ['-i', gid.to_s]
+          target_gid = gid
+          target_gid ||= next_system_gid if system_group?
+          options = target_gid.nil? ? [] : ['-i', target_gid.to_s]
           cmd = 'dseditgroup'
-          args = ['-o', 'create', *options, group]
-          exec_or_fail(cmd, args, "cannot create group '#{group}'")
+          args = ['-o', 'create', *options, group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def remove_group
-          group = @resource.name
           cmd = 'dseditgroup'
-          args = ['-o', 'delete', group]
-          exec_or_fail(cmd, args, "cannot remove group '#{group}'")
+          args = ['-o', 'delete', group_name]
+          exec_or_fail(cmd, args, "cannot remove group '#{group_name}'")
         end
 
         def set_members
-          group = @resource.name
-          options = ['GroupMembership', *@resource.members]
+          options = ['GroupMembership', *members]
           cmd = 'dscl'
-          args = ['.', 'create', "/Groups/#{group}", *options]
-          exec_or_fail(cmd, args, "cannot create group '#{group}'")
+          args = ['.', 'create', "/Groups/#{group_name}", *options]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def set_gid
-          group = @resource.name
           cmd = 'dseditgroup'
           args = ['-o', 'edit',
-                  '-i', @resource.gid.to_s,
-                  group]
-          exec_or_fail(cmd, args, "cannot create group '#{group}'")
+                  '-i', gid.to_s,
+                  group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         # Overrides Provider::Group#group_data to work around caching
         # issues with getgrnam(3) on OS X.
         def group_data
-          Etc.group { |g| break g if g.name == @resource.name }
+          Etc.group { |g| break g if g.name == group_name }
         end
 
         def next_system_gid

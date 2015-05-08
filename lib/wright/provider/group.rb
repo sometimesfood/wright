@@ -6,13 +6,12 @@ module Wright
     # Group provider. Used as a base class for {Resource::Group}
     # providers.
     class Group < Wright::Provider
-      # Creates the group.
+      # Creates or updates the group.
       #
       # @return [void]
       def create
-        group = @resource.name
-        unless_uptodate(:create, "group already created: '#{group}'") do
-          unless_dry_run("create group: '#{group}'") do
+        unless_uptodate(:create, "group already created: '#{group_name}'") do
+          unless_dry_run("create group: '#{group_name}'") do
             ensure_group_exists
             set_members unless members_uptodate?
           end
@@ -23,15 +22,30 @@ module Wright
       #
       # @return [void]
       def remove
-        group = @resource.name
-        unless_uptodate(:remove, "group already removed: '#{group}'") do
-          unless_dry_run("remove group: '#{group}'") do
+        unless_uptodate(:remove, "group already removed: '#{group_name}'") do
+          unless_dry_run("remove group: '#{group_name}'") do
             remove_group
           end
         end
       end
 
       private
+
+      def group_name
+        @resource.name
+      end
+
+      def gid
+        @resource.gid
+      end
+
+      def members
+        @resource.members
+      end
+
+      def system_group?
+        @resource.system
+      end
 
       def ensure_group_exists
         if group_exists?
@@ -62,17 +76,17 @@ module Wright
       end
 
       def group_data
-        Etc.getgrnam(@resource.name)
+        Etc.getgrnam(group_name)
       rescue ArgumentError
         nil
       end
 
       def gid_uptodate?
-        @resource.gid.nil? || group_data.gid == @resource.gid
+        gid.nil? || group_data.gid == gid
       end
 
       def members_uptodate?
-        @resource.members.nil? || group_data.mem == @resource.members
+        members.nil? || group_data.mem == members
       end
 
       def group_exists?
@@ -80,11 +94,10 @@ module Wright
       end
 
       def set_members
-        group = @resource.name
-        new_members = @resource.members - group_data.mem
-        unwanted_members = group_data.mem - @resource.members
-        new_members.each { |m| add_member(m, group) }
-        unwanted_members.each { |m| remove_member(m, group) }
+        new_members = members - group_data.mem
+        unwanted_members = group_data.mem - members
+        new_members.each { |m| add_member(m, group_name) }
+        unwanted_members.each { |m| remove_member(m, group_name) }
       end
 
       def create_group

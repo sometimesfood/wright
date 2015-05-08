@@ -10,35 +10,30 @@ module Wright
         private
 
         def create_group
-          group = @resource.name
-          gid = @resource.gid
           options = []
-          options << '--system' if @resource.system
+          options << '--system' if system_group?
           options += ['-g', gid.to_s] if gid
           cmd = 'groupadd'
-          args = [*options, group]
-          exec_or_fail(cmd, args, "cannot create group '#{group}'")
+          args = [*options, group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def remove_group
-          group = @resource.name
           cmd = 'groupdel'
-          args = [group]
-          exec_or_fail(cmd, args, "cannot remove group '#{group}'")
+          args = [group_name]
+          exec_or_fail(cmd, args, "cannot remove group '#{group_name}'")
         end
 
         def set_members
-          group = @resource.name
           cmd = 'gpasswd'
-          args = ['-M', "'#{@resource.members.join(',')}'", group]
-          exec_or_fail(cmd, args, "cannot create group '#{group}'")
+          args = ['-M', "'#{members.join(',')}'", group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
         def set_gid
-          group = @resource.name
           cmd = 'groupmod'
-          args = ['-g', @resource.gid.to_s, group]
-          exec_or_fail(cmd, args, "cannot create group '#{group}'")
+          args = ['-g', gid.to_s, group_name]
+          exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
       end
     end
