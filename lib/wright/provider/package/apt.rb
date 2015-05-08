@@ -9,9 +9,9 @@ module Wright
       class Apt < Wright::Provider::Package
         # @return [Array<String>] the installed package versions
         def installed_versions
-          package = @resource.name
-          err = "Cannot determine installed versions for package '#{package}'"
-          apt_policy = exec_or_fail('apt-cache', ['policy', package], err)
+          err =
+            "Cannot determine installed versions for package '#{package_name}'"
+          apt_policy = exec_or_fail('apt-cache', ['policy', package_name], err)
 
           version_re = /(?!\(none\)).*/
           installed_re = /^  Installed: (?<version>#{version_re})$/
@@ -22,11 +22,11 @@ module Wright
         private
 
         def install_package
-          apt_get(:install, @resource.name, @resource.version)
+          apt_get(:install, package_name, package_version)
         end
 
         def remove_package
-          apt_get(:remove, @resource.name)
+          apt_get(:remove, package_name)
         end
 
         def apt_get(action, package, version = nil)
