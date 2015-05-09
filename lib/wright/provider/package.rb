@@ -56,15 +56,15 @@ module Wright
       def uptodate?(action)
         case action
         when :install
-          package_installed?
+          installed?
         when :remove
-          !package_installed?
+          !installed?
         else
           fail ArgumentError, "invalid action '#{action}'"
         end
       end
 
-      def package_installed?
+      def installed?
         if package_version
           installed_versions.include?(package_version)
         else
