@@ -3,8 +3,8 @@ require_relative '../../spec_helper'
 require 'wright/provider/package/apt'
 
 describe Wright::Provider::Package::Apt do
-  def apt_cache(pkg_name)
-    ['apt-cache', 'policy', pkg_name]
+  def apt_cache(cmd, pkg_name)
+    ['apt-cache', cmd.to_s, pkg_name]
   end
 
   def apt_get(action, pkg_name, pkg_version = nil)
@@ -28,7 +28,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'abcde'
       pkg_versions = ['2.5.3-1']
       pkg_provider = package_provider(pkg_name)
-      apt_cache_cmd = apt_cache(pkg_name)
+      apt_cache_cmd = apt_cache(:policy, pkg_name)
 
       @fake_capture3.expect(apt_cache_cmd)
       @fake_capture3.stub do
@@ -40,7 +40,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'htop'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      apt_cache_cmd = apt_cache(pkg_name)
+      apt_cache_cmd = apt_cache(:policy, pkg_name)
 
       @fake_capture3.expect(apt_cache_cmd)
       @fake_capture3.stub do
@@ -52,7 +52,7 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'not-a-real-package'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      apt_cache_cmd = apt_cache(pkg_name)
+      apt_cache_cmd = apt_cache(:policy, pkg_name)
 
       @fake_capture3.expect(apt_cache_cmd)
       @fake_capture3.stub do
