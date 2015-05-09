@@ -34,6 +34,16 @@ module Wright
         fail NotImplementedError
       end
 
+      # @return [Bool] true if the package is installed, false
+      #   otherwise
+      def installed?
+        if package_version
+          installed_versions.include?(package_version)
+        else
+          !installed_versions.empty?
+        end
+      end
+
       private
 
       def package_name
@@ -61,14 +71,6 @@ module Wright
           !installed?
         else
           fail ArgumentError, "invalid action '#{action}'"
-        end
-      end
-
-      def installed?
-        if package_version
-          installed_versions.include?(package_version)
-        else
-          !installed_versions.empty?
         end
       end
 

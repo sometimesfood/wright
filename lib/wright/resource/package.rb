@@ -39,6 +39,9 @@ module Wright
       # @return [Array<String>] the installed package versions
       def_delegator :@provider, :installed_versions
 
+      # @return [Bool] +true+ if the package is installed
+      def_delegator :@provider, :installed?
+
       # Installs the Package.
       #
       # @return [Bool] true if the package was updated and false
