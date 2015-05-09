@@ -1,0 +1,11 @@
+Package: linux-image
+Versions: 
+
+Reverse Depends: 
+  firmware-crystalhd,linux-image
+  kernel-common,linux-image
+  dkms,linux-image
+Dependencies: 
+Provides: 
+Reverse Provides: 
+linux-image-3.2.0-4-amd64 3.2.65-1+deb7u2

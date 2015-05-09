@@ -40,9 +40,28 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'htop'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      apt_cache_cmd = apt_cache(:policy, pkg_name)
+      apt_cache_policy_cmd = apt_cache(:policy, pkg_name)
+      apt_cache_showpkg_cmd = apt_cache(:showpkg, pkg_name)
 
-      @fake_capture3.expect(apt_cache_cmd)
+      @fake_capture3.expect(apt_cache_policy_cmd)
+      @fake_capture3.expect(apt_cache_showpkg_cmd)
+      @fake_capture3.stub do
+        pkg_provider.installed_versions.must_equal pkg_versions
+      end
+    end
+
+    it 'should list virtual packages for which providers are installed' do
+      pkg_name = 'linux-image'
+      provider_name = 'linux-image-3.2.0-4-amd64'
+      pkg_versions = ['virtual']
+      pkg_provider = package_provider(pkg_name)
+      apt_cache_policy_cmd = apt_cache(:policy, pkg_name)
+      apt_cache_showpkg_cmd = apt_cache(:showpkg, pkg_name)
+      apt_cache_policy_provider_cmd = apt_cache(:policy, provider_name)
+
+      @fake_capture3.expect(apt_cache_policy_cmd)
+      @fake_capture3.expect(apt_cache_showpkg_cmd)
+      @fake_capture3.expect(apt_cache_policy_provider_cmd)
       @fake_capture3.stub do
         pkg_provider.installed_versions.must_equal pkg_versions
       end
@@ -52,9 +71,11 @@ describe Wright::Provider::Package::Apt do
       pkg_name = 'not-a-real-package'
       pkg_versions = []
       pkg_provider = package_provider(pkg_name)
-      apt_cache_cmd = apt_cache(:policy, pkg_name)
+      apt_cache_policy_cmd = apt_cache(:policy, pkg_name)
+      apt_cache_showpkg_cmd = apt_cache(:showpkg, pkg_name)
 
-      @fake_capture3.expect(apt_cache_cmd)
+      @fake_capture3.expect(apt_cache_policy_cmd)
+      @fake_capture3.expect(apt_cache_showpkg_cmd)
       @fake_capture3.stub do
         pkg_provider.installed_versions.must_equal pkg_versions
       end
