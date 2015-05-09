@@ -1,3 +1,5 @@
+require 'forwardable'
+
 require 'wright/resource'
 require 'wright/dsl'
 
@@ -20,6 +22,8 @@ module Wright
     #   htop.installed_versions
     #   # => []
     class Package < Wright::Resource
+      extend Forwardable
+
       # @return [String] the package version to install or remove
       attr_accessor :version
 
@@ -33,9 +37,7 @@ module Wright
       end
 
       # @return [Array<String>] the installed package versions
-      def installed_versions
-        @provider.installed_versions
-      end
+      def_delegator :@provider, :installed_versions
 
       # Installs the Package.
       #
