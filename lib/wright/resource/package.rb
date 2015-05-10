@@ -36,9 +36,11 @@ module Wright
         @action = :install
       end
 
+      # @!method installed_versions
       # @return [Array<String>] the installed package versions
       def_delegator :@provider, :installed_versions
 
+      # @!method installed?
       # @return [Bool] +true+ if the package is installed
       def_delegator :@provider, :installed?
 
