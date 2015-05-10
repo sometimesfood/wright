@@ -1,0 +1,26 @@
+Package: suckless-tools
+Versions: 
+40-1 (/var/lib/apt/lists/debian.inode.at_debian_dists_jessie_main_binary-amd64_Packages)
+ Description Language: 
+                 File: /var/lib/apt/lists/debian.inode.at_debian_dists_jessie_main_binary-amd64_Packages
+                  MD5: d19175bb7582a6f06fe2a6daa5910d10
+ Description Language: en
+                 File: /var/lib/apt/lists/debian.inode.at_debian_dists_jessie_main_i18n_Translation-en
+                  MD5: d19175bb7582a6f06fe2a6daa5910d10
+
+
+Reverse Depends: 
+  wmii,suckless-tools
+  uzbl,suckless-tools
+  surf,suckless-tools
+  spectrwm,suckless-tools
+  ncurses-term,suckless-tools 39
+  ncurses-term,suckless-tools 39
+  i3,suckless-tools
+  herbstluftwm,suckless-tools
+  dwm,suckless-tools
+Dependencies: 
+40-1 - libc6 (2 2.14) libfontconfig1 (2 2.11) libfreetype6 (2 2.2.1) libx11-6 (0 (null)) libxext6 (0 (null)) libxft2 (4 2.1.1) libxinerama1 (0 (null)) libxrender1 (0 (null)) libxss1 (0 (null)) zlib1g (2 1:1.1.4) dwm (0 (null)) stterm (0 (null)) surf (0 (null)) 
+Provides: 
+40-1 - xssstate wmname tabbed swarp ssid sselp sprop slock lsx lsw dmenu 
+Reverse Provides: 
