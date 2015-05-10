@@ -31,6 +31,8 @@ module Wright # rubocop:disable Documentation
   end
 
   # @api private
+  # Activates dry-run mode.
+  # @return [void]
   def self.activate_dry_run
     @dry_run = true
   end
