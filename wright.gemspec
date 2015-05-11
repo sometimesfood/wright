@@ -25,7 +25,7 @@ EOS
 
   gem.required_ruby_version = '>= 1.9.3'
 
-  gem.add_development_dependency 'minitest', '~> 5.6.0'
+  gem.add_development_dependency 'minitest', '~> 5.6.1'
   gem.add_development_dependency 'minitest-stub-const', '~> 0.4'
   gem.add_development_dependency 'fakefs', '~> 0.6.7'
   gem.add_development_dependency 'fakeetc', '~> 0.2.0'
@@ -33,5 +33,5 @@ EOS
   gem.add_development_dependency 'yard', '~> 0.8.7.6'
   gem.add_development_dependency 'simplecov', '~> 0.10.0'
   gem.add_development_dependency 'pry', '~> 0.10.1'
-  gem.add_development_dependency 'rubocop', '~> 0.30.1'
+  gem.add_development_dependency 'rubocop', '~> 0.31.0'
 end
