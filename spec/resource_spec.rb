@@ -44,8 +44,6 @@ describe Wright::Resource do
   before(:each) do
     @config = Wright::Config.config_hash.clone
     Wright::Config.config_hash.clear
-    @hello = 'Hello world'
-    @say_hello = -> { print @hello }
   end
 
   after(:each) do
@@ -83,18 +81,20 @@ describe Wright::Resource do
     provider = Wright::Provider::AlwaysUpdated
     Wright::Config[:resources] = { updater: { provider: provider.name } }
     resource = Updater.new
+    message = 'hello'
     lambda do
-      resource.on_update = @say_hello
+      resource.on_update = -> { print message }
       assert resource.do_something
-    end.must_output @hello
+    end.must_output message
   end
 
   it 'should not run update actions if there were no updates' do
     provider = Wright::Provider::NeverUpdated
     Wright::Config[:resources] = { updater: { provider: provider.name } }
     resource = Updater.new
+    message = 'hello'
     lambda do
-      resource.on_update = @say_hello
+      resource.on_update = -> { print message }
       assert !resource.do_something
     end.must_be_silent
   end
@@ -107,9 +107,10 @@ describe Wright::Resource do
       resource = Updater.new(name)
       resource_info = "#{resource.resource_name} '#{name}'"
       output = "INFO: (would) run update action for #{resource_info}\n"
+      message = 'hello'
       lambda do
         reset_logger
-        resource.on_update = @say_hello
+        resource.on_update = -> { print message }
         assert resource.do_something
       end.must_output output
     end
