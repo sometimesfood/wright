@@ -35,6 +35,10 @@ class Sample < Wright::Resource; end
 
 # resource with a single method to test update notification
 class Updater < Wright::Resource
+  def initialize(name = '')
+    super
+  end
+
   def do_something
     might_update_resource {}
   end
@@ -80,12 +84,14 @@ describe Wright::Resource do
   it 'should run update actions on updates' do
     provider = Wright::Provider::AlwaysUpdated
     Wright::Config[:resources] = { updater: { provider: provider.name } }
-    resource = Updater.new
+    resource = Updater.new('sample_updater')
+    notification = "INFO: run update action for updater 'sample_updater'"
     message = 'hello'
     lambda do
+      reset_logger
       resource.on_update = -> { print message }
       assert resource.do_something
-    end.must_output message
+    end.must_output "#{notification}\n#{message}"
   end
 
   it 'should not run update actions if there were no updates' do
@@ -94,6 +100,7 @@ describe Wright::Resource do
     resource = Updater.new
     message = 'hello'
     lambda do
+      reset_logger
       resource.on_update = -> { print message }
       assert !resource.do_something
     end.must_be_silent
@@ -106,13 +113,13 @@ describe Wright::Resource do
       name = :farnsworth
       resource = Updater.new(name)
       resource_info = "#{resource.resource_name} '#{name}'"
-      output = "INFO: (would) run update action for #{resource_info}\n"
+      notification = "INFO: (would) run update action for #{resource_info}\n"
       message = 'hello'
       lambda do
         reset_logger
         resource.on_update = -> { print message }
         assert resource.do_something
-      end.must_output output
+      end.must_output notification
     end
   end
 
