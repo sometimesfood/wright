@@ -46,16 +46,18 @@ module Wright
         #   instantiation of {Wright::Resource::Package} as soon as
         #   the resource-provider mapping can be changed more easily
         def virtual_package_installed?
-          err = 'Error executing apt-cache'
-          showpkg = exec_or_fail('apt-cache', ['showpkg', package_name], err)
-          reverse_provides = showpkg.partition("Reverse Provides: \n").last
-          provided_by = reverse_provides.split("\n")
-          provided_by.any? do |package_line|
-            name, version = package_line.split(' ')
+          reverse_provides.any? do |name, version|
             resource = OpenStruct.new(name: name, version: version)
             package = Wright::Provider::Package::Apt.new(resource)
             package.installed?
           end
+        end
+
+        def reverse_provides
+          err = 'Error executing apt-cache'
+          showpkg = exec_or_fail('apt-cache', ['showpkg', package_name], err)
+          packages = showpkg.partition("Reverse Provides: \n").last.split("\n")
+          Hash[packages.map { |p| p.split(' ', 2) }]
         end
 
         def env
