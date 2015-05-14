@@ -1,6 +1,7 @@
 # wright NEWS
 ## unreleased
 - Add --dry-run option
+- Add support for virtual packages to apt provider
 
 ## 0.3.0 (2015-04-23)
 - Add bin/wright

@@ -1,0 +1,6 @@
+linux-image-3.2.0-4-amd64:
+  Installed: 3.2.65-1+deb7u2
+  Candidate: 3.2.65-1+deb7u2
+  Version table:
+ *** 3.2.65-1+deb7u2 0
+        100 /var/lib/dpkg/status

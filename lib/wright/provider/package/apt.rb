@@ -1,3 +1,5 @@
+require 'ostruct'
+
 require 'wright/provider'
 require 'wright/provider/package'
 
@@ -16,7 +18,7 @@ module Wright
           version_re = /(?!\(none\)).*/
           installed_re = /^  Installed: (?<version>#{version_re})$/
           match = installed_re.match(apt_policy)
-          match ? [match['version']] : []
+          match ? [match['version']] : virtual_package_versions
         end
 
         private
@@ -34,6 +36,28 @@ module Wright
           cmd = 'apt-get'
           args = [action.to_s, '-qy', package + package_version]
           exec_or_fail(cmd, args, "cannot #{action} package '#{package}'")
+        end
+
+        def virtual_package_versions
+          virtual_package_installed? ? ['virtual'] : []
+        end
+
+        # @todo replace the OpenStruct hack below by a direct
+        #   instantiation of {Wright::Resource::Package} as soon as
+        #   the resource-provider mapping can be changed more easily
+        def virtual_package_installed?
+          reverse_provides.any? do |name, version|
+            resource = OpenStruct.new(name: name, version: version)
+            package = Wright::Provider::Package::Apt.new(resource)
+            package.installed?
+          end
+        end
+
+        def reverse_provides
+          err = 'Error executing apt-cache'
+          showpkg = exec_or_fail('apt-cache', ['showpkg', package_name], err)
+          packages = showpkg.partition("Reverse Provides: \n").last.split("\n")
+          Hash[packages.map { |p| p.split(' ', 2) }]
         end
 
         def env
