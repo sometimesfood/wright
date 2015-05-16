@@ -1,0 +1,37 @@
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.digitalnova.at
+ * extras: mirror.digitalnova.at
+ * updates: ftp.tugraz.at
+Resolving Dependencies
+--> Running transaction check
+---> Package mc.x86_64 1:4.8.7-8.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package       Arch              Version                  Repository       Size
+================================================================================
+Installing:
+ mc            x86_64            1:4.8.7-8.el7            base            1.7 M
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 1.7 M
+Installed size: 5.6 M
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : 1:mc-4.8.7-8.el7.x86_64                                      1/1 
+  Verifying  : 1:mc-4.8.7-8.el7.x86_64                                      1/1 
+
+Installed:
+  mc.x86_64 1:4.8.7-8.el7                                                       
+
+Complete!

@@ -4,12 +4,19 @@ require 'wright/provider/package/yum'
 
 describe Wright::Provider::Package::Yum do
   def rpm_q(pkg_name)
-    %W(rpm -q #{pkg_name} --qf %{VERSION}-%{RELEASE})
+    version_format = '%{VERSION}-%{RELEASE}'
+    %W(rpm -q #{pkg_name} --qf #{version_format})
   end
 
   def package_provider(pkg_name, pkg_version = nil)
     pkg_resource = OpenStruct.new(name: pkg_name, version: pkg_version)
     Wright::Provider::Package::Yum.new(pkg_resource)
+  end
+
+  def yum(action, pkg_name, pkg_version = nil)
+    options = action == :install ? ['-y'] : []
+    version = pkg_version.nil? ? '' : "-#{pkg_version}"
+    ['yum', action.to_s, *options, pkg_name + version]
   end
 
   before :each do
@@ -39,6 +46,45 @@ describe Wright::Provider::Package::Yum do
       @fake_capture3.expect(rpm_q_cmd, 'rpm_-q_httpd')
       @fake_capture3.stub do
         pkg_provider.installed_versions.must_equal pkg_versions
+      end
+    end
+  end
+
+  describe '#install_package' do
+    it 'should install packages' do
+      pkg_name = 'nano'
+      pkg_provider = package_provider(pkg_name)
+      yum_cmd = yum(:install, pkg_name)
+
+      @fake_capture3.expect(yum_cmd)
+      @fake_capture3.stub do
+        pkg_provider.send(:install_package)
+      end
+    end
+
+    it 'should install packages with version' do
+      pkg_name = 'mc'
+      pkg_version = '4.8.7-8.el7'
+      pkg_provider = package_provider(pkg_name, pkg_version)
+      yum_cmd = yum(:install, pkg_name, pkg_version)
+
+      @fake_capture3.expect(yum_cmd)
+      @fake_capture3.stub do
+        pkg_provider.send(:install_package)
+      end
+    end
+
+    it 'should raise exceptions for unknown packages' do
+      pkg_name = 'not-a-real-package'
+      pkg_provider = package_provider(pkg_name)
+      yum_cmd = yum(:install, pkg_name)
+
+      @fake_capture3.expect(yum_cmd)
+      @fake_capture3.stub do
+        e = -> { pkg_provider.send(:install_package) }.must_raise RuntimeError
+        wright_error = "cannot install package '#{pkg_name}'"
+        yum_error = "Error: Nothing to do"
+        e.message.must_equal %(#{wright_error}: "#{yum_error}")
       end
     end
   end
