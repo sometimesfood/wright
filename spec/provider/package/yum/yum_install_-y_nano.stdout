@@ -1,0 +1,36 @@
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.digitalnova.at
+ * extras: mirror.digitalnova.at
+ * updates: ftp.tugraz.at
+Resolving Dependencies
+--> Running transaction check
+---> Package nano.x86_64 0:2.3.1-10.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package        Arch             Version                   Repository      Size
+================================================================================
+Installing:
+ nano           x86_64           2.3.1-10.el7              base           440 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 440 k
+Installed size: 1.6 M
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : nano-2.3.1-10.el7.x86_64                                     1/1 
+  Verifying  : nano-2.3.1-10.el7.x86_64                                     1/1 
+
+Installed:
+  nano.x86_64 0:2.3.1-10.el7                                                    
+
+Complete!
