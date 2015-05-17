@@ -2,6 +2,7 @@
 ## unreleased
 - Add --dry-run option
 - Add support for virtual packages to apt provider
+- Add yum support to package provider
 
 ## 0.3.0 (2015-04-23)
 - Add bin/wright
