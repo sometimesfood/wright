@@ -82,7 +82,7 @@ describe Wright::Provider::Package::Yum do
       @fake_capture3.stub do
         e = -> { pkg_provider.send(:install_package) }.must_raise RuntimeError
         wright_error = "cannot install package '#{pkg_name}'"
-        yum_error = "Error: Nothing to do"
+        yum_error = 'Error: Nothing to do'
         e.message.must_equal %(#{wright_error}: "#{yum_error}")
       end
     end
