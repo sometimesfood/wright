@@ -14,11 +14,6 @@ wright
 
 Lightweight configuration management.
 
-Requirements
-------------
-
- - Ruby ≥1.9
-
 Getting Started
 ---------------
 
@@ -61,6 +56,30 @@ puts File.symlink? '/tmp/foo/fstab'
 fstab.remove
 foo_dir.remove
 ```
+
+Installation
+------------
+
+Since wright does not have any runtime dependencies apart from Ruby
+≥1.9, it can safely be installed system-wide via rubygems:
+
+    sudo gem install wright
+
+If you use a Debian-based GNU/Linux distribution such as Ubuntu, you
+can also install wright via the PPA [sometimesfood/wright][ppa]:
+
+    sudo apt-get install software-properties-common
+    sudo add-apt-repository -y ppa:sometimesfood/wright
+    sudo apt-get update && sudo apt-get install wright
+
+If you use a Debian-based distribution that is not Ubuntu, you have to
+update your apt sources manually before installing wright:
+
+    export DISTRO="$(lsb_release -sc)"
+    export PPA_LIST="sometimesfood-ubuntu-wright-${DISTRO}.list"
+    sudo sed -i "s/${DISTRO}/trusty/g" /etc/apt/sources.list.d/${PPA_LIST}
+
+[ppa]: http://launchpad.net/~sometimesfood/+archive/ubuntu/wright
 
 Documentation
 -------------
