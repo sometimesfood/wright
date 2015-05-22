@@ -6,6 +6,7 @@ module Wright
   class CLI
     def initialize(main)
       @commands = []
+      @requires = []
       @main = main
       set_up_parser
     end
@@ -20,13 +21,14 @@ module Wright
       Wright.activate_dry_run if @dry_run
       Wright.log.level = @log_level if @log_level
       @main.extend Wright::DSL
+      @requires.each { |r| require r }
 
       run_script(arguments)
     end
 
     private
 
-    attr_reader :commands, :dry_run, :log_level
+    attr_reader :commands, :requires, :dry_run, :log_level
 
     def parse(argv)
       # use OptionParser#order! instead of #parse! so CLI#run does not
@@ -47,6 +49,7 @@ module Wright
     def set_up_parser
       @parser = OptionParser.new
       set_up_command_option
+      set_up_require_option
       set_up_dry_run_option
       set_up_verbosity_options
       set_up_version_option
@@ -55,6 +58,13 @@ module Wright
     def set_up_command_option
       @parser.on('-e COMMAND', 'Run COMMAND') do |e|
         @commands << e
+      end
+    end
+
+    def set_up_require_option
+      @parser.on('-r LIBRARY',
+                 'Require LIBRARY before running the script') do |r|
+        @requires << r
       end
     end
 

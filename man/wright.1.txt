@@ -34,6 +34,10 @@ OPTIONS
     Run 'COMMAND' as a wright script. When multiple commands are
     passed, they are joined and run in sequence.
 
+*-r* 'LIBRARY'::
+    Require 'LIBRARY' before running the wright script. When multiple
+    libraries are passed, they are loaded in sequence.
+
 *-n, --dry-run*::
 
     Enable dry-run mode. In dry-run mode, wright resources do not

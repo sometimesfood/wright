@@ -21,6 +21,12 @@ describe Wright::CLI do
       @cli.send(:commands).must_equal %w(foo bar)
     end
 
+    it 'parses -r LIBRARY' do
+      argv = %w(-r library1 -r library2 -rlibrary3 file.rb)
+      @cli.parse(argv).must_equal %w(file.rb)
+      @cli.send(:requires).must_equal %w(library1 library2 library3)
+    end
+
     it 'parses --dry-run' do
       argv = %w(--dry-run file.rb)
       @cli.parse(argv).must_equal %w(file.rb)
