@@ -76,7 +76,7 @@ If you use a Debian-based distribution that is not Ubuntu, you have to
 update your apt sources manually before installing wright:
 
     export DISTRO="$(lsb_release -sc)"
-    export PPA_LIST="sometimesfood-ubuntu-wright-${DISTRO}.list"
+    export PPA_LIST="sometimesfood-wright-${DISTRO}.list"
     sudo sed -i "s/${DISTRO}/trusty/g" /etc/apt/sources.list.d/${PPA_LIST}
 
 [ppa]: http://launchpad.net/~sometimesfood/+archive/ubuntu/wright
