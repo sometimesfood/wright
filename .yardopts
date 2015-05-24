@@ -1,4 +1,5 @@
 # include private methods if they are tagged as "@api public"
 --private --query '(visibility == :public) || (@api.text == "public")'
+--output-dir doc/yardoc/
 lib/wright/**/*.rb
 lib/wright.rb

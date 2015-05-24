@@ -3,7 +3,7 @@
 *.rbc
 /.bundle/
 /coverage/
-/doc/
+/doc/yardoc/
 /pkg/
 /.config
 /.yardoc
