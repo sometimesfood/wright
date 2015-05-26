@@ -26,7 +26,7 @@ module Wright
 
         def set_members(group_name, members)
           cmd = 'gpasswd'
-          args = ['-M', "'#{members.join(',')}'", group_name]
+          args = ['-M', members.join(','), group_name]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 

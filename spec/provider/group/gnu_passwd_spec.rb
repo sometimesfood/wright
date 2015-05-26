@@ -12,7 +12,7 @@ describe Wright::Provider::Group::GnuPasswd do
   end
 
   def gpasswd(group_name, members)
-    ['gpasswd', '-M', "'#{members.join(',')}'", group_name]
+    ['gpasswd', '-M', members.join(','), group_name]
   end
 
   def groupmod(group_name, gid)
