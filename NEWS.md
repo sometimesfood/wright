@@ -1,4 +1,7 @@
 # wright NEWS
+## 0.3.1 (2015-05-26)
+- Fix quoting issue in GNU passwd group provider (#10)
+
 ## 0.3.0 (2015-04-23)
 - Add bin/wright
 - Add wright(1) manpage
