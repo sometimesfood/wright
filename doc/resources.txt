@@ -30,7 +30,7 @@ but numeric notation is often more compact.
 Creating files
 --------------
 The file resource can be used to create files. Tildes (`~`) in
-directory names are supported.
+file names are supported.
 
 [source,ruby]
 ----
