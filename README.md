@@ -90,23 +90,20 @@ users at the moment.
 Run `bundle exec yard` to generate
 [HTML docs for wright developers](http://rubydoc.info/gems/wright/).
 
-Hacking
--------
-
-To get started with wright, simply install the development
-dependencies via bundler:
-
- - `bundle install --path .bundle`
- - `bundle exec rake test`
-
-All tests should pass.
-
 Contributing
 ------------
 
 Contributions to wright are greatly appreciated. If you would like to
 contribute to wright, please have a look at the
 [contribution guidelines](CONTRIBUTING.md).
+
+To start hacking on wright, simply install the development
+dependencies via bundler:
+
+ - `bundle install --path .bundle`
+ - `bundle exec rake test`
+
+All tests should pass.
 
 Copyright
 ---------
