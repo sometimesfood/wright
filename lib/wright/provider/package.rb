@@ -54,6 +54,10 @@ module Wright
         @resource.version
       end
 
+      def package_options
+        @resource.options
+      end
+
       # @api public
       # Checks if the package is up-to-date for a given action.
       #

@@ -27,12 +27,17 @@ module Wright
       # @return [String] the package version to install or remove
       attr_accessor :version
 
+      # @return [Array<String>] the options passed to the package
+      #   manager
+      attr_accessor :options
+
       # Initializes a Package.
       #
       # @param name [String] the package's name
       def initialize(name)
         super
         @version = nil
+        @options = nil
         @action = :install
       end
 
