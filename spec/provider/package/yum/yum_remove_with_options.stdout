@@ -1,0 +1,30 @@
+Resolving Dependencies
+--> Running transaction check
+---> Package vim-enhanced.x86_64 2:7.4.160-1.el7 will be erased
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package             Arch          Version                   Repository    Size
+================================================================================
+Removing:
+ vim-enhanced        x86_64        2:7.4.160-1.el7           @base        2.2 M
+
+Transaction Summary
+================================================================================
+Remove  1 Package
+
+Installed size: 2.2 M
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Erasing    : 2:vim-enhanced-7.4.160-1.el7.x86_64                          1/1 
+  Verifying  : 2:vim-enhanced-7.4.160-1.el7.x86_64                          1/1 
+
+Removed:
+  vim-enhanced.x86_64 2:7.4.160-1.el7                                           
+
+Complete!

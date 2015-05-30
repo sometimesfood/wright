@@ -20,17 +20,17 @@ module Wright
         private
 
         def install_package
-          yum(:install, ['-y'], package_name, package_version)
+          yum(:install, package_options, package_name, package_version)
         end
 
         def remove_package
-          yum(:remove, ['-y'], package_name)
+          yum(:remove, package_options, package_name)
         end
 
         def yum(action, options, package, version = nil)
           cmd = 'yum'
           package_version = version.nil? ? '' : "-#{version}"
-          args = [action.to_s, *options, package + package_version]
+          args = [*options, action.to_s, '-y', package + package_version]
           exec_or_fail(cmd, args, "cannot #{action} package '#{package}'")
         end
       end
