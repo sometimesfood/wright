@@ -40,7 +40,8 @@ module Wright
 
           Wright::Util.bundler_clean_env do
             error_message = "cannot #{action} package '#{package}'"
-            exec_or_fail('brew', [action.to_s, package], error_message)
+            args = [action.to_s, *package_options, package]
+            exec_or_fail('brew', args, error_message)
           end
         end
 
