@@ -128,11 +128,15 @@ package 'tmux'
 
 While wright defaults to installing the package version picked by your
 package manager, you can also use the `version` attribute to specify
-the desired version.
+the desired version. The `options` attribute can be used to pass
+options to your package manager.
 
 [source,ruby]
 ----
 package 'mg' do |p|
   p.version = '20110905-1.1'
+  p.options = %w(--no-install-recommends --auto-remove) # <1>
 end
 ----
+<1> If you only need a single option, you can also set `options` to a
+string such as `'--no-install-recommends'`.

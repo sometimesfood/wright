@@ -3,6 +3,7 @@
 - Add --dry-run option
 - Add support for virtual packages to apt provider
 - Add yum support to package provider
+- Add options attribute to package resource
 
 ## 0.3.1 (2015-05-26)
 - Fix quoting issue in GNU passwd group provider (#10)

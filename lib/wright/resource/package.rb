@@ -27,8 +27,8 @@ module Wright
       # @return [String] the package version to install or remove
       attr_accessor :version
 
-      # @return [Array<String>] the options passed to the package
-      #   manager
+      # @return [String, Array<String>] the options passed to the
+      #   package manager
       attr_accessor :options
 
       # Initializes a Package.
