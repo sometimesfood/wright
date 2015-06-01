@@ -8,14 +8,17 @@ describe Wright::Provider::Package::Yum do
     %W(rpm -q #{pkg_name} --qf #{version_format})
   end
 
-  def package_provider(pkg_name, pkg_version = nil)
-    pkg_resource = OpenStruct.new(name: pkg_name, version: pkg_version)
+  def package_provider(pkg_name, args = {})
+    properties = { name: pkg_name,
+                   version: args[:version],
+                   options: args[:options]}
+    pkg_resource = OpenStruct.new(properties)
     Wright::Provider::Package::Yum.new(pkg_resource)
   end
 
-  def yum(action, pkg_name, pkg_version = nil)
-    version = pkg_version.nil? ? '' : "-#{pkg_version}"
-    ['yum', action.to_s, '-y', pkg_name + version]
+  def yum(action, pkg_name, args = {})
+    version = args[:version].nil? ? '' : "-#{args[:version]}"
+    ['yum', *args[:options], action.to_s, '-y', pkg_name + version]
   end
 
   before :each do
@@ -61,13 +64,25 @@ describe Wright::Provider::Package::Yum do
       end
     end
 
-    it 'should install packages with version' do
+    it 'should install specific package versions' do
       pkg_name = 'mc'
       pkg_version = '4.8.7-8.el7'
-      pkg_provider = package_provider(pkg_name, pkg_version)
-      yum_cmd = yum(:install, pkg_name, pkg_version)
+      pkg_provider = package_provider(pkg_name, version: pkg_version)
+      yum_cmd = yum(:install, pkg_name, version: pkg_version)
 
       @fake_capture3.expect(yum_cmd)
+      @fake_capture3.stub do
+        pkg_provider.send(:install_package)
+      end
+    end
+
+    it 'should pass options to the package manager' do
+      pkg_name = 'postfix'
+      pkg_options = '--enablerepo=centosplus'
+      pkg_provider = package_provider(pkg_name, options: pkg_options)
+      yum_cmd = yum(:install, pkg_name, options: pkg_options)
+
+      @fake_capture3.expect(yum_cmd, 'yum_install_with_options')
       @fake_capture3.stub do
         pkg_provider.send(:install_package)
       end
@@ -95,6 +110,18 @@ describe Wright::Provider::Package::Yum do
       yum_cmd = yum(:remove, pkg_name)
 
       @fake_capture3.expect(yum_cmd)
+      @fake_capture3.stub do
+        pkg_provider.send(:remove_package)
+      end
+    end
+
+    it 'should pass options to the package manager' do
+      pkg_name = 'vim'
+      pkg_options = ['--noplugins']
+      pkg_provider = package_provider(pkg_name, options: pkg_options)
+      yum_cmd = yum(:remove, pkg_name, options: pkg_options)
+
+      @fake_capture3.expect(yum_cmd, 'yum_remove_with_options')
       @fake_capture3.stub do
         pkg_provider.send(:remove_package)
       end

@@ -3,6 +3,7 @@
 - Add --dry-run option
 - Add support for virtual packages to apt provider
 - Add yum support to package provider
+- Add options attribute to package resource
 
 ## 0.3.2 (2015-06-01)
 - Expand script file path (#11)

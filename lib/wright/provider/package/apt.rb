@@ -24,17 +24,17 @@ module Wright
         private
 
         def install_package
-          apt_get(:install, package_name, package_version)
+          apt_get(:install, package_options, package_name, package_version)
         end
 
         def remove_package
-          apt_get(:remove, package_name)
+          apt_get(:remove, package_options, package_name)
         end
 
-        def apt_get(action, package, version = nil)
+        def apt_get(action, options, package, version = nil)
           package_version = version.nil? ? '' : "=#{version}"
           cmd = 'apt-get'
-          args = [action.to_s, '-qy', package + package_version]
+          args = [*options, action.to_s, '-qy', package + package_version]
           exec_or_fail(cmd, args, "cannot #{action} package '#{package}'")
         end
 
