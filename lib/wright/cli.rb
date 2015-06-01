@@ -36,7 +36,7 @@ module Wright
 
     def run_script(arguments)
       if @commands.empty? && arguments.any?
-        script = arguments.shift
+        script = File.expand_path(arguments.shift)
         load script
       else
         commands = @commands.empty? ? $stdin.read : @commands.join("\n")
