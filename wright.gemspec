@@ -25,7 +25,7 @@ EOS
 
   gem.required_ruby_version = '>= 1.9.3'
 
-  gem.add_development_dependency 'minitest', '~> 5.6.1'
+  gem.add_development_dependency 'minitest', '~> 5.7.0'
   gem.add_development_dependency 'minitest-stub-const', '~> 0.4'
   gem.add_development_dependency 'fakefs', '~> 0.6.7'
   gem.add_development_dependency 'fakeetc', '~> 0.2.0'
