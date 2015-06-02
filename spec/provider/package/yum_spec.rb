@@ -11,7 +11,7 @@ describe Wright::Provider::Package::Yum do
   def package_provider(pkg_name, args = {})
     properties = { name: pkg_name,
                    version: args[:version],
-                   options: args[:options]}
+                   options: args[:options] }
     pkg_resource = OpenStruct.new(properties)
     Wright::Provider::Package::Yum.new(pkg_resource)
   end
