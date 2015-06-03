@@ -28,7 +28,7 @@ EOS
   gem.add_development_dependency 'minitest', '~> 5.7.0'
   gem.add_development_dependency 'minitest-stub-const', '~> 0.4'
   gem.add_development_dependency 'fakefs', '~> 0.6.7'
-  gem.add_development_dependency 'fakeetc', '~> 0.2.0'
+  gem.add_development_dependency 'fakeetc', '~> 0.3.0'
   gem.add_development_dependency 'rake', '~> 10.4.2'
   gem.add_development_dependency 'yard', '~> 0.8.7.6'
   gem.add_development_dependency 'redcarpet', '~> 3.2.3'
