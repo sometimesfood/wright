@@ -2,12 +2,12 @@
 .\"     Title: wright
 .\"    Author: [see the "AUTHOR" section]
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 05/23/2015
+.\"      Date: 06/03/2015
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "WRIGHT" "1" "05/23/2015" "\ \&" "\ \&"
+.TH "WRIGHT" "1" "06/03/2015" "\ \&" "\ \&"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -155,15 +155,7 @@ To install tmux and update its config file from a wright script, create the foll
 .\}
 .nf
 package \*(Aqtmux\*(Aq
-.fi
-.if n \{\
-.RE
-.\}
-.sp
-.if n \{\
-.RS 4
-.\}
-.nf
+
 file \*(Aq/etc/tmux\&.conf\*(Aq do |f|
   f\&.content = <<EOF
 unbind C\-b
