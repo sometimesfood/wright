@@ -17,45 +17,33 @@ Lightweight configuration management.
 Getting Started
 ---------------
 
-To start a wright IRB session, simply run:
-
-    $ bundle console
-
-In order to create some resources using the wright DSL:
+Performing simple administrative tasks with wright is easy.
 
 ```ruby
-require 'wright'
-extend Wright::DSL
+#!/usr/bin/env wright
 
-foo_dir = directory '/tmp/foo'
-fstab = symlink '/tmp/foo/fstab' do |s|
-  s.to = '/etc/fstab'
+package 'sudo'
+
+file '/etc/sudoers.d/env_keep-editor' do |f|
+  f.content = "Defaults env_keep += EDITOR\n"
+  f.owner   = 'root:root'
+  f.mode    = '440'
 end
-
-puts File.directory? '/tmp/foo'
-puts File.symlink? '/tmp/foo/fstab'
-
-fstab.remove
-foo_dir.remove
 ```
 
-If you don't want to use the DSL:
+Scripts can also be run directly from the shell.
 
-```ruby
-require 'wright'
+    wright -e "package('tmux')"
 
-foo_dir = Wright::Resource::Directory.new('/tmp/foo')
-foo_dir.create
-fstab = Wright::Resource::Symlink.new('/tmp/foo/fstab')
-fstab.to = '/etc/fstab'
-fstab.create
+If you would rather see the effects of running a wright script first,
+use the dry-run option:
 
-puts File.directory? '/tmp/foo'
-puts File.symlink? '/tmp/foo/fstab'
+    wright --dry-run -e "package('tmux')"
 
-fstab.remove
-foo_dir.remove
-```
+For a list of command-line parameters, see
+[the manpage](man/wright.1.txt). For a more in-depth list of tasks you
+can perform using wright, check the
+[resource list](doc/resources.txt).
 
 Installation
 ------------
@@ -64,6 +52,9 @@ Since wright does not have any runtime dependencies apart from Ruby
 ≥1.9, it can safely be installed system-wide via rubygems:
 
     sudo gem install wright
+
+Installation on Debian-based systems
+------------------------------------
 
 If you use a Debian-based GNU/Linux distribution such as Ubuntu, you
 can also install wright via the PPA [sometimesfood/wright][ppa]:
@@ -84,11 +75,16 @@ update your apt sources manually before installing wright:
 Documentation
 -------------
 
-There is not too much useful documentation that is targeted towards
-users at the moment.
+As a wright user, the following documents are probably going to be of
+interest to you:
 
-Run `bundle exec yard` to generate
-[HTML docs for wright developers](http://rubydoc.info/gems/wright/).
+- [wright manpage](man/wright.1.txt)
+- [list of wright resources](doc/resources.txt)
+- [wright is just Ruby](doc/wright-is-ruby.txt)
+
+As a wright developer, you might also be interested in the
+[wright developer docs](http://www.rubydoc.info/gems/wright/) which
+can also be generated via `bundle exec yard`.
 
 Contributing
 ------------
