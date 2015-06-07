@@ -4,10 +4,10 @@ Gem::Specification.new do |gem|
   gem.authors       = ['Sebastian Boehm']
   gem.email         = ['sebastian@sometimesfood.org']
   gem.license       = 'MIT'
-  gem.summary       = 'A lightweight config management library'
+  gem.summary       = 'A lightweight config management tool'
   gem.homepage      = 'https://github.com/sometimesfood/wright'
   gem.description   = <<EOS
-Wright is a lightweight configuration management library.
+Wright is a lightweight configuration management tool.
 EOS
 
   gem.files         = Dir['{bin,lib,spec}/**/*',
