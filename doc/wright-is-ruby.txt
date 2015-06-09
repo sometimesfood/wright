@@ -11,7 +11,6 @@ So how is wright Ruby? Let me count the ways...
 
 Interpreter and DSL
 -------------------
-
 Typically wright scripts use an interpreter line such as the one below
 to set `wright(1)` as the script interpreter.
 
@@ -55,7 +54,6 @@ dir.create
 
 Manipulating resources
 ----------------------
-
 The DSL methods mentioned above return proper wright resource objects,
 so you can just save them for later use.
 
@@ -73,7 +71,6 @@ can re-use it later in the update action of another resource.
 
 Update actions
 --------------
-
 If you want to perform a specific action every time a resource
 changes, you can use the `on_update` attribute. Since wright is just
 Ruby, you can simply set `on_update` to a `proc` or a `lambda` (or
@@ -100,7 +97,6 @@ file('/etc/foobard.conf') { |f| f.action = :remove }
 
 Dry-run mode
 ------------
-
 Since wright scripts are just Ruby, wright's dry-run mode only affects
 wright resources. If you want to make sure not to shoot yourself in
 the foot, it's probably a good idea to respect dry-run mode whenever
@@ -136,7 +132,6 @@ file('/tmp/foo') { |f| f.action = :remove }
 
 Distributing wright scripts
 ---------------------------
-
 Looking for a way to package and distribute your wright scripts? Since
 wright is just Ruby, you can simply use Ruby gems to package, version
 and distribute your wright scripts. (Don't forget to add wright as a
