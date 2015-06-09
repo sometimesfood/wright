@@ -76,7 +76,6 @@ interest to you:
 - [wright manpage](man/wright.1.txt)
 - [list of wright resources](doc/resources.txt)
 - [wright is just Ruby](doc/wright-is-ruby.txt)
-- [resources, providers](doc/resources-providers.txt)
 
 As a wright developer, you might also be interested in the
 [wright developer docs](http://www.rubydoc.info/gems/wright/) which
