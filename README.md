@@ -1,6 +1,5 @@
 wright
 ======
-
 [![Gem Version](https://img.shields.io/gem/v/wright.svg?style=flat-square)][gem]
 [![Build Status](https://img.shields.io/travis/sometimesfood/wright.svg?style=flat-square)][travis]
 [![Code Climate](https://img.shields.io/codeclimate/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
@@ -16,7 +15,6 @@ Lightweight configuration management.
 
 Getting Started
 ---------------
-
 Performing simple administrative tasks with wright is easy.
 
 ```ruby
@@ -47,7 +45,6 @@ can perform using wright, check the
 
 Installation
 ------------
-
 Since wright does not have any runtime dependencies apart from Ruby
 ≥1.9, it can safely be installed system-wide via rubygems:
 
@@ -55,7 +52,6 @@ Since wright does not have any runtime dependencies apart from Ruby
 
 Installation on Debian-based systems
 ------------------------------------
-
 If you use a Debian-based GNU/Linux distribution such as Ubuntu, you
 can also install wright via the PPA [sometimesfood/wright][ppa]:
 
@@ -74,13 +70,13 @@ update your apt sources manually before installing wright:
 
 Documentation
 -------------
-
 As a wright user, the following documents are probably going to be of
 interest to you:
 
 - [wright manpage](man/wright.1.txt)
 - [list of wright resources](doc/resources.txt)
 - [wright is just Ruby](doc/wright-is-ruby.txt)
+- [resources, providers](doc/resources-providers.txt)
 
 As a wright developer, you might also be interested in the
 [wright developer docs](http://www.rubydoc.info/gems/wright/) which
@@ -88,7 +84,6 @@ can also be generated via `bundle exec yard`.
 
 Contributing
 ------------
-
 Contributions to wright are greatly appreciated. If you would like to
 contribute to wright, please have a look at the
 [contribution guidelines](CONTRIBUTING.md).
@@ -103,6 +98,5 @@ All tests should pass.
 
 Copyright
 ---------
-
 Copyright (c) 2012-2015 Sebastian Boehm. See [LICENSE](LICENSE) for
 details.
