@@ -6,4 +6,5 @@
 /Gemfile.local
 /Gemfile.lock
 /doc/*.html
+/man/*.html
 *~
