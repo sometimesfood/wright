@@ -6,11 +6,6 @@ wright
 [![Test Coverage](https://img.shields.io/codeclimate/coverage/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
 [![Gem Dependencies](https://img.shields.io/gemnasium/sometimesfood/wright.svg?style=flat-square)][gemnasium]
 
-[gem]: https://rubygems.org/gems/wright
-[travis]: https://travis-ci.org/sometimesfood/wright
-[codeclimate]: https://codeclimate.com/github/sometimesfood/wright
-[gemnasium]: https://gemnasium.com/sometimesfood/wright
-
 Lightweight configuration management.
 
 Getting Started
@@ -39,9 +34,8 @@ use the dry-run option:
     wright --dry-run -e "package('tmux')"
 
 For a list of command-line parameters, see
-[the manpage](man/wright.1.txt). For a more in-depth list of tasks you
-can perform using wright, check the
-[resource list](doc/resources.txt).
+[the manpage][wright-manpage]. For a more in-depth list of tasks you
+can perform using wright, check the [resource list][wright-resources].
 
 Installation
 ------------
@@ -66,16 +60,14 @@ update your apt sources manually before installing wright:
     export PPA_LIST="sometimesfood-wright-${DISTRO}.list"
     sudo sed -i "s/${DISTRO}/trusty/g" /etc/apt/sources.list.d/${PPA_LIST}
 
-[ppa]: http://launchpad.net/~sometimesfood/+archive/ubuntu/wright
-
 Documentation
 -------------
 As a wright user, the following documents are probably going to be of
 interest to you:
 
-- [wright manpage](man/wright.1.txt)
-- [list of wright resources](doc/resources.txt)
-- [wright is just Ruby](doc/wright-is-ruby.txt)
+- [wright manpage][wright-manpage]
+- [list of wright resources][wright-resources]
+- [wright is just Ruby][wright-is-ruby]
 
 As a wright developer, you might also be interested in the
 [wright developer docs](http://www.rubydoc.info/gems/wright/) which
@@ -99,3 +91,12 @@ Copyright
 ---------
 Copyright (c) 2012-2015 Sebastian Boehm. See [LICENSE](LICENSE) for
 details.
+
+[gem]: https://rubygems.org/gems/wright
+[travis]: https://travis-ci.org/sometimesfood/wright
+[codeclimate]: https://codeclimate.com/github/sometimesfood/wright
+[gemnasium]: https://gemnasium.com/sometimesfood/wright
+[ppa]: http://launchpad.net/~sometimesfood/+archive/ubuntu/wright
+[wright-manpage]: http://wright.sometimesfood.org/man/wright.1.html
+[wright-resources]: http://wright.sometimesfood.org/doc/resources.html
+[wright-is-ruby]: http://wright.sometimesfood.org/doc/wright-is-ruby.html
