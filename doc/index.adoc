@@ -1,0 +1,13 @@
+wright Docs
+===========
+ifdef::env-github[:outfilesuffix: .txt]
+
+Documentation for users
+-----------------------
+- link:../man/wright.1{outfilesuffix}[wright manpage]
+- link:resources{outfilesuffix}[wright resources]
+- link:wright-is-ruby{outfilesuffix}[wright is Ruby]
+
+Documentation for developers
+----------------------------
+- link:http://www.rubydoc.info/gems/wright/[wright developer docs]
