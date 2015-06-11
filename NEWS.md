@@ -1,5 +1,5 @@
 # wright NEWS
-## unreleased
+## 0.4.0 (2015-06-11)
 - Add --dry-run option
 - Add support for virtual packages to apt provider
 - Add yum support to package provider
