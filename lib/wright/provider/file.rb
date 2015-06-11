@@ -18,9 +18,12 @@ module Wright
       #   the specified name
       def create
         fail_if_directory
-        file = @resource.name
-        unless_uptodate(:create, "file already created: '#{file}'") do
-          create_file
+        file_permissions = permissions
+        unless_uptodate(:create, "file already created: '#{file_name}'") do
+          unless_dry_run("create file: '#{file_name}'") do
+            write_content_to_file
+            file_permissions.update unless file_permissions.uptodate?
+          end
         end
       end
 
@@ -31,25 +34,30 @@ module Wright
       #   specified name
       def remove
         fail_if_directory
-        file = @resource.name
-        unless_uptodate(:remove, "file already removed: '#{file}'") do
-          remove_file
+        unless_uptodate(:remove, "file already removed: '#{file_name}'") do
+          unless_dry_run("remove file: '#{file_name}'") do
+            FileUtils.rm(filename_expanded)
+          end
         end
       end
 
       private
 
-      def create_file
-        file_permissions = permissions
-        unless_dry_run("create file: '#{@resource.name}'") do
-          write_content_to_file
-          file_permissions.update unless file_permissions.uptodate?
-        end
+      def file_name
+        @resource.name
+      end
+
+      def content
+        @resource.content
+      end
+
+      def permissions
+        Wright::Util::FilePermissions.create_from_resource(@resource, :file)
       end
 
       def write_content_to_file
-        tempfile = Tempfile.new(::File.basename(filename))
-        tempfile.write(@resource.content) if @resource.content
+        tempfile = Tempfile.new(::File.basename(filename_expanded))
+        tempfile.write(content) if content
         move_tempfile(tempfile)
       ensure
         tempfile.close!
@@ -57,18 +65,8 @@ module Wright
 
       def move_tempfile(tempfile)
         # do not overwrite existing files if content was not specified
-        return if @resource.content.nil? && ::File.exist?(filename)
-        FileUtils.mv(tempfile.path, filename)
-      end
-
-      def remove_file
-        unless_dry_run("remove file: '#{@resource.name}'") do
-          FileUtils.rm(filename)
-        end
-      end
-
-      def permissions
-        Wright::Util::FilePermissions.create_from_resource(@resource, :file)
+        return if content.nil? && ::File.exist?(filename_expanded)
+        FileUtils.mv(tempfile.path, filename_expanded)
       end
 
       def checksum(content)
@@ -76,10 +74,10 @@ module Wright
       end
 
       def content_uptodate?
-        return false unless ::File.exist?(filename)
-        content = @resource.content || ''
-        target_checksum = checksum(content.to_s)
-        current_checksum = checksum(::File.read(filename))
+        return false unless ::File.exist?(filename_expanded)
+        target_content = content || ''
+        target_checksum = checksum(target_content.to_s)
+        current_checksum = checksum(::File.read(filename_expanded))
         current_checksum == target_checksum
       end
 
@@ -88,16 +86,18 @@ module Wright
         when :create
           content_uptodate? && permissions.uptodate?
         when :remove
-          !::File.exist?(filename) && !::File.symlink?(filename)
+          !::File.exist?(filename_expanded) &&
+            !::File.symlink?(filename_expanded)
         end
       end
 
-      def filename
-        ::File.expand_path(@resource.name)
+      def filename_expanded
+        ::File.expand_path(file_name)
       end
 
       def fail_if_directory
-        fail Errno::EISDIR, filename if ::File.directory?(filename)
+        return unless ::File.directory?(filename_expanded)
+        fail Errno::EISDIR, filename_expanded
       end
     end
   end

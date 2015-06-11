@@ -1,0 +1,7 @@
+==> Downloading http://ftpmirror.gnu.org/units/units-2.02.tar.gz
+Already downloaded: /Library/Caches/Homebrew/gnu-units-2.02.tar.gz
+==> Patching
+patching file definitions.units
+==> ./configure --prefix=/usr/local/Cellar/gnu-units/2.02
+==> make install
+🍺  /usr/local/Cellar/gnu-units/2.02: 12 files, 624K, built in 11 seconds

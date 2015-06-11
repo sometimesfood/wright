@@ -1,0 +1,138 @@
+wright is Ruby
+==============
+:source-highlighter: pygments
+:toc:
+
+While you can use wright without knowing too much about Ruby,
+understanding that wright scripts are just plain Ruby helps a lot
+finding your way around wright.
+
+So how is wright Ruby? Let me count the ways...
+
+Interpreter and DSL
+-------------------
+Typically wright scripts use an interpreter line such as the one below
+to set `wright(1)` as the script interpreter.
+
+[source,ruby]
+----
+#!/usr/bin/env wright
+directory '~/this/is/a/directory' do |d|
+  d.mode = '440'
+end
+----
+
+If you do not want to use the wright interpreter, you can rewrite the
+script above to use wright as a library.
+
+[source,ruby]
+----
+#!/usr/bin/env ruby
+require 'wright'
+extend Wright::DSL
+
+directory '~/this/is/a/directory' do |d|
+  d.mode = '440'
+end
+----
+
+The `extend Wright::DSL` line makes wright DSL methods such as
+`directory` available, which are a shorthand for instantiating a
+resource and performing its default action. If you do not want to use
+the DSL, you can also use the underlying resources in the following
+way.
+
+[source,ruby]
+----
+#!/usr/bin/env ruby
+require 'wright'
+
+dir = Wright::Resource::Directory.new('~/this/is/a/directory')
+dir.mode = '440'
+dir.create
+----
+
+Manipulating resources
+----------------------
+The DSL methods mentioned above return proper wright resource objects,
+so you can just save them for later use.
+
+[source,ruby]
+----
+this_is_a_directory = directory '~/this/is/a/directory' do |d|
+  d.mode = '440'
+end
+this_is_a_directory.class
+# => Wright::Resource::Directory
+----
+
+This is especially handy, since you can name a resource so that you
+can re-use it later in the update action of another resource.
+
+Update actions
+--------------
+If you want to perform a specific action every time a resource
+changes, you can use the `on_update` attribute. Since wright is just
+Ruby, you can simply set `on_update` to a `proc` or a `lambda` (or
+anything else that responds to `call` message, for that matter).
+
+[source,ruby]
+----
+file '/etc/foobard.conf' do |f|
+  f.content   = "# foobard config\n"
+  f.on_update = -> { `service foobard restart` }
+end
+----
+
+One-line resources
+------------------
+While multi-line resources are fine for more involved resource
+definitions, one-line resource definitions can be more succinct for
+simple definitions.
+
+[source,ruby]
+----
+file('/etc/foobard.conf') { |f| f.action = :remove }
+----
+
+Dry-run mode
+------------
+Since wright scripts are just Ruby, wright's dry-run mode only affects
+wright resources. If you want to make sure not to shoot yourself in
+the foot, it's probably a good idea to respect dry-run mode whenever
+you manipulate your system's state in your scripts using Ruby.
+
+This script does not respect dry-run mode and will happily delete
+`/tmp/foo`, even when run in dry-run mode:
+
+[source,ruby]
+----
+#!/usr/bin/env wright
+File.delete('/tmp/foo')
+----
+
+In order to change this script so that it does not touch your system
+in dry-run mode, you can use the `Wright::dry_run?` method.
+
+[source,ruby]
+----
+#!/usr/bin/env wright
+File.delete('/tmp/foo') unless Wright.dry_run?
+----
+
+Of course, the best way to achieve dry-run awareness in this situation
+would be to restrict yourself to using only wright's built-in
+resources, which all support dry-run mode out of the box.
+
+[source,ruby]
+----
+#!/usr/bin/env wright
+file('/tmp/foo') { |f| f.action = :remove }
+----
+
+Distributing wright scripts
+---------------------------
+Looking for a way to package and distribute your wright scripts? Since
+wright is just Ruby, you can simply use Ruby gems to package, version
+and distribute your wright scripts. (Don't forget to add wright as a
+runtime dependency to your gemspec!)

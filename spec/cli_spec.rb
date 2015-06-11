@@ -21,6 +21,18 @@ describe Wright::CLI do
       @cli.send(:commands).must_equal %w(foo bar)
     end
 
+    it 'parses -r LIBRARY' do
+      argv = %w(-r library1 -r library2 -rlibrary3 file.rb)
+      @cli.parse(argv).must_equal %w(file.rb)
+      @cli.send(:requires).must_equal %w(library1 library2 library3)
+    end
+
+    it 'parses --dry-run' do
+      argv = %w(--dry-run file.rb)
+      @cli.parse(argv).must_equal %w(file.rb)
+      @cli.send(:dry_run).must_equal true
+    end
+
     it 'parses --verbose' do
       argv = ['--verbose']
       @cli.parse(argv)
@@ -38,8 +50,14 @@ describe Wright::CLI do
     it 'parses --version' do
       argv = ['--version']
       expected = "wright version #{Wright::VERSION}\n"
-
       -> { @cli.run(argv) }.must_output expected
+    end
+
+    it 'enables dry-run mode when requested to do so' do
+      argv = ['--dry-run', '-e', 'print Wright.dry_run?']
+      expected = 'true'
+      -> { @cli.run(argv) }.must_output expected
+      Wright.instance_variable_set(:@dry_run, false)
     end
 
     it 'loads files' do

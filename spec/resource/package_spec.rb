@@ -17,6 +17,14 @@ describe Wright::Resource::Package do
     end
   end
 
+  describe '#installed?' do
+    it 'should ask the provider for the install status' do
+      @provider.expect(:installed?, nil)
+      @package.installed?
+      @provider.verify
+    end
+  end
+
   describe '#install' do
     it 'should ask the provider to install the package' do
       @provider.expect(:install, nil)

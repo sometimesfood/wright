@@ -1,19 +1,13 @@
 require_relative '../spec_helper'
 
 require 'fakeetc'
+
 require 'wright/provider'
 require 'wright/provider/group'
 
 describe Wright::Provider::User do
   before(:each) do
-    username = 'johndoe'
-    @resource = OpenStruct.new(name: username)
-    @create_message = "INFO: create user: '#{username}'\n"
-    @create_message_dry = "INFO: (would) create user: '#{username}'\n"
-    @create_message_debug = "DEBUG: user already created: '#{username}'\n"
-    @remove_message = "INFO: remove user: '#{username}'\n"
-    @remove_message_dry = "INFO: (would) remove user: '#{username}'\n"
-    @remove_message_debug = "DEBUG: user already removed: '#{username}'\n"
+    @resource = OpenStruct.new(name: 'johndoe')
   end
 
   after(:each) do
@@ -186,11 +180,11 @@ describe Wright::Provider::User do
     end
   end
 
-  describe '#add_user' do
+  describe '#create_user' do
     it 'should raise an exception' do
       provider = Wright::Provider::User.new(@resource)
       lambda do
-        provider.send(:add_user)
+        provider.send(:create_user)
       end.must_raise NotImplementedError
     end
   end
@@ -204,16 +198,23 @@ describe Wright::Provider::User do
     end
   end
 
-  describe '#delete_user' do
+  describe '#remove_user' do
     it 'should raise an exception' do
       provider = Wright::Provider::User.new(@resource)
       lambda do
-        provider.send(:delete_user)
+        provider.send(:remove_user)
       end.must_raise NotImplementedError
     end
   end
 
   describe '#create' do
+    before(:each) do
+      username = @resource.name
+      @create_message = "INFO: create user: '#{username}'\n"
+      @create_message_dry = "INFO: (would) create user: '#{username}'\n"
+      @create_message_debug = "DEBUG: user already created: '#{username}'\n"
+    end
+
     it 'should set the update status when the user is up-to-date' do
       provider = Wright::Provider::User.new(@resource)
 
@@ -231,8 +232,8 @@ describe Wright::Provider::User do
       provider = Wright::Provider::User.new(@resource)
       mock_provider = Minitest::Mock.new
 
-      mock_provider.expect(:add_user, nil)
-      provider.stub :add_user, -> { mock_provider.add_user } do
+      mock_provider.expect(:create_user, nil)
+      provider.stub :create_user, -> { mock_provider.create_user } do
         FakeEtc do
           lambda do
             reset_logger
@@ -279,6 +280,13 @@ describe Wright::Provider::User do
   end
 
   describe '#remove' do
+    before(:each) do
+      username = @resource.name
+      @remove_message = "INFO: remove user: '#{username}'\n"
+      @remove_message_dry = "INFO: (would) remove user: '#{username}'\n"
+      @remove_message_debug = "DEBUG: user already removed: '#{username}'\n"
+    end
+
     it 'should set the update status when the user is already removed' do
       provider = Wright::Provider::User.new(@resource)
 
@@ -295,9 +303,9 @@ describe Wright::Provider::User do
       provider = Wright::Provider::User.new(@resource)
       mock_provider = Minitest::Mock.new
 
-      mock_provider.expect(:delete_user, nil)
-      provider.stub :delete_user, -> { mock_provider.delete_user } do
-        FakeEtc.add_users('johndoe' => {})
+      mock_provider.expect(:remove_user, nil)
+      provider.stub :remove_user, -> { mock_provider.remove_user } do
+        FakeEtc.add_users(@resource.name => {})
         FakeEtc do
           lambda do
             reset_logger
@@ -313,7 +321,7 @@ describe Wright::Provider::User do
       provider = Wright::Provider::User.new(@resource)
 
       Wright.dry_run do
-        FakeEtc.add_users('johndoe' => {})
+        FakeEtc.add_users(@resource.name => {})
         FakeEtc do
           lambda do
             reset_logger

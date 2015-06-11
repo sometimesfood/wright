@@ -1,0 +1,9 @@
+Package: dmenu
+Versions: 
+
+Reverse Depends: 
+  xmonad,dmenu
+Dependencies: 
+Provides: 
+Reverse Provides: 
+suckless-tools 40-1

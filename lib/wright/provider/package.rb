@@ -9,9 +9,9 @@ module Wright
       #
       # @return [void]
       def install
-        package = @resource.name
-        unless_uptodate(:install, "package already installed: '#{package}'") do
-          unless_dry_run("install package: '#{package}'") do
+        unless_uptodate(:install,
+                        "package already installed: '#{package_name}'") do
+          unless_dry_run("install package: '#{package_name}'") do
             install_package
           end
         end
@@ -21,9 +21,9 @@ module Wright
       #
       # @return [void]
       def remove
-        package = @resource.name
-        unless_uptodate(:remove, "package already removed: '#{package}'") do
-          unless_dry_run("remove package: '#{package}'") do
+        unless_uptodate(:remove,
+                        "package already removed: '#{package_name}'") do
+          unless_dry_run("remove package: '#{package_name}'") do
             remove_package
           end
         end
@@ -34,7 +34,29 @@ module Wright
         fail NotImplementedError
       end
 
+      # @return [Bool] true if the package is installed, false
+      #   otherwise
+      def installed?
+        if package_version
+          installed_versions.include?(package_version)
+        else
+          !installed_versions.empty?
+        end
+      end
+
       private
+
+      def package_name
+        @resource.name
+      end
+
+      def package_version
+        @resource.version
+      end
+
+      def package_options
+        @resource.options
+      end
 
       # @api public
       # Checks if the package is up-to-date for a given action.
@@ -48,19 +70,11 @@ module Wright
       def uptodate?(action)
         case action
         when :install
-          package_installed?
+          installed?
         when :remove
-          !package_installed?
+          !installed?
         else
           fail ArgumentError, "invalid action '#{action}'"
-        end
-      end
-
-      def package_installed?
-        if @resource.version
-          installed_versions.include?(@resource.version)
-        else
-          !installed_versions.empty?
         end
       end
 

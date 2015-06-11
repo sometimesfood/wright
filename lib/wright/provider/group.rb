@@ -6,13 +6,15 @@ module Wright
     # Group provider. Used as a base class for {Resource::Group}
     # providers.
     class Group < Wright::Provider
-      # Adds the group.
+      # Creates or updates the group.
       #
       # @return [void]
       def create
-        group = @resource.name
-        unless_uptodate(:create, "group already created: '#{group}'") do
-          create_group
+        unless_uptodate(:create, "group already created: '#{group_name}'") do
+          unless_dry_run("create group: '#{group_name}'") do
+            ensure_group_exists
+            set_members unless members_uptodate?
+          end
         end
       end
 
@@ -20,13 +22,38 @@ module Wright
       #
       # @return [void]
       def remove
-        group = @resource.name
-        unless_uptodate(:remove, "group already removed: '#{group}'") do
-          remove_group
+        unless_uptodate(:remove, "group already removed: '#{group_name}'") do
+          unless_dry_run("remove group: '#{group_name}'") do
+            remove_group
+          end
         end
       end
 
       private
+
+      def group_name
+        @resource.name
+      end
+
+      def gid
+        @resource.gid
+      end
+
+      def members
+        @resource.members
+      end
+
+      def system_group?
+        @resource.system
+      end
+
+      def ensure_group_exists
+        if group_exists?
+          set_gid unless gid_uptodate?
+        else
+          create_group
+        end
+      end
 
       # @api public
       # Checks if the group is up-to-date for a given action.
@@ -48,37 +75,16 @@ module Wright
         end
       end
 
-      def create_group
-        group = @resource.name
-        unless_dry_run("create group: '#{group}'") do
-          if group_exists?
-            set_gid(group, @resource.gid) unless gid_uptodate?
-          else
-            add_group(group, @resource.gid, @resource.system)
-          end
-          set_members(group, @resource.members) unless members_uptodate?
-        end
-      end
-
-      def remove_group
-        group = @resource.name
-        unless_dry_run("remove group: '#{group}'") do
-          delete_group(group)
-        end
-      end
-
       def group_data
-        Etc.getgrnam(@resource.name)
-      rescue ArgumentError
-        nil
+        Wright::Util::User.safe_getgrnam(group_name)
       end
 
       def gid_uptodate?
-        @resource.gid.nil? || group_data.gid == @resource.gid
+        gid.nil? || group_data.gid == gid
       end
 
       def members_uptodate?
-        @resource.members.nil? || group_data.mem == @resource.members
+        members.nil? || group_data.mem == members
       end
 
       def group_exists?
@@ -86,11 +92,22 @@ module Wright
       end
 
       def set_members
-        group = @resource.name
-        new_members = @resource.members - group_data.mem
-        unwanted_members = group_data.mem - @resource.members
-        new_members.each { |m| add_member(m, group) }
-        unwanted_members.each { |m| remove_member(m, group) }
+        new_members = members - group_data.mem
+        unwanted_members = group_data.mem - members
+        new_members.each { |m| add_member(m, group_name) }
+        unwanted_members.each { |m| remove_member(m, group_name) }
+      end
+
+      def create_group
+        fail NotImplementedError
+      end
+
+      def remove_group
+        fail NotImplementedError
+      end
+
+      def set_gid
+        fail NotImplementedError
       end
 
       def add_member(_member, _group)

@@ -1,0 +1,142 @@
+wright Resources
+================
+:source-highlighter: pygments
+:icons: font
+:toc:
+
+Creating directories
+--------------------
+The directory resource can be used to create a directory and all of
+its parent directories. Tildes (`~`) in directory names are supported.
+
+[source,ruby]
+----
+directory '~/this/is/a/directory'
+----
+
+If you want to specify the directory's mode, owner or group, you can
+do so via the `mode`, `owner` or `group` attributes.
+
+[source,ruby]
+----
+directory '~/this/is/another/directory' do |d|
+  d.mode = '755' # <1>
+  d.owner = 'nobody:nobody'
+end
+----
+<1> wright also supports symbolic mode strings (e.g. `'u=rwx,go=rx'`),
+but numeric notation is often more compact.
+
+Creating files
+--------------
+The file resource can be used to create files. Tildes (`~`) in
+file names are supported.
+
+[source,ruby]
+----
+file '~/this-is-a-file'
+----
+
+If you do not specify the file's desired content, wright creates an
+empty file if the file does not yet exist but will not touch existing
+files.footnote:[If you want to clear the content of an existing file,
+you can set the file's `content` attribute to empty string.]
+
+[source,ruby]
+----
+file '~/this-is-another-file' do |f|
+  f.content = "Hello world\n"
+  f.mode = '400' # <1>
+  f.owner = 'nobody:nobody'
+end
+----
+<1> wright also supports symbolic mode strings (e.g. `'u=r,go='`), but
+numeric notation is often more compact.
+
+Creating groups
+---------------
+The group resource can be used to create groups.
+
+[source,ruby]
+----
+group 'ordinary_gentlemen'
+----
+
+If you want to add members to a group, change the group's group id or
+create the group as a system group, you can use the `gid`, `members`
+and `system` attributes.
+
+[source,ruby]
+----
+group 'extraordinary_gentlemen' do |g|
+  g.gid = 999
+  g.members = %w(murray quatermain nemo jekyll) # <1>
+  g.system = false
+end
+----
+<1> Note that wright removes all users that are not listed here from
+the group's members list.
+
+Creating users
+--------------
+The user resource can be used to create users.
+
+[source,ruby]
+----
+user 'orlando'
+----
+
+If you want to change a user's details, you can set the user
+resource's attributes.
+
+[source,ruby]
+----
+user 'griffin' do |u|
+  u.uid = 777
+  u.full_name = 'Hawley Griffin'
+  u.home = '/home/users/griffin'
+  u.groups = 'extraordinary_gentlemen'
+  u.primary_group = 'users'
+  u.shell = 'zsh'
+  u.system = false
+end
+----
+
+All user attributes are optional and have sensible defaults. For
+example on GNU systems, `useradd(8)` is used to create users, which is
+why wright respects all your sytem-wide user defaults.
+
+Creating symlinks
+-----------------
+The symlink resource can be used to create symlinks.
+
+[source,ruby]
+----
+symlink '/etc/nginx/sites-enabled/example.org' do |s|
+  s.to = '/etc/nginx/sites-available/example.org'
+end
+----
+
+Installing packages
+-------------------
+The package resource can be used to install packages.
+
+[source,ruby]
+----
+package 'tmux'
+----
+
+While wright defaults to installing the package version picked by your
+package manager, you can also use the `version` attribute to specify
+the desired version. The `options` attribute can be used to pass
+options to your package manager.
+
+[source,ruby]
+----
+package 'mg' do |p|
+  p.version = '20110905-1.1'
+  p.options = %w(--no-install-recommends --auto-remove) # <1>
+end
+----
+<1> If you only need a single option, you can also set `options` to a
+string such as `'--no-install-recommends'`.

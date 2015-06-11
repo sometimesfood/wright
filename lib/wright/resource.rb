@@ -123,10 +123,12 @@ module Wright
     def run_update_action
       return if @on_update.nil?
 
+      resource = "#{@resource_name} '#{@name}'"
+      notification = "run update action for #{resource}"
       if Wright.dry_run?
-        resource = "#{@resource_name} '#{@name}'"
-        Wright.log.info "(would) run update action for #{resource}"
+        Wright.log.info "(would) #{notification}"
       else
+        Wright.log.info notification
         @on_update.call
       end
     end

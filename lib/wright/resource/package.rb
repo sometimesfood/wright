@@ -1,3 +1,5 @@
+require 'forwardable'
+
 require 'wright/resource'
 require 'wright/dsl'
 
@@ -20,8 +22,14 @@ module Wright
     #   htop.installed_versions
     #   # => []
     class Package < Wright::Resource
+      extend Forwardable
+
       # @return [String] the package version to install or remove
       attr_accessor :version
+
+      # @return [String, Array<String>] the options passed to the
+      #   package manager
+      attr_accessor :options
 
       # Initializes a Package.
       #
@@ -29,13 +37,17 @@ module Wright
       def initialize(name)
         super
         @version = nil
+        @options = nil
         @action = :install
       end
 
+      # @!method installed_versions
       # @return [Array<String>] the installed package versions
-      def installed_versions
-        @provider.installed_versions
-      end
+      def_delegator :@provider, :installed_versions
+
+      # @!method installed?
+      # @return [Bool] +true+ if the package is installed
+      def_delegator :@provider, :installed?
 
       # Installs the Package.
       #
@@ -66,6 +78,7 @@ Wright::DSL.register_resource(Wright::Resource::Package)
 
 package_providers = {
   'debian' => 'Wright::Provider::Package::Apt',
+  'rhel'   => 'Wright::Provider::Package::Yum',
   'macosx' => 'Wright::Provider::Package::Homebrew'
 }
 Wright::Config[:resources][:package] ||= {}

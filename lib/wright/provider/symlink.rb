@@ -10,11 +10,13 @@ module Wright
       #
       # @return [void]
       def create
-        fail Errno::EEXIST, link_name if regular_file?
+        fail Errno::EEXIST, link_name_expanded if regular_file?
 
-        symlink = symlink_to_s(@resource.name, @resource.to)
+        symlink = symlink_to_s
         unless_uptodate(:create, "symlink already created: #{symlink}") do
-          create_link
+          unless_dry_run("create symlink: #{symlink}") do
+            Wright::Util::File.ln_sfn(link_to_expanded, link_name_expanded)
+          end
         end
       end
 
@@ -22,54 +24,51 @@ module Wright
       #
       # @return [void]
       def remove
-        fail "'#{link_name}' is not a symlink" if regular_file?
+        fail "'#{link_name_expanded}' is not a symlink" if regular_file?
 
-        symlink = @resource.name
-        unless_uptodate(:remove, "symlink already removed: '#{symlink}'") do
-          remove_symlink
+        unless_uptodate(:remove, "symlink already removed: '#{link_name}'") do
+          unless_dry_run("remove symlink: '#{link_name}'") do
+            FileUtils.rm(link_name_expanded)
+          end
         end
       end
 
       private
 
+      def link_name
+        @resource.name
+      end
+
+      def link_to
+        @resource.to
+      end
+
+      def link_to_expanded
+        return nil if link_to.nil?
+        Wright::Util::File.expand_tilde_path(link_to)
+      end
+
+      def link_name_expanded
+        Wright::Util::File.expand_tilde_path(link_name)
+      end
+
+      def symlink_to_s
+        "'#{link_name}' -> '#{link_to}'"
+      end
+
       def uptodate?(action)
         case action
         when :create
-          ::File.symlink?(link_name) &&
-            ::File.readlink(link_name) == link_to
+          ::File.symlink?(link_name_expanded) &&
+            ::File.readlink(link_name_expanded) == link_to_expanded
         when :remove
-          !::File.symlink?(link_name)
-        end
-      end
-
-      def create_link
-        symlink = symlink_to_s(@resource.name, @resource.to)
-        unless_dry_run("create symlink: #{symlink}") do
-          Wright::Util::File.ln_sfn(link_to, link_name)
-        end
-      end
-
-      def symlink_to_s(link_name, target)
-        "'#{link_name}' -> '#{target}'"
-      end
-
-      def remove_symlink
-        unless_dry_run("remove symlink: '#{@resource.name}'") do
-          FileUtils.rm(link_name)
+          !::File.symlink?(link_name_expanded)
         end
       end
 
       def regular_file?
-        ::File.exist?(link_name) && !::File.symlink?(link_name)
-      end
-
-      def link_to
-        return nil if @resource.to.nil?
-        Wright::Util::File.expand_tilde_path(@resource.to)
-      end
-
-      def link_name
-        Wright::Util::File.expand_tilde_path(@resource.name)
+        ::File.exist?(link_name_expanded) &&
+          !::File.symlink?(link_name_expanded)
       end
     end
   end

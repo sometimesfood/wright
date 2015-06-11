@@ -12,11 +12,14 @@ module Wright
       #
       # @return [void]
       def create
-        fail Errno::EEXIST, dirname if regular_file?
+        fail Errno::EEXIST, dirname_expanded if regular_file?
 
-        dir = @resource.name
-        unless_uptodate(:create, "directory already created: '#{dir}'") do
-          create_directory
+        dir_permissions = permissions
+        unless_uptodate(:create, "directory already created: '#{dir_name}'") do
+          unless_dry_run("create directory: '#{dir_name}'") do
+            FileUtils.mkdir_p(dirname_expanded)
+            dir_permissions.update unless dir_permissions.uptodate?
+          end
         end
       end
 
@@ -24,25 +27,22 @@ module Wright
       #
       # @return [void]
       def remove
-        if ::File.exist?(dirname) && !::File.directory?(dirname)
-          fail "'#{dirname}' exists but is not a directory"
+        if ::File.exist?(dirname_expanded) &&
+           !::File.directory?(dirname_expanded)
+          fail "'#{dirname_expanded}' exists but is not a directory"
         end
 
-        dir = @resource.name
-        unless_uptodate(:remove, "directory already removed: '#{dir}'") do
-          remove_directory
+        unless_uptodate(:remove, "directory already removed: '#{dir_name}'") do
+          unless_dry_run("remove directory: '#{dir_name}'") do
+            FileUtils.rmdir(dirname_expanded)
+          end
         end
       end
 
       private
 
-      def uptodate?(action)
-        case action
-        when :create
-          ::File.directory?(dirname) && permissions.uptodate?
-        when :remove
-          !::File.exist?(dirname) && !::File.directory?(dirname)
-        end
+      def dir_name
+        @resource.name
       end
 
       def permissions
@@ -50,26 +50,22 @@ module Wright
                                                            :directory)
       end
 
-      def create_directory
-        dir_permissions = permissions
-        unless_dry_run("create directory: '#{@resource.name}'") do
-          FileUtils.mkdir_p(dirname)
-          dir_permissions.update unless dir_permissions.uptodate?
-        end
-      end
-
-      def remove_directory
-        unless_dry_run("remove directory: '#{@resource.name}'") do
-          FileUtils.rmdir(dirname)
+      def uptodate?(action)
+        case action
+        when :create
+          ::File.directory?(dirname_expanded) && permissions.uptodate?
+        when :remove
+          !::File.exist?(dirname_expanded) &&
+            !::File.directory?(dirname_expanded)
         end
       end
 
       def regular_file?
-        ::File.exist?(dirname) && !::File.directory?(dirname)
+        ::File.exist?(dirname_expanded) && !::File.directory?(dirname_expanded)
       end
 
-      def dirname
-        ::File.expand_path(@resource.name)
+      def dirname_expanded
+        ::File.expand_path(dir_name)
       end
     end
   end

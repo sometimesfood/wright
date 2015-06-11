@@ -9,53 +9,50 @@ module Wright
       class DarwinDirectoryService < User
         private
 
-        def add_user
-          user = @resource.name
+        def create_user
           attributes = default_attributes.merge(resource_attributes)
           attributes.each do |k, v|
             args = dscl_args(:create, k, v)
-            exec_or_fail('dscl', args, "cannot create user '#{user}'")
+            exec_or_fail('dscl', args, "cannot create user '#{user_name}'")
           end
         end
 
         def update_user
-          user = @resource.name
           resource_attributes.each do |k, v|
             args = dscl_args(:create, k, v)
-            exec_or_fail('dscl', args, "cannot create user '#{user}'")
+            exec_or_fail('dscl', args, "cannot create user '#{user_name}'")
           end
         end
 
-        def delete_user
-          user = @resource.name
+        def remove_user
           exec_or_fail('dscl',
-                       %W(. -delete /Users/#{user}),
-                       "cannot remove user '#{user}'")
+                       %W(. -delete /Users/#{user_name}),
+                       "cannot remove user '#{user_name}'")
         end
 
         def dscl_args(cmd, key, value)
-          %W(. -#{cmd} /Users/#{@resource.name} #{key} #{value})
+          %W(. -#{cmd} /Users/#{user_name} #{key} #{value})
         end
 
         def default_attributes
-          uid_range = @resource.system ? 1...500 : 500...1000
+          uid_range = system_user? ? 1...500 : 500...1000
           {
             'UniqueID' => Wright::Util::User.next_free_uid(uid_range),
             'UserShell' => '/bin/bash',
             'RealName' => '',
-            'NFSHomeDirectory' => "/Users/#{@resource.name}",
+            'NFSHomeDirectory' => "/Users/#{user_name}",
             'PrimaryGroupID' => Wright::Util::User.group_to_gid('staff'),
             'Password' => '*'
           }
         end
 
         def resource_attributes
-          gid = Wright::Util::User.group_to_gid(@resource.primary_group)
+          gid = Wright::Util::User.group_to_gid(primary_group)
           {
-            'UniqueID' => @resource.uid,
-            'UserShell' => @resource.shell,
-            'RealName' => @resource.full_name,
-            'NFSHomeDirectory' => @resource.home,
+            'UniqueID' => uid,
+            'UserShell' => shell,
+            'RealName' => full_name,
+            'NFSHomeDirectory' => home,
             'PrimaryGroupID' => gid
           }.reject { |_k, v| v.nil? }
         end

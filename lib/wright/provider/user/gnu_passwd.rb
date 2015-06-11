@@ -9,44 +9,43 @@ module Wright
       class GnuPasswd < Wright::Provider::User
         private
 
-        def add_user
-          user = @resource.name
+        def create_user
           exec_or_fail('useradd',
-                       [*user_options, user],
-                       "cannot create user '#{user}'")
+                       [*user_options, user_name],
+                       "cannot create user '#{user_name}'")
         end
 
         def update_user
-          user = @resource.name
           exec_or_fail('usermod',
-                       [*user_options, user],
-                       "cannot create user '#{user}'")
+                       [*user_options, user_name],
+                       "cannot create user '#{user_name}'")
+        end
+
+        def remove_user
+          exec_or_fail('userdel',
+                       [user_name],
+                       "cannot remove user '#{user_name}'")
         end
 
         def user_options
           options = {
-            '-u' => @resource.uid,
-            '-g' => @resource.primary_group,
+            '-u' => uid,
+            '-g' => primary_group,
             '-c' => comment,
-            '-G' => groups,
-            '-s' => @resource.shell,
-            '-d' => @resource.home
+            '-G' => group_list,
+            '-s' => shell,
+            '-d' => home
           }.reject { |_k, v| v.nil? }.flatten
-          options << '-r' if @resource.system
+          options << '-r' if system_user?
           options.map(&:to_s)
         end
 
         def comment
-          @resource.full_name.nil? ? nil : "#{@resource.full_name},,,"
+          full_name.nil? ? nil : "#{full_name},,,"
         end
 
-        def groups
-          @resource.groups.nil? ? nil : @resource.groups.join(',')
-        end
-
-        def delete_user
-          user = @resource.name
-          exec_or_fail('userdel', [user], "cannot remove user '#{user}'")
+        def group_list
+          groups.nil? ? nil : groups.join(',')
         end
       end
     end

@@ -26,13 +26,15 @@ describe Wright::Provider::User::DarwinDirectoryService do
     FakeEtc.clear_groups
   end
 
-  describe '#add_user' do
+  describe '#create_user' do
     before(:each) do
-      Wright::Provider::User::DarwinDirectoryService.send(:public, :add_user)
+      Wright::Provider::User::DarwinDirectoryService.send(:public,
+                                                          :create_user)
     end
 
     after(:each) do
-      Wright::Provider::User::DarwinDirectoryService.send(:private, :add_user)
+      Wright::Provider::User::DarwinDirectoryService.send(:private,
+                                                          :create_user)
     end
 
     it 'should add users' do
@@ -55,7 +57,7 @@ describe Wright::Provider::User::DarwinDirectoryService do
       @fake_capture3.expect(dscl(:create, user, 'Password', '*'),
                             'dscl-new-user-password')
       @fake_capture3.stub do
-        FakeEtc { provider.add_user }
+        FakeEtc { provider.create_user }
       end
     end
 
@@ -80,7 +82,7 @@ describe Wright::Provider::User::DarwinDirectoryService do
       @fake_capture3.expect(dscl(:create, user, 'Password', '*'),
                             'dscl-new-user-password')
       @fake_capture3.stub do
-        FakeEtc { provider.add_user }
+        FakeEtc { provider.create_user }
       end
     end
 
@@ -112,7 +114,7 @@ describe Wright::Provider::User::DarwinDirectoryService do
       @fake_capture3.expect(dscl(:create, user, 'Password', '*'),
                             'dscl-new-user-password')
       @fake_capture3.stub do
-        FakeEtc { provider.add_user }
+        FakeEtc { provider.create_user }
       end
     end
   end
@@ -142,15 +144,15 @@ describe Wright::Provider::User::DarwinDirectoryService do
     end
   end
 
-  describe '#delete_user' do
+  describe '#remove_user' do
     before(:each) do
       Wright::Provider::User::DarwinDirectoryService.send(:public,
-                                                          :delete_user)
+                                                          :remove_user)
     end
 
     after(:each) do
       Wright::Provider::User::DarwinDirectoryService.send(:private,
-                                                          :delete_user)
+                                                          :remove_user)
     end
 
     it 'should delete users' do
@@ -160,7 +162,7 @@ describe Wright::Provider::User::DarwinDirectoryService do
       @fake_capture3.expect(%W(dscl . -delete /Users/#{@resource.name}),
                             'dscl-delete-user')
       @fake_capture3.stub do
-        FakeEtc { provider.delete_user }
+        FakeEtc { provider.remove_user }
       end
     end
   end

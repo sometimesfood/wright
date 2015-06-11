@@ -7,13 +7,18 @@ module Wright
     # User provider. Used as a base class for {Resource::User}
     # providers.
     class User < Wright::Provider
-      # Adds the user.
+      # Creates or updates the user.
       #
       # @return [void]
       def create
-        user = @resource.name
-        unless_uptodate(:create, "user already created: '#{user}'") do
-          create_user
+        unless_uptodate(:create, "user already created: '#{user_name}'") do
+          unless_dry_run("create user: '#{user_name}'") do
+            if user_exists?
+              update_user
+            else
+              create_user
+            end
+          end
         end
       end
 
@@ -21,13 +26,46 @@ module Wright
       #
       # @return [void]
       def remove
-        user = @resource.name
-        unless_uptodate(:remove, "user already removed: '#{user}'") do
-          remove_user
+        unless_uptodate(:remove, "user already removed: '#{user_name}'") do
+          unless_dry_run("remove user: '#{user_name}'") do
+            remove_user
+          end
         end
       end
 
       private
+
+      def user_name
+        @resource.name
+      end
+
+      def uid
+        @resource.uid
+      end
+
+      def primary_group
+        @resource.primary_group
+      end
+
+      def full_name
+        @resource.full_name
+      end
+
+      def groups
+        @resource.groups
+      end
+
+      def shell
+        @resource.shell
+      end
+
+      def home
+        @resource.home
+      end
+
+      def system_user?
+        @resource.system
+      end
 
       # @api public
       # Checks if the user is up-to-date for a given action.
@@ -58,64 +96,43 @@ module Wright
           primary_group_uptodate?
       end
 
-      def create_user
-        unless_dry_run("create user: '#{@resource.name}'") do
-          if user_exists?
-            update_user
-          else
-            add_user
-          end
-        end
-      end
-
-      def remove_user
-        unless_dry_run("remove user: '#{@resource.name}'") do
-          delete_user
-        end
-      end
-
       def user_data
-        Etc.getpwnam(@resource.name)
-      rescue ArgumentError
-        nil
+        Wright::Util::User.safe_getpwnam(user_name)
       end
 
       def uid_uptodate?
-        @resource.uid.nil? || user_data.uid == @resource.uid
+        uid.nil? || user_data.uid == uid
       end
 
       def full_name_uptodate?
-        @resource.full_name.nil? ||
-          user_data.gecos.split(',').first == @resource.full_name
+        full_name.nil? || user_data.gecos.split(',').first == full_name
       end
 
       def groups_uptodate?
-        return true if @resource.groups.nil?
-        groups = []
-        Etc.group { |g| groups << g.name if g.mem.include?(@resource.name) }
-        groups.uniq.sort == @resource.groups.uniq.sort
+        return true if groups.nil?
+        target_groups = []
+        Etc.group { |g| target_groups << g.name if g.mem.include?(user_name) }
+        target_groups.sort.uniq == groups.sort.uniq
       end
 
       def shell_uptodate?
-        @resource.shell.nil? || user_data.shell == @resource.shell
+        shell.nil? || user_data.shell == shell
       end
 
       def home_uptodate?
-        @resource.home.nil? || user_data.dir == @resource.home
+        home.nil? || user_data.dir == home
       end
 
       def primary_group_uptodate?
-        return true if @resource.primary_group.nil?
-
-        gid = Wright::Util::User.group_to_gid(@resource.primary_group)
-        user_data.gid == gid
+        return true if primary_group.nil?
+        user_data.gid == Wright::Util::User.group_to_gid(primary_group)
       end
 
       def user_exists?
         !user_data.nil?
       end
 
-      def add_user
+      def create_user
         fail NotImplementedError
       end
 
@@ -123,7 +140,7 @@ module Wright
         fail NotImplementedError
       end
 
-      def delete_user
+      def remove_user
         fail NotImplementedError
       end
     end

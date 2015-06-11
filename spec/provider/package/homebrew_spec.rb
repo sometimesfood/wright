@@ -3,13 +3,16 @@ require_relative '../../spec_helper'
 require 'wright/provider/package/homebrew'
 
 describe Wright::Provider::Package::Homebrew do
-  def brew(action, pkg_name)
-    options = action == :info ? ['info', '--json=v1'] : [action.to_s]
-    ['brew', *options, pkg_name]
+  def brew(action, pkg_name, args = {})
+    action_args = action == :info ? ['info', '--json=v1'] : [action.to_s]
+    ['brew', *action_args, *args[:options], pkg_name]
   end
 
-  def package_provider(pkg_name, pkg_version = nil)
-    pkg_resource = OpenStruct.new(name: pkg_name, version: pkg_version)
+  def package_provider(pkg_name, args = {})
+    properties = { name: pkg_name,
+                   version: args[:version],
+                   options: args[:options] }
+    pkg_resource = OpenStruct.new(properties)
     Wright::Provider::Package::Homebrew.new(pkg_resource)
   end
 
@@ -71,7 +74,7 @@ describe Wright::Provider::Package::Homebrew do
     it 'should output a warning when specifying a package version' do
       pkg_name = 'cd-discid'
       pkg_version = '1.1'
-      pkg_provider = package_provider(pkg_name, pkg_version)
+      pkg_provider = package_provider(pkg_name, version: pkg_version)
       brew_install_cmd = brew(:install, pkg_name)
       version_warning =
         "WARN: ignoring package version: '#{pkg_name} (#{pkg_version})'\n"
@@ -82,6 +85,18 @@ describe Wright::Provider::Package::Homebrew do
           reset_logger
           pkg_provider.send(:install_package)
         end.must_output version_warning
+      end
+    end
+
+    it 'should pass options to the package manager' do
+      pkg_name = 'gnu-units'
+      pkg_options = '--with-default-names'
+      pkg_provider = package_provider(pkg_name, options: pkg_options)
+      brew_install_cmd = brew(:install, pkg_name, options: pkg_options)
+
+      @fake_capture3.expect(brew_install_cmd)
+      @fake_capture3.stub do
+        pkg_provider.send(:install_package)
       end
     end
 
@@ -105,6 +120,18 @@ describe Wright::Provider::Package::Homebrew do
       pkg_name = 'lame'
       pkg_provider = package_provider(pkg_name)
       brew_uninstall_cmd = brew(:uninstall, pkg_name)
+
+      @fake_capture3.expect(brew_uninstall_cmd)
+      @fake_capture3.stub do
+        pkg_provider.send(:remove_package)
+      end
+    end
+
+    it 'should pass options to the package manager' do
+      pkg_name = 'lame'
+      pkg_options = ['--force']
+      pkg_provider = package_provider(pkg_name, options: pkg_options)
+      brew_uninstall_cmd = brew(:uninstall, pkg_name, options: pkg_options)
 
       @fake_capture3.expect(brew_uninstall_cmd)
       @fake_capture3.stub do

@@ -9,28 +9,28 @@ module Wright
       class GnuPasswd < Wright::Provider::Group
         private
 
-        def add_group(group_name, gid, system)
+        def create_group
           options = []
-          options << '--system' if system
+          options << '--system' if system_group?
           options += ['-g', gid.to_s] if gid
           cmd = 'groupadd'
           args = [*options, group_name]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
-        def delete_group(group_name)
+        def remove_group
           cmd = 'groupdel'
           args = [group_name]
           exec_or_fail(cmd, args, "cannot remove group '#{group_name}'")
         end
 
-        def set_members(group_name, members)
+        def set_members
           cmd = 'gpasswd'
           args = ['-M', members.join(','), group_name]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
         end
 
-        def set_gid(group_name, gid)
+        def set_gid
           cmd = 'groupmod'
           args = ['-g', gid.to_s, group_name]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")

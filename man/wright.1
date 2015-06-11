@@ -2,12 +2,12 @@
 .\"     Title: wright
 .\"    Author: [see the "AUTHOR" section]
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 04/22/2015
+.\"      Date: 06/03/2015
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "WRIGHT" "1" "04/22/2015" "\ \&" "\ \&"
+.TH "WRIGHT" "1" "06/03/2015" "\ \&" "\ \&"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -46,6 +46,18 @@ Although wright is typically used to run script files, it can also execute short
 Run
 \fICOMMAND\fR
 as a wright script\&. When multiple commands are passed, they are joined and run in sequence\&.
+.RE
+.PP
+\fB\-r\fR \fILIBRARY\fR
+.RS 4
+Require
+\fILIBRARY\fR
+before running the wright script\&. When multiple libraries are passed, they are loaded in sequence\&.
+.RE
+.PP
+\fB\-n, \-\-dry\-run\fR
+.RS 4
+Enable dry\-run mode\&. In dry\-run mode, wright resources do not modify the system, but you still have to make sure your own code does not cause any unwanted changes\&.
 .RE
 .PP
 \fB\-v, \-\-verbose\fR
@@ -143,15 +155,7 @@ To install tmux and update its config file from a wright script, create the foll
 .\}
 .nf
 package \*(Aqtmux\*(Aq
-.fi
-.if n \{\
-.RE
-.\}
-.sp
-.if n \{\
-.RS 4
-.\}
-.nf
+
 file \*(Aq/etc/tmux\&.conf\*(Aq do |f|
   f\&.content = <<EOF
 unbind C\-b

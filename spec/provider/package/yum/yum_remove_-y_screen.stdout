@@ -1,0 +1,31 @@
+Loaded plugins: fastestmirror
+Resolving Dependencies
+--> Running transaction check
+---> Package screen.x86_64 0:4.1.0-0.19.20120314git3c2946.el7 will be erased
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package     Arch        Version                               Repository  Size
+================================================================================
+Removing:
+ screen      x86_64      4.1.0-0.19.20120314git3c2946.el7      @base      914 k
+
+Transaction Summary
+================================================================================
+Remove  1 Package
+
+Installed size: 914 k
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Erasing    : screen-4.1.0-0.19.20120314git3c2946.el7.x86_64               1/1 
+  Verifying  : screen-4.1.0-0.19.20120314git3c2946.el7.x86_64               1/1 
+
+Removed:
+  screen.x86_64 0:4.1.0-0.19.20120314git3c2946.el7                              
+
+Complete!

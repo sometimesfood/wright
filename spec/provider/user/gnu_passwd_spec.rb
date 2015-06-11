@@ -18,13 +18,13 @@ describe Wright::Provider::User::GnuPasswd do
     FakeEtc.clear_groups
   end
 
-  describe '#add_user' do
+  describe '#create_user' do
     before(:each) do
-      Wright::Provider::User::GnuPasswd.send(:public, :add_user)
+      Wright::Provider::User::GnuPasswd.send(:public, :create_user)
     end
 
     after(:each) do
-      Wright::Provider::User::GnuPasswd.send(:private, :add_user)
+      Wright::Provider::User::GnuPasswd.send(:private, :create_user)
     end
 
     it 'should add users' do
@@ -32,7 +32,7 @@ describe Wright::Provider::User::GnuPasswd do
 
       @fake_capture3.expect(%W(useradd #{@resource.name}))
       @fake_capture3.stub do
-        FakeEtc { provider.add_user }
+        FakeEtc { provider.create_user }
       end
     end
 
@@ -59,7 +59,7 @@ describe Wright::Provider::User::GnuPasswd do
       FakeEtc.add_groups('anonymous' => { gid: 123 })
       @fake_capture3.expect(['useradd', *expected_args], 'useradd_with_options')
       @fake_capture3.stub do
-        FakeEtc { provider.add_user }
+        FakeEtc { provider.create_user }
       end
     end
   end
@@ -85,13 +85,13 @@ describe Wright::Provider::User::GnuPasswd do
     end
   end
 
-  describe '#delete_user' do
+  describe '#remove_user' do
     before(:each) do
-      Wright::Provider::User::GnuPasswd.send(:public, :delete_user)
+      Wright::Provider::User::GnuPasswd.send(:public, :remove_user)
     end
 
     after(:each) do
-      Wright::Provider::User::GnuPasswd.send(:private, :delete_user)
+      Wright::Provider::User::GnuPasswd.send(:private, :remove_user)
     end
 
     it 'should delete users' do
@@ -100,7 +100,7 @@ describe Wright::Provider::User::GnuPasswd do
       FakeEtc.add_users(@resource.name => {})
       @fake_capture3.expect(%W(userdel #{@resource.name}))
       @fake_capture3.stub do
-        FakeEtc { provider.delete_user }
+        FakeEtc { provider.remove_user }
       end
     end
   end
