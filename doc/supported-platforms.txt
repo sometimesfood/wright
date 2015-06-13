@@ -1,0 +1,28 @@
+Supported Platforms
+===================
+
+wright currently fully supports the following platforms:
+
+- OS X
+- Debian
+- Ubuntu
+- RHEL/Centos ≥7
+
+Untested platforms
+------------------
+While other Unix-like operating systems such as FreeBSD, OpenBSD or
+GNU/Linux distributions not listed above are not tested at the moment,
+wright should in principle be able to run on these platforms.
+
+One major caveat is that since there are currently no providers for
+the user, group or package resource for these systems, only basic
+resources such as the file, directory or symlink resource can be used.
+
+Unsupported platforms
+---------------------
+There are no plans for a Windows version of wright.
+
+Since wright requires at least Ruby 1.9, there is no support for
+systems that still rely on Ruby 1.8, such as RHEL 6/CentOS 6. If you
+want to use wright on a system that does not have Ruby 1.9 packages,
+you have to install Ruby 1.9 via a third-party repository.

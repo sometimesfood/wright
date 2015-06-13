@@ -7,6 +7,7 @@ Documentation for users
 - link:../man/wright.1{outfilesuffix}[wright manpage]
 - link:resources{outfilesuffix}[wright resources]
 - link:wright-is-ruby{outfilesuffix}[wright is Ruby]
+- link:supported-platforms{outfilesuffix}[list of supported platforms]
 
 Documentation for developers
 ----------------------------
