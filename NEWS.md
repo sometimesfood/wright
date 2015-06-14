@@ -1,6 +1,10 @@
 # wright NEWS
+## 0.4.1 (2015-06-14)
+- Use GNU passwd group and user providers on Fedora
+
 ## 0.4.0 (2015-06-11)
 - Add --dry-run option
+- Add -r option
 - Add support for virtual packages to apt provider
 - Add yum support to package provider
 - Use GNU passwd group and user providers on CentOS/RHEL
