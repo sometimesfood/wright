@@ -1,4 +1,7 @@
 # wright NEWS
+## unreleased
+- Use GNU passwd group and user providers on Fedora
+
 ## 0.4.0 (2015-06-11)
 - Add --dry-run option
 - Add -r option
