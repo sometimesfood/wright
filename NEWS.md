@@ -1,5 +1,5 @@
 # wright NEWS
-## unreleased
+## 0.4.1 (2015-06-14)
 - Use GNU passwd group and user providers on Fedora
 
 ## 0.4.0 (2015-06-11)
