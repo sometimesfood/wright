@@ -1,4 +1,7 @@
 # wright NEWS
+## unreleased
+- Don't colorize log messages if Config[:log][:colorize] is nil (#13)
+
 ## 0.4.1 (2015-06-14)
 - Use GNU passwd group and user providers on Fedora
 

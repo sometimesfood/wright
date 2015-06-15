@@ -58,7 +58,7 @@ module Wright # rubocop:disable Documentation
     def initialize(logdev = $stdout)
       super
       Wright::Config[:log] ||= {}
-      return unless Wright::Config[:log][:colorize].nil?
+      return if Wright::Config[:log].has_key?(:colorize)
 
       Wright::Config[:log][:colorize] = logdev.tty?
     end
