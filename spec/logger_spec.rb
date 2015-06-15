@@ -36,6 +36,10 @@ describe Wright::Logger do
     Wright::Config[:log] = { colorize: false }
     Wright::Logger.new
     Wright::Config[:log][:colorize].must_equal false
+
+    Wright::Config[:log] = { colorize: nil }
+    Wright::Logger.new
+    Wright::Config[:log][:colorize].must_be_nil
   end
 
   it 'should format log messages according to the config' do
