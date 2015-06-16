@@ -36,35 +36,35 @@ module Wright
       private
 
       def user_name
-        @resource.name
+        resource.name
       end
 
       def uid
-        @resource.uid
+        resource.uid
       end
 
       def primary_group
-        @resource.primary_group
+        resource.primary_group
       end
 
       def full_name
-        @resource.full_name
+        resource.full_name
       end
 
       def groups
-        @resource.groups
+        resource.groups
       end
 
       def shell
-        @resource.shell
+        resource.shell
       end
 
       def home
-        @resource.home
+        resource.home
       end
 
       def system_user?
-        @resource.system
+        resource.system
       end
 
       # @api public

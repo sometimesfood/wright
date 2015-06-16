@@ -38,8 +38,8 @@ module Wright
       #   one colon
       def user_and_group=(user_and_group)
         user, group = split_user_and_group(user_and_group)
-        @user = user
-        @group = group if group
+        self.user = user
+        self.group = group if group
       end
 
       private

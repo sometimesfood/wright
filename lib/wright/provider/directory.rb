@@ -42,11 +42,11 @@ module Wright
       private
 
       def dir_name
-        @resource.name
+        resource.name
       end
 
       def permissions
-        Wright::Util::FilePermissions.create_from_resource(@resource,
+        Wright::Util::FilePermissions.create_from_resource(resource,
                                                            :directory)
       end
 

@@ -26,12 +26,15 @@ module Wright
     # @return [Bool] true if the provider was updated and false
     #   otherwise
     def updated?
-      updated = @updated
-      @updated = false
-      updated
+      updated_since_last_call = updated
+      self.updated = false
+      updated_since_last_call
     end
 
     private
+
+    attr_accessor :updated
+    attr_reader :resource
 
     # @api public
     # Logs an info message and runs a code block unless dry run mode
@@ -49,7 +52,7 @@ module Wright
 
     # @api public
     # Checks if the provider is up-to-date, runs a code block and sets
-    # `@updated` to `true` if it is not.
+    # `updated` to `true` if it is not.
     #
     # @param action [String] the target action
     # @param message [String] a log message that is displayed if the
@@ -59,7 +62,7 @@ module Wright
         Wright.log.debug message
       else
         yield
-        @updated = true
+        self.updated = true
       end
     end
 

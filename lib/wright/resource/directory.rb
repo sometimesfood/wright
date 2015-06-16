@@ -20,7 +20,7 @@ module Wright
       def initialize(name)
         super
         @mode = nil
-        @owner = Wright::Util::FileOwner.new
+        @dir_owner = Wright::Util::FileOwner.new
         @action = :create
       end
 
@@ -31,15 +31,15 @@ module Wright
       #   @return [String, Integer] the directory's intended owner
       # @!method owner=
       #   @see #owner
-      def_delegator :@owner, :user_and_group=, :owner=
-      def_delegator :@owner, :user, :owner
+      def_delegator :dir_owner, :user_and_group=, :owner=
+      def_delegator :dir_owner, :user, :owner
 
       # @!attribute group
       #   @return [String, Integer] the directory's intended group
       # @!method group=
       #   @see #group
-      def_delegator :@owner, :group
-      def_delegator :@owner, :group=
+      def_delegator :dir_owner, :group
+      def_delegator :dir_owner, :group=
 
       # Creates or updates the directory.
       #
@@ -47,7 +47,7 @@ module Wright
       #   otherwise
       def create
         might_update_resource do
-          @provider.create
+          provider.create
         end
       end
 
@@ -57,9 +57,13 @@ module Wright
       #   otherwise
       def remove
         might_update_resource do
-          @provider.remove
+          provider.remove
         end
       end
+
+      private
+
+      attr_reader :dir_owner
     end
   end
 end

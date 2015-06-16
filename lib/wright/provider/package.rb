@@ -47,15 +47,15 @@ module Wright
       private
 
       def package_name
-        @resource.name
+        resource.name
       end
 
       def package_version
-        @resource.version
+        resource.version
       end
 
       def package_options
-        @resource.options
+        resource.options
       end
 
       # @api public

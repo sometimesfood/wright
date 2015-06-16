@@ -32,19 +32,19 @@ module Wright
       private
 
       def group_name
-        @resource.name
+        resource.name
       end
 
       def gid
-        @resource.gid
+        resource.gid
       end
 
       def members
-        @resource.members
+        resource.members
       end
 
       def system_group?
-        @resource.system
+        resource.system
       end
 
       def ensure_group_exists

@@ -16,38 +16,39 @@ module Wright
     # @param argv [Array<String>] the arguments passed to bin/wright
     def run(argv)
       arguments = parse(argv)
-      return if @quit
+      return if quit
 
-      Wright.activate_dry_run if @dry_run
-      Wright.log.level = @log_level if @log_level
-      @main.extend Wright::DSL
-      @requires.each { |r| require r }
+      Wright.activate_dry_run if dry_run
+      Wright.log.level = log_level if log_level
+      main.extend Wright::DSL
+      requires.each { |r| require r }
 
       run_script(arguments)
     end
 
     private
 
-    attr_reader :commands, :requires, :dry_run, :log_level
+    attr_accessor :parser, :quit, :log_level, :dry_run
+    attr_reader :commands, :requires, :main
 
     def parse(argv)
       # use OptionParser#order! instead of #parse! so CLI#run does not
       # consume --arguments passed to wright scripts
-      @parser.order!(argv)
+      parser.order!(argv)
     end
 
     def run_script(arguments)
-      if @commands.empty? && arguments.any?
+      if commands.empty? && arguments.any?
         script = File.expand_path(arguments.shift)
         load script
       else
-        commands = @commands.empty? ? $stdin.read : @commands.join("\n")
-        @main.instance_eval(commands, '<main>', 1)
+        cmds = commands.empty? ? $stdin.read : commands.join("\n")
+        main.instance_eval(cmds, '<main>', 1)
       end
     end
 
     def set_up_parser
-      @parser = OptionParser.new
+      self.parser = OptionParser.new
       set_up_command_option
       set_up_require_option
       set_up_dry_run_option
@@ -56,38 +57,38 @@ module Wright
     end
 
     def set_up_command_option
-      @parser.on('-e COMMAND', 'Run COMMAND') do |e|
-        @commands << e
+      parser.on('-e COMMAND', 'Run COMMAND') do |e|
+        commands << e
       end
     end
 
     def set_up_require_option
-      @parser.on('-r LIBRARY',
-                 'Require LIBRARY before running the script') do |r|
-        @requires << r
+      parser.on('-r LIBRARY',
+                'Require LIBRARY before running the script') do |r|
+        requires << r
       end
     end
 
     def set_up_dry_run_option
-      @parser.on('-n', '--dry-run', 'Enable dry-run mode') do
-        @dry_run = true
+      parser.on('-n', '--dry-run', 'Enable dry-run mode') do
+        self.dry_run = true
       end
     end
 
     def set_up_verbosity_options
-      @parser.on('-v', '--verbose', 'Increase verbosity') do
-        @log_level = Wright::Logger::DEBUG
+      parser.on('-v', '--verbose', 'Increase verbosity') do
+        self.log_level = Wright::Logger::DEBUG
       end
 
-      @parser.on('-q', '--quiet', 'Decrease verbosity') do
-        @log_level = Wright::Logger::ERROR
+      parser.on('-q', '--quiet', 'Decrease verbosity') do
+        self.log_level = Wright::Logger::ERROR
       end
     end
 
     def set_up_version_option
-      @parser.on_tail('--version', 'Show wright version') do
+      parser.on_tail('--version', 'Show wright version') do
         puts "wright version #{Wright::VERSION}"
-        @quit = true
+        self.quit = true
       end
     end
   end

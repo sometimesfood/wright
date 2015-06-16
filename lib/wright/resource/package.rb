@@ -43,11 +43,11 @@ module Wright
 
       # @!method installed_versions
       # @return [Array<String>] the installed package versions
-      def_delegator :@provider, :installed_versions
+      def_delegator :provider, :installed_versions
 
       # @!method installed?
       # @return [Bool] +true+ if the package is installed
-      def_delegator :@provider, :installed?
+      def_delegator :provider, :installed?
 
       # Installs the Package.
       #
@@ -55,7 +55,7 @@ module Wright
       #   otherwise
       def install
         might_update_resource do
-          @provider.install
+          provider.install
         end
       end
 
@@ -65,7 +65,7 @@ module Wright
       #   otherwise
       def remove
         might_update_resource do
-          @provider.remove
+          provider.remove
         end
       end
 

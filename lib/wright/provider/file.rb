@@ -44,15 +44,15 @@ module Wright
       private
 
       def file_name
-        @resource.name
+        resource.name
       end
 
       def content
-        @resource.content
+        resource.content
       end
 
       def permissions
-        Wright::Util::FilePermissions.create_from_resource(@resource, :file)
+        Wright::Util::FilePermissions.create_from_resource(resource, :file)
       end
 
       def write_content_to_file

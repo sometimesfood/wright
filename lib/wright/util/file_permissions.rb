@@ -60,8 +60,8 @@ module Wright
 
         mode_i = File.numeric_mode_to_i(mode)
         unless mode_i
-          base_mode_i = ::File.exist?(@filename) ? current_mode : default_mode
-          mode_i = File.symbolic_mode_to_i(mode, base_mode_i, @filetype)
+          base_mode_i = ::File.exist?(filename) ? current_mode : default_mode
+          mode_i = File.symbolic_mode_to_i(mode, base_mode_i, filetype)
         end
         @mode = mode_i
       end
@@ -70,7 +70,7 @@ module Wright
       # @return [Bool] +true+ if the file is up to date, +false+
       #   otherwise
       def uptodate?
-        if ::File.exist?(@filename)
+        if ::File.exist?(filename)
           uid_uptodate? && gid_uptodate? && mode_uptodate?
         else
           false
@@ -81,41 +81,43 @@ module Wright
       #
       # @return [void]
       def update
-        ::File.chmod(@mode, @filename) if @mode
-        ::File.chown(@uid, @gid, @filename) if @uid || @gid
+        ::File.chmod(mode, filename) if mode
+        ::File.chown(uid, gid, filename) if uid || gid
       end
 
       # @return [Integer] the file's current mode
       def current_mode
-        Wright::Util::File.file_mode(@filename)
+        Wright::Util::File.file_mode(filename)
       end
 
       # @return [Integer] the file's current owner's uid
       def current_uid
-        Wright::Util::File.file_owner(@filename)
+        Wright::Util::File.file_owner(filename)
       end
 
       # @return [Integer] the file's current group's gid
       def current_gid
-        Wright::Util::File.file_group(@filename)
+        Wright::Util::File.file_group(filename)
       end
 
       private
 
+      attr_reader :filetype
+
       def uid_uptodate?
-        @uid.nil? || current_uid == @uid
+        uid.nil? || current_uid == uid
       end
 
       def gid_uptodate?
-        @gid.nil? || current_gid == @gid
+        gid.nil? || current_gid == gid
       end
 
       def mode_uptodate?
-        @mode.nil? || current_mode == @mode
+        mode.nil? || current_mode == mode
       end
 
       def default_mode
-        case @filetype
+        case filetype
         when :file
           ~::File.umask & 0666
         when :directory

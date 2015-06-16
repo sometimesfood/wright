@@ -25,15 +25,15 @@ module Wright
       #   @return [String, Integer] the directory's intended owner
       # @!method owner=
       #   @see #owner
-      def_delegator :@owner, :user_and_group=, :owner=
-      def_delegator :@owner, :user, :owner
+      def_delegator :file_owner, :user_and_group=, :owner=
+      def_delegator :file_owner, :user, :owner
 
       # @!attribute group
       #   @return [String, Integer] the directory's intended group
       # @!method group=
       #   @see #group
-      def_delegator :@owner, :group=
-      def_delegator :@owner, :group
+      def_delegator :file_owner, :group=
+      def_delegator :file_owner, :group
 
       # Initializes a File.
       #
@@ -42,7 +42,7 @@ module Wright
         super
         @content = nil
         @mode = nil
-        @owner = Wright::Util::FileOwner.new
+        @file_owner = Wright::Util::FileOwner.new
         @action = :create
       end
 
@@ -52,7 +52,7 @@ module Wright
       #   otherwise
       def create
         might_update_resource do
-          @provider.create
+          provider.create
         end
       end
 
@@ -62,9 +62,13 @@ module Wright
       #   otherwise
       def remove
         might_update_resource do
-          @provider.remove
+          provider.remove
         end
       end
+
+      private
+
+      attr_reader :file_owner
     end
   end
 end

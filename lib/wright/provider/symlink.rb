@@ -36,11 +36,11 @@ module Wright
       private
 
       def link_name
-        @resource.name
+        resource.name
       end
 
       def link_to
-        @resource.to
+        resource.to
       end
 
       def link_to_expanded

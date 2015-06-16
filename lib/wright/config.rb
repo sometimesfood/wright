@@ -14,7 +14,9 @@ module Wright
     @config_hash = {}
     class << self
       extend Forwardable
-      def_delegators :@config_hash, :[], :[]=, :size
+      def_delegators :config_hash, :[], :[]=, :size
+      attr_reader :config_hash
+      private :config_hash
     end
     private_class_method :new
 
@@ -34,7 +36,7 @@ module Wright
     #   otherwise.
     def self.nested_key?(*path)
       last_key = path.pop
-      last_hash = path.reduce(@config_hash) do |hash, key|
+      last_hash = path.reduce(config_hash) do |hash, key|
         return false unless hash.respond_to?(:fetch)
         hash.fetch(key, {})
       end
@@ -55,7 +57,7 @@ module Wright
     #
     # @return the configuration value or nil if the value is not set
     def self.nested_value(*path)
-      nested_key?(*path) ? path.reduce(@config_hash) { |a, e| a[e] } : nil
+      nested_key?(*path) ? path.reduce(config_hash) { |a, e| a[e] } : nil
     end
   end
 end

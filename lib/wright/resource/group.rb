@@ -36,7 +36,7 @@ module Wright
       #   otherwise
       def create
         might_update_resource do
-          @provider.create
+          provider.create
         end
       end
 
@@ -46,7 +46,7 @@ module Wright
       #   otherwise
       def remove
         might_update_resource do
-          @provider.remove
+          provider.remove
         end
       end
     end
