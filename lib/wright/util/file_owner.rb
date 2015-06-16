@@ -11,7 +11,7 @@ module Wright
 
       # Sets user and group simultaneously.
       #
-      # @param [String, Integer] user_and_group a user in +user:group+
+      # @param user_and_group [String, Integer] a user in +user:group+
       #   notation or a uid
       #
       # @example
