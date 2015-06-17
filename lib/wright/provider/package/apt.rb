@@ -34,7 +34,7 @@ module Wright
         def apt_get(action, options, package, version = nil)
           package_version = version.nil? ? '' : "=#{version}"
           cmd = 'apt-get'
-          args = [*options, action.to_s, '-qy', package + package_version]
+          args = ['-qy', *options, action.to_s, package + package_version]
           exec_or_fail(cmd, args, "cannot #{action} package '#{package}'")
         end
 

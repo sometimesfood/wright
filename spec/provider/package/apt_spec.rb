@@ -10,7 +10,7 @@ describe Wright::Provider::Package::Apt do
   def apt_get(action, pkg_name, args = {})
     version = args[:version].nil? ? '' : "=#{args[:version]}"
     options = args[:options]
-    ['apt-get', *options, action.to_s, '-qy', pkg_name + version]
+    ['apt-get', '-qy', *options, action.to_s, pkg_name + version]
   end
 
   def package_provider(pkg_name, args = {})
@@ -135,7 +135,7 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name, options: pkg_options)
       apt_cmd = apt_get(:install, pkg_name, options: pkg_options)
 
-      @fake_capture3.expect(apt_cmd, 'apt-get_install_-qy_htop')
+      @fake_capture3.expect(apt_cmd, 'apt-get_-qy_install_htop')
       @fake_capture3.stub do
         pkg_provider.send(:install_package)
       end
