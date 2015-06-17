@@ -30,7 +30,7 @@ module Wright
         def yum(action, options, package, version = nil)
           cmd = 'yum'
           package_version = version.nil? ? '' : "-#{version}"
-          args = [*options, action.to_s, '-y', package + package_version]
+          args = ['-y', *options, action.to_s, package + package_version]
           exec_or_fail(cmd, args, "cannot #{action} package '#{package}'")
         end
       end

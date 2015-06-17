@@ -18,7 +18,7 @@ describe Wright::Provider::Package::Yum do
 
   def yum(action, pkg_name, args = {})
     version = args[:version].nil? ? '' : "-#{args[:version]}"
-    ['yum', *args[:options], action.to_s, '-y', pkg_name + version]
+    ['yum', '-y', *args[:options], action.to_s, pkg_name + version]
   end
 
   before :each do
