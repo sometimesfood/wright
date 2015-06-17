@@ -14,7 +14,7 @@ module Wright
       # Creates or updates the file.
       #
       # @return [void]
-      # @raise [Errno::EISDIR] if there is already a directory with
+      # @raise [Errno::EISDIR] if there already is a directory with
       #   the specified name
       def create
         fail_if_directory
