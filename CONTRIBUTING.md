@@ -32,3 +32,13 @@ Submitting pull requests
 
 [commit-messages]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 [pull-requests]: https://help.github.com/articles/using-pull-requests/
+
+Running the tests
+-----------------
+To start hacking on wright, simply install the development
+dependencies via bundler:
+
+ - `bundle install --path .bundle`
+ - `bundle exec rake test`
+
+All tests should pass.
