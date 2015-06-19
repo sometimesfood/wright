@@ -1,12 +1,10 @@
 Contributing
 ============
-
 Contributions to wright are greatly appreciated. Here's how you can
 help.
 
 Reporting issues
 ----------------
-
 If you encounter any problems with wright, please take the time to
 report them via the [issue tracker][github-issues].
 
@@ -19,7 +17,6 @@ report them via the [issue tracker][github-issues].
 
 Submitting pull requests
 ------------------------
-
 - Fork the project.
 - Open a new feature branch (`git checkout -b hackety-hack`).
 - Write [proper commit messages][commit-messages].
@@ -36,7 +33,7 @@ Submitting pull requests
 Running the tests
 -----------------
 To start hacking on wright, simply install the development
-dependencies via bundler:
+dependencies via bundler and run the tests:
 
  - `bundle install --path .bundle`
  - `bundle exec rake test`
