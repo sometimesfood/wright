@@ -37,10 +37,17 @@ module Wright
       # Initializes a user.
       #
       # @param name [String] the user's name
-      def initialize(name)
+      def initialize(name, args = {})
         super
-        @action = :create
-        @system = false
+        @uid           = args.fetch(:uid, nil)
+        @full_name     = args.fetch(:full_name, nil)
+        @groups        = args.fetch(:groups, nil)
+        @shell         = args.fetch(:shell, nil)
+        @home          = args.fetch(:home, nil)
+        @primary_group = args.fetch(:primary_group, nil)
+        @system        = args.fetch(:system, false)
+        @action        = args.fetch(:action, :create)
+        alias_args(args, login_group: :primary_group, homedir: :home)
       end
 
       # Creates or updates the user.
@@ -60,6 +67,16 @@ module Wright
       def remove
         might_update_resource do
           provider.remove
+        end
+      end
+
+      private
+
+      def alias_args(args, aliases)
+        aliases.each do |method_alias, method|
+          key = "@#{method}".to_sym
+          value = args.fetch(method_alias, nil)
+          instance_variable_set(key, value) unless args.key?(method)
         end
       end
     end

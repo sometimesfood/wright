@@ -185,4 +185,16 @@ describe Wright::Resource do
       resource.fail_train
     end.must_raise(RuntimeError)
   end
+
+  it 'should accept attributes via an argument hash' do
+    sample_lambda = -> {}
+    sample = Sample.new('sample_name',
+                        action: 'sample_action',
+                        on_update: sample_lambda,
+                        ignore_failure: 'sample_ignore_failure')
+    sample.name.must_equal 'sample_name'
+    sample.action.must_equal 'sample_action'
+    sample.send(:on_update).must_equal sample_lambda
+    sample.ignore_failure.must_equal 'sample_ignore_failure'
+  end
 end

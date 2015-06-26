@@ -7,6 +7,25 @@ describe Wright::Util::FileOwner do
     @owner = Wright::Util::FileOwner.new
   end
 
+  describe '#initialize' do
+    it 'should accept user and group arguments' do
+      owner = Wright::Util::FileOwner.new('user')
+      owner.user.must_equal 'user'
+
+      owner = Wright::Util::FileOwner.new('user', 'group')
+      owner.user.must_equal 'user'
+      owner.group.must_equal 'group'
+
+      owner = Wright::Util::FileOwner.new('user:group')
+      owner.user.must_equal 'user'
+      owner.group.must_equal 'group'
+
+      owner = Wright::Util::FileOwner.new('user:group1', 'group2')
+      owner.user.must_equal 'user'
+      owner.group.must_equal 'group2'
+    end
+  end
+
   describe '#user_and_group=' do
     it 'should set the user' do
       @owner.group = 'group'

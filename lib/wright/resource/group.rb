@@ -24,10 +24,12 @@ module Wright
       # Initializes a Group.
       #
       # @param name [String] the group's name
-      def initialize(name)
+      def initialize(name, args = {})
         super
-        @action = :create
-        @system = false
+        @members = args.fetch(:members, nil)
+        @gid     = args.fetch(:gid, nil)
+        @system  = args.fetch(:system, false)
+        @action  = args.fetch(:action, :create)
       end
 
       # Creates or updates the group.

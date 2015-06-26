@@ -9,13 +9,13 @@ module Wright
     # Initializes a Resource.
     #
     # @param name [String] the name of the resource
-    def initialize(name = nil)
-      @name = name
-      @resource_name = Util.class_to_resource_name(self.class).to_sym
-      @provider = provider_for_resource
-      @action = nil
-      @on_update = nil
-      @ignore_failure = false
+    def initialize(name = nil, args = {})
+      @name           = name
+      @action         = args.fetch(:action, nil)
+      @ignore_failure = args.fetch(:ignore_failure, false)
+      self.on_update  = args.fetch(:on_update, nil)
+      @resource_name  = Util.class_to_resource_name(self.class).to_sym
+      @provider       = provider_for_resource
     end
 
     # @return [Symbol] the name of the method to be run by {#run_action}

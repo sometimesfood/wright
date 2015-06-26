@@ -52,6 +52,30 @@ dir.mode = '440'
 dir.create
 ----
 
+Hash syntax
+-----------
+Resources can also be defined using an attribute hash.
+
+[source,ruby]
+----
+#!/usr/bin/env wright
+
+directory '~/this/is/a/directory',
+          mode: '440'
+----
+
+If you would rather avoid the DSL, you can also supply an attribute
+hash directly to the directory resource.
+
+[source,ruby]
+----
+#!/usr/bin/env ruby
+require 'wright'
+
+dir = Wright::Resource::Directory.new('~/this/is/a/directory', mode: '440')
+dir.create
+----
+
 Manipulating resources
 ----------------------
 The DSL methods mentioned above return proper wright resource objects,

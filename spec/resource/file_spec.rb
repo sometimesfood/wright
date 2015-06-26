@@ -12,6 +12,23 @@ describe Wright::Resource::File do
 
   after(:each) { FakeFS::FileSystem.clear }
 
+  describe '#initialize' do
+    it 'should accept attributes via an argument hash' do
+      resource = Wright::Resource::File.new(@filename,
+                                            content: 'sample_content',
+                                            mode: 'sample_mode',
+                                            action: 'sample_action',
+                                            owner: 'sample_owner',
+                                            group: 'sample_group')
+      resource.name.must_equal @filename
+      resource.content.must_equal 'sample_content'
+      resource.mode.must_equal 'sample_mode'
+      resource.action.must_equal 'sample_action'
+      resource.owner.must_equal 'sample_owner'
+      resource.group.must_equal 'sample_group'
+    end
+  end
+
   describe '#create' do
     it 'should create files' do
       FakeFS do

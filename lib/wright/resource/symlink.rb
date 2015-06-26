@@ -13,10 +13,10 @@ module Wright
       # Initializes a Symlink.
       #
       # @param name [String] the symlink's name
-      def initialize(name)
+      def initialize(name, args = {})
         super
-        @to = nil
-        @action = :create
+        @to     = args.fetch(:to, nil)
+        @action = args.fetch(:action, :create)
       end
 
       # @return [String] the symlink's intended target

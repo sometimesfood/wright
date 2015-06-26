@@ -9,6 +9,19 @@ describe Wright::Resource::Package do
     @package.instance_variable_set(:@provider, @provider)
   end
 
+  describe '#initialize' do
+    it 'should accept attributes via an argument hash' do
+      resource = Wright::Resource::Package.new('sample_name',
+                                               version: 'sample_version',
+                                               options: 'sample_options',
+                                               action: 'sample_action')
+      resource.name.must_equal 'sample_name'
+      resource.version.must_equal 'sample_version'
+      resource.options.must_equal 'sample_options'
+      resource.action.must_equal 'sample_action'
+    end
+  end
+
   describe '#installed_versions' do
     it 'should ask the provider for installed versions' do
       @provider.expect(:installed_versions, nil)

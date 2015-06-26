@@ -17,7 +17,7 @@ describe Wright::DSL do
       def self.name
         'ResourceKlass'
       end
-      def initialize(_name); end
+      def initialize(_name, _args); end
     end
 
     @wright_dsl.register_resource(resource_class)
@@ -26,8 +26,10 @@ describe Wright::DSL do
     resource_name = 'just a name'
     @recipe.must_respond_to(resource_method_name)
 
+    # Ruby 1.9: "0 for 1", Ruby 2: "0 for 1..2"
+    error_message_re = /\Awrong number of arguments \(0 for 1(..2)?\)\Z/
     e = -> { @recipe.send(resource_method_name) }.must_raise ArgumentError
-    e.message.must_equal 'wrong number of arguments (0 for 1)'
+    e.message.must_match error_message_re
 
     resource = @recipe.send(resource_method_name, resource_name)
     resource.must_be_instance_of(resource_class)
@@ -39,7 +41,7 @@ describe Wright::DSL do
         'Hello'
       end
 
-      def initialize(name)
+      def initialize(name, _args = {})
         @name = name
       end
 
@@ -58,7 +60,7 @@ describe Wright::DSL do
         'ResourceKlass'
       end
 
-      def initialize(_name); end
+      def initialize(_name, _args = {}); end
     end
     @wright_dsl.register_resource(resource_class)
 

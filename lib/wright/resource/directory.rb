@@ -17,11 +17,13 @@ module Wright
       # Initializes a Directory.
       #
       # @param name [String] the directory's name
-      def initialize(name)
+      def initialize(name, args = {})
         super
-        @mode = nil
-        @dir_owner = Wright::Util::FileOwner.new
-        @action = :create
+        @mode      = args.fetch(:mode, nil)
+        @action    = args.fetch(:action, :create)
+        owner      = args.fetch(:owner, nil)
+        group      = args.fetch(:group, nil)
+        @dir_owner = Wright::Util::FileOwner.new(owner, group)
       end
 
       # @return [String, Integer] the directory's intended mode

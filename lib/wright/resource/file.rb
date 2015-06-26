@@ -38,12 +38,14 @@ module Wright
       # Initializes a File.
       #
       # @param name [String] the file's name
-      def initialize(name)
+      def initialize(name, args = {})
         super
-        @content = nil
-        @mode = nil
-        @file_owner = Wright::Util::FileOwner.new
-        @action = :create
+        @content    = args.fetch(:content, nil)
+        @mode       = args.fetch(:mode, nil)
+        @action     = args.fetch(:action, :create)
+        owner       = args.fetch(:owner, nil)
+        group       = args.fetch(:group, nil)
+        @file_owner = Wright::Util::FileOwner.new(owner, group)
       end
 
       # Creates or updates the file.

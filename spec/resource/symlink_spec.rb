@@ -18,6 +18,17 @@ describe Wright::Resource::Symlink do
     link
   end
 
+  describe '#initialize' do
+    it 'should accept attributes via an argument hash' do
+      resource = Wright::Resource::Symlink.new(@link_name,
+                                               to: 'sample_to',
+                                               action: 'sample_action')
+      resource.name.must_equal @link_name
+      resource.to.must_equal 'sample_to'
+      resource.action.must_equal 'sample_action'
+    end
+  end
+
   describe '#create' do
     it 'should create symlinks' do
       FakeFS do
