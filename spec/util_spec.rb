@@ -75,6 +75,22 @@ CPE_NAME="cpe:/o:centos:centos:7"
 HOME_URL="https://www.centos.org/"
 BUG_REPORT_URL="https://bugs.centos.org/"
 EOS
+      @fedora_os_release = <<EOS
+NAME=Fedora
+VERSION="22 (Twenty Two)"
+ID=fedora
+VERSION_ID=22
+PRETTY_NAME="Fedora 22 (Twenty Two)"
+ANSI_COLOR="0;34"
+CPE_NAME="cpe:/o:fedoraproject:fedora:22"
+HOME_URL="https://fedoraproject.org/"
+BUG_REPORT_URL="https://bugzilla.redhat.com/"
+REDHAT_BUGZILLA_PRODUCT="Fedora"
+REDHAT_BUGZILLA_PRODUCT_VERSION=22
+REDHAT_SUPPORT_PRODUCT="Fedora"
+REDHAT_SUPPORT_PRODUCT_VERSION=22
+PRIVACY_POLICY_URL=https://fedoraproject.org/wiki/Legal:PrivacyPolicy
+EOS
     end
 
     after(:each) { FakeFS::FileSystem.clear }
@@ -100,6 +116,9 @@ EOS
 
           File.write('/etc/os-release', @centos_os_release)
           Wright::Util.os_family.must_equal 'rhel'
+
+          File.write('/etc/os-release', @fedora_os_release)
+          Wright::Util.os_family.must_equal 'fedora'
         end
       end
     end

@@ -2,6 +2,9 @@
 ## unreleased
 - Add attribute hash support to DSL and resources
 
+## 0.4.3 (2015-06-28)
+- Fix distro detection for Fedora 22 (#15)
+
 ## 0.4.2 (2015-06-15)
 - Don't colorize log messages if Config[:log][:colorize] is nil (#13)
 
