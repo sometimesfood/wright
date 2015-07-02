@@ -34,11 +34,15 @@ module Wright
       # Initializes a Package.
       #
       # @param name [String] the package's name
+      # @param args [Hash] the arguments
+      # @option args [Symbol] :action (:install) the action
+      # @option args [String, #to_s] :version the package version
+      # @option args [String, Array<String>] :options the package options
       def initialize(name, args = {})
         super
+        @action  = args.fetch(:action, :install)
         @version = args.fetch(:version, nil)
         @options = args.fetch(:options, nil)
-        @action  = args.fetch(:action, :install)
       end
 
       # @!method installed_versions

@@ -37,8 +37,19 @@ module Wright
       # Initializes a user.
       #
       # @param name [String] the user's name
+      # @param args [Hash] the arguments
+      # @option args [Symbol] :action (:create) the action
+      # @option args [Integer] :uid the user's uid
+      # @option args [String] :full_name the user's full name
+      # @option args [Array<String>] :groups the user's groups
+      # @option args [String] :shell the user's shell
+      # @option args [String] :home the user's home directory
+      # @option args [String] :primary_group the user's primary group
+      # @option args [Bool] :system (false) denotes whether the user
+      #   should be a system user or not
       def initialize(name, args = {})
         super
+        @action        = args.fetch(:action, :create)
         @uid           = args.fetch(:uid, nil)
         @full_name     = args.fetch(:full_name, nil)
         @groups        = args.fetch(:groups, nil)
@@ -46,7 +57,6 @@ module Wright
         @home          = args.fetch(:home, nil)
         @primary_group = args.fetch(:primary_group, nil)
         @system        = args.fetch(:system, false)
-        @action        = args.fetch(:action, :create)
         alias_args(args, login_group: :primary_group, homedir: :home)
       end
 

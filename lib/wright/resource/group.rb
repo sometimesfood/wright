@@ -24,12 +24,18 @@ module Wright
       # Initializes a Group.
       #
       # @param name [String] the group's name
+      # @param args [Hash] the arguments
+      # @option args [Symbol] :action (:create) the action
+      # @option args [Array<String>] :members the group's members
+      # @option args [Integer] :gid the group's gid
+      # @option args [Bool] :system (false) denotes whether the group
+      #   should be a system group or not
       def initialize(name, args = {})
         super
+        @action  = args.fetch(:action, :create)
         @members = args.fetch(:members, nil)
         @gid     = args.fetch(:gid, nil)
         @system  = args.fetch(:system, false)
-        @action  = args.fetch(:action, :create)
       end
 
       # Creates or updates the group.

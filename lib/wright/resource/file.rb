@@ -15,7 +15,7 @@ module Wright
     class File < Wright::Resource
       extend Forwardable
 
-      # @return [String] the file's intended content
+      # @return [String, #to_s] the file's intended content
       attr_accessor :content
 
       # @return [String, Integer] the file's intended mode
@@ -38,11 +38,17 @@ module Wright
       # Initializes a File.
       #
       # @param name [String] the file's name
+      # @param args [Hash] the arguments
+      # @option args [Symbol] :action (:create) the action
+      # @option args [String, #to_s] :content the file's content
+      # @option args [String, Integer] :mode the file's mode
+      # @option args [String, Integer] :owner the file's owner
+      # @option args [String, Integer] :group the file's group
       def initialize(name, args = {})
         super
+        @action     = args.fetch(:action, :create)
         @content    = args.fetch(:content, nil)
         @mode       = args.fetch(:mode, nil)
-        @action     = args.fetch(:action, :create)
         owner       = args.fetch(:owner, nil)
         group       = args.fetch(:group, nil)
         @file_owner = Wright::Util::FileOwner.new(owner, group)

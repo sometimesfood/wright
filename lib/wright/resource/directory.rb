@@ -17,10 +17,15 @@ module Wright
       # Initializes a Directory.
       #
       # @param name [String] the directory's name
+      # @param args [Hash] the arguments
+      # @option args [Symbol] :action (:create) the action
+      # @option args [String, Integer] :mode the directory's mode
+      # @option args [String, Integer] :owner the directory's owner
+      # @option args [String, Integer] :group the directory's group
       def initialize(name, args = {})
         super
-        @mode      = args.fetch(:mode, nil)
         @action    = args.fetch(:action, :create)
+        @mode      = args.fetch(:mode, nil)
         owner      = args.fetch(:owner, nil)
         group      = args.fetch(:group, nil)
         @dir_owner = Wright::Util::FileOwner.new(owner, group)
