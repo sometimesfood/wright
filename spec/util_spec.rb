@@ -155,4 +155,19 @@ EOS
       mock.verify
     end
   end
+
+  describe 'fetch_last' do
+    it 'should fetch the value of the last candidate key from a hash' do
+      hash = { candidate1: :value1, candidate2: :value2, foo: :bar }
+      candidates = [:candidate2, :candidate1]
+      Wright::Util.fetch_last(hash, candidates).must_equal :value2
+    end
+
+    it 'should return the default value if no candidate key is found' do
+      hash = { foo: :foo, bar: :bar, baz: :baz }
+      candidates = [:qux, :quux]
+      Wright::Util.fetch_last(hash, candidates).must_be_nil
+      Wright::Util.fetch_last(hash, candidates, :default).must_equal :default
+    end
+  end
 end

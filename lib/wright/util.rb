@@ -85,5 +85,17 @@ module Wright
         yield
       end
     end
+
+    # Fetches the value of the candidate key that occurs last in a hash.
+    #
+    # @param hash [Hash] the hash
+    # @param candidate_keys [Array<Object>] the candidate keys
+    # @param default [Object] the default value
+    # @return [Object] the value of the candidate key that occurs last in
+    #   the hash or +default+ if none of the candidate keys can be found
+    def self.fetch_last(hash, candidate_keys, default = nil)
+      candidates = hash.select { |k, _v| candidate_keys.include?(k) }
+      candidates.empty? ? default : candidates.values.last
+    end
   end
 end
