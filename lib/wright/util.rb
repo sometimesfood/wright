@@ -56,7 +56,7 @@ module Wright
     #   # => "debian"
     # @example
     #   Wright::Util.os_family
-    #   # => "macosx"
+    #   # => "osx"
     #
     # @return [String] the system's OS family (base distribution for
     #   GNU/Linux systems) or 'other' for unknown operating systems
@@ -64,7 +64,7 @@ module Wright
       system_arch = RbConfig::CONFIG['target_os']
       case system_arch
       when /darwin/
-        'macosx'
+        'osx'
       when /linux/
         distro
       else

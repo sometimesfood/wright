@@ -94,7 +94,7 @@ user_providers = {
   'debian' => 'Wright::Provider::User::GnuPasswd',
   'rhel'   => 'Wright::Provider::User::GnuPasswd',
   'fedora' => 'Wright::Provider::User::GnuPasswd',
-  'macosx' => 'Wright::Provider::User::DarwinDirectoryService'
+  'osx'    => 'Wright::Provider::User::DarwinDirectoryService'
 }
 Wright::Config[:resources][:user] ||= {}
 Wright::Config[:resources][:user][:provider] ||=

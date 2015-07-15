@@ -83,7 +83,7 @@ Wright::DSL.register_resource(Wright::Resource::Package)
 package_providers = {
   'debian' => 'Wright::Provider::Package::Apt',
   'rhel'   => 'Wright::Provider::Package::Yum',
-  'macosx' => 'Wright::Provider::Package::Homebrew'
+  'osx'    => 'Wright::Provider::Package::Homebrew'
 }
 Wright::Config[:resources][:package] ||= {}
 Wright::Config[:resources][:package][:provider] ||=

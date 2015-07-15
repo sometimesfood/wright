@@ -95,9 +95,9 @@ EOS
 
     after(:each) { FakeFS::FileSystem.clear }
 
-    it 'should detect MacOS X' do
+    it 'should detect OS X' do
       stub_os('darwin13') do
-        Wright::Util.os_family.must_equal 'macosx'
+        Wright::Util.os_family.must_equal 'osx'
       end
     end
 

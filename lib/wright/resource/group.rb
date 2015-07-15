@@ -67,7 +67,7 @@ group_providers = {
   'debian' => 'Wright::Provider::Group::GnuPasswd',
   'rhel'   => 'Wright::Provider::Group::GnuPasswd',
   'fedora' => 'Wright::Provider::Group::GnuPasswd',
-  'macosx' => 'Wright::Provider::Group::DarwinDirectoryService'
+  'osx'    => 'Wright::Provider::Group::DarwinDirectoryService'
 }
 Wright::Config[:resources][:group] ||= {}
 Wright::Config[:resources][:group][:provider] ||=
