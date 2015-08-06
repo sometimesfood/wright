@@ -53,6 +53,19 @@ describe Wright::Provider::File do
       end.must_output @create_message_debug
     end
 
+    it 'should return the update status if an empty file was not created' do
+      file = Wright::Provider::File.new(@file_resource)
+      lambda do
+        reset_logger
+        FakeFS do
+          create_target_file
+          @file_resource.content = nil
+          file.create
+        end
+        assert !file.updated?
+      end.must_output @create_message_debug
+    end
+
     it 'should return the update status if permissions were changed' do
       file = Wright::Provider::File.new(@file_resource)
       lambda do
