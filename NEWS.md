@@ -1,4 +1,8 @@
 # wright NEWS
+## 0.4.4 (2015-08-06)
+- Fix update status for file provider if content attribute is nil and
+  file already has content (#16)
+
 ## 0.4.3 (2015-06-28)
 - Fix distro detection for Fedora 22 (#15)
 
