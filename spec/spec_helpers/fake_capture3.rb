@@ -31,7 +31,7 @@ class FakeCapture3
 
   def return_values(command_and_args, base_filename)
     filename = base_filename ||
-               command_and_args.join(' ').gsub(' ', '_').gsub('/', 'SLASH')
+               command_and_args.join(' ').tr(' ', '_').gsub('/', 'SLASH')
     command_stdout = File.read("#{@basedir}/#{filename}.stdout")
     command_stderr = File.read("#{@basedir}/#{filename}.stderr")
     command_status = File.read("#{@basedir}/#{filename}.return").chomp == '0'

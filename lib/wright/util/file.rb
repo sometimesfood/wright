@@ -54,7 +54,7 @@ module Wright
       private_constant :MODE_MAP
 
       def self.mode_mask(mode, is_directory)
-        mode.gsub!('X', 'x') if is_directory
+        mode.tr!('X', 'x') if is_directory
         mode.chars.reduce(0) { |a, e| a | MODE_MAP[e].to_i }
       end
       private_class_method :mode_mask

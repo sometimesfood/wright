@@ -10,13 +10,14 @@ Gem::Specification.new do |gem|
 Wright is a lightweight configuration management tool.
 EOS
 
-  gem.files         = Dir['{bin,lib,spec}/**/*',
-                          'man/wright.1',
-                          'Rakefile',
-                          'README.md',
-                          'CONTRIBUTING.md',
-                          'NEWS.md',
-                          'LICENSE'] & `git ls-files -z`.split("\0")
+  gem.files = Dir['{bin,lib,spec}/**/*',
+                  'man/wright.1',
+                  'Rakefile',
+                  'README.md',
+                  'CONTRIBUTING.md',
+                  'NEWS.md',
+                  'LICENSE'] & `git ls-files -z`.split("\0")
+
   gem.executables   = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = 'wright'
