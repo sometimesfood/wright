@@ -17,6 +17,7 @@ describe Wright::DSL do
       def self.name
         'ResourceKlass'
       end
+
       def initialize(_name, _args); end
     end
 
