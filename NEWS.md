@@ -4,6 +4,7 @@
 - Add template helpers
   - Add util.render_erb to DSL
   - Add util.render_mustache to DSL
+  - Add util.render_file to DSL
 
 ## 0.4.4 (2015-08-06)
 - Fix update status for file provider if content attribute is nil and

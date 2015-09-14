@@ -1,6 +1,7 @@
 require 'wright/util'
 require 'wright/util/erb_renderer'
 require 'wright/util/mustache_renderer'
+require 'wright/util/file_renderer'
 
 module Wright
   # Includable Wright script DSL.
@@ -45,6 +46,17 @@ module Wright
       # @return [String] the rendered template
       def render_mustache(template, hash)
         Wright::Util::MustacheRenderer.new(hash).render(template)
+      end
+
+      # Renders a template file according to the file's extension
+      # using the supplied hash. Currently supports ERB (+.erb+) and
+      # Mustache (+.mustache+).
+      #
+      # @param filename [String] the filename of the template file
+      # @param hash [Hash] the hash
+      # @return [String] the rendered template
+      def render_file(filename, hash)
+        Wright::Util::FileRenderer.new(hash).render(filename)
       end
     end
 

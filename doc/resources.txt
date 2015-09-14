@@ -67,6 +67,17 @@ file '~/this-is-a-mustache-file' do |f|
 end
 ----
 
+To render a template file, you can use the `render_file` helper.
+
+[source,ruby]
+----
+File.write(File.expand_path('~/hello.mustache'), "Hello {{name}}\n")
+
+file '~/this-is-another-mustache-file' do |f|
+  f.content = util.render_file('~/hello.mustache', name: 'Mustache world')
+end
+----
+
 Creating groups
 ---------------
 The group resource can be used to create groups.

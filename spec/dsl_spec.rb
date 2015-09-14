@@ -115,4 +115,21 @@ describe Wright::DSL::Util do
       mustache_renderer_object_double.verify
     end
   end
+
+  describe '#render_file' do
+    it 'should delegate rendering files templates to FileRenderer' do
+      file_renderer_class_double = Minitest::Mock.new
+      file_renderer_object_double = Minitest::Mock.new
+      file_renderer_class_double.expect(:new,
+                                        file_renderer_object_double,
+                                        [:hash])
+      file_renderer_object_double.expect(:render, nil, [:filename])
+
+      Wright::Util.stub_const(:FileRenderer, file_renderer_class_double) do
+        @util.render_file(:filename, :hash)
+      end
+      file_renderer_class_double.verify
+      file_renderer_object_double.verify
+    end
+  end
 end
