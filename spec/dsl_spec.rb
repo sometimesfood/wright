@@ -97,4 +97,22 @@ describe Wright::DSL::Util do
       erb_renderer_object_double.verify
     end
   end
+
+  describe '#render_mustache' do
+    it 'should delegate rendering mustache templates to MustacheRenderer' do
+      mustache_renderer_class_double = Minitest::Mock.new
+      mustache_renderer_object_double = Minitest::Mock.new
+      mustache_renderer_class_double.expect(:new,
+                                            mustache_renderer_object_double,
+                                            [:hash])
+      mustache_renderer_object_double.expect(:render, nil, [:template])
+
+      Wright::Util.stub_const(:MustacheRenderer,
+                              mustache_renderer_class_double) do
+        @util.render_mustache(:template, :hash)
+      end
+      mustache_renderer_class_double.verify
+      mustache_renderer_object_double.verify
+    end
+  end
 end

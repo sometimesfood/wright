@@ -54,12 +54,16 @@ end
 numeric notation is often more compact.
 
 If you would like to render a template, you can do so using the
-`render_erb` helper.
+`render_erb` and `render_mustache` helpers.
 
 [source,ruby]
 ----
 file '~/this-is-an-erb-file' do |f|
   f.content = util.render_erb("Hello <%= name %>\n", name: 'ERB world')
+end
+
+file '~/this-is-a-mustache-file' do |f|
+  f.content = util.render_mustache("Hello {{name}}\n", name: 'Mustache world')
 end
 ----
 
