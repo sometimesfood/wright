@@ -14,6 +14,7 @@ describe Wright::Util::MustacheRenderer do
     end
 
     it 'should throw exceptions when encountering undefined names' do
+      skip unless defined?(Mustache)
       template = '{{undefined_name}}'
       hash = {}
       renderer = Wright::Util::MustacheRenderer.new(hash)
