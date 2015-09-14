@@ -7,6 +7,7 @@ wright currently fully supports the following platforms:
 - Debian
 - Ubuntu
 - RHEL/Centos ≥7
+- Fedora
 
 Untested platforms
 ------------------
