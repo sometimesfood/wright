@@ -1,6 +1,5 @@
 require_relative 'spec_helper'
 
-require 'minitest/stub_const'
 require 'wright/util'
 
 describe Wright::Util do

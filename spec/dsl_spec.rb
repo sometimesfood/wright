@@ -6,9 +6,8 @@ describe Wright::DSL do
   before(:each) do
     # duplicate Wright::DSL for testing
     dsl = Wright::DSL.dup
-    @recipe = Class.new do
-      extend dsl
-    end
+    @recipe = Object.new
+    @recipe.extend(dsl)
     @wright_dsl = dsl
   end
 
@@ -69,5 +68,33 @@ describe Wright::DSL do
     block = ->(resource) { throw resource.class }
 
     -> { @recipe.send(resource_name, nil, &block) }.must_throw resource_class
+  end
+
+  describe '#util' do
+    it 'should return a Wright::DSL::Util object' do
+      @recipe.util.must_be_instance_of Wright::DSL::Util
+    end
+  end
+end
+
+describe Wright::DSL::Util do
+  before(:each) { @util = Wright::DSL::Util.new }
+
+  describe '#render_erb' do
+    it 'should delegate rendering ERB templates to ErbRenderer' do
+      erb_renderer_class_double = Minitest::Mock.new
+      erb_renderer_object_double = Minitest::Mock.new
+      erb_renderer_class_double.expect(:new,
+                                       erb_renderer_object_double,
+                                       [:hash])
+      erb_renderer_object_double.expect(:render, nil, [:template])
+
+      Wright::Util.stub_const(:ErbRenderer,
+                              erb_renderer_class_double) do
+        @util.render_erb(:template, :hash)
+      end
+      erb_renderer_class_double.verify
+      erb_renderer_object_double.verify
+    end
   end
 end

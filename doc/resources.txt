@@ -53,6 +53,16 @@ end
 <1> wright also supports symbolic mode strings (e.g. `'u=r,go='`), but
 numeric notation is often more compact.
 
+If you would like to render a template, you can do so using the
+`render_erb` helper.
+
+[source,ruby]
+----
+file '~/this-is-an-erb-file' do |f|
+  f.content = util.render_erb("Hello <%= name %>\n", name: 'ERB world')
+end
+----
+
 Creating groups
 ---------------
 The group resource can be used to create groups.

@@ -1,4 +1,5 @@
 require 'wright/util'
+require 'wright/util/erb_renderer'
 
 module Wright
   # Includable Wright script DSL.
@@ -27,6 +28,23 @@ module Wright
   #   a_sink_to_remember.class
   #   # => KitchenSink
   module DSL
+    # DSL helper class.
+    class Util
+      # Renders an ERB template using the supplied hash.
+      # @param template [String] the template
+      # @param hash [Hash] the hash
+      # @return [String] the rendered template
+      def render_erb(template, hash)
+        Wright::Util::ErbRenderer.new(hash).render(template)
+      end
+    end
+
+    # Supplies access to various useful helper methods.
+    # @return [Wright::DSL::Util] a utility helper
+    def util
+      Wright::DSL::Util.new
+    end
+
     # Registers a class as a resource.
     #
     # Creates a resource method in the DSL module. Uses the
@@ -39,7 +57,7 @@ module Wright
     # @param resource_class [Class] the resource class
     # @return [void]
     def self.register_resource(resource_class)
-      method_name = Util.class_to_resource_name(resource_class)
+      method_name = Wright::Util.class_to_resource_name(resource_class)
       this_module = self
       define_method(method_name) do |name, args = {}, &block|
         this_module.yield_resource(resource_class, name, args, &block)
