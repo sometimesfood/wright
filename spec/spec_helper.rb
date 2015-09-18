@@ -3,6 +3,7 @@ require_relative 'spec_helpers/test_coverage'
 
 require 'ostruct'
 require 'fakefs/safe'
+require 'minitest/stub_const'
 
 measure_coverage if coverage?
 
