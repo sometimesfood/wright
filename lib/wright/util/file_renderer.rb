@@ -3,25 +3,25 @@ require 'wright/util/mustache_renderer'
 
 module Wright
   module Util
-    # File template class.
+    # File renderer.
     #
     # @example
     #   filename = 'template.erb'
     #   template = "foo is <%= foo %>."
     #   hash = { foo: :bar }
     #   File.write(filename, template)
-    #   file_template = Wright::Util::FileTemplate.new(filename, hash)
-    #   file_template.render
+    #   renderer = Wright::Util::FileRenderer.new(hash)
+    #   renderer.render(filename)
     #   # => "foo is bar."
     class FileRenderer
       # Initializes a FileTemplate.
-      # @param filename [String] the filename of the template
       # @param hash [Hash] the attribute hash of the template
       def initialize(hash)
         @hash = hash
       end
 
-      # Renders the file template.
+      # Renders a template file.
+      # @param filename [String] the filename of the template
       # @raise [ArgumentError] if the given file type is not supported
       def render(filename)
         renderer = renderer_for_file(filename)
