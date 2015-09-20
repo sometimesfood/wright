@@ -17,21 +17,20 @@ Performing simple administrative tasks with wright is easy.
 
 package 'sudo'
 
-file '/etc/sudoers.d/env_keep-editor' do |f|
-  f.content = "Defaults env_keep += EDITOR\n"
-  f.owner   = 'root:root'
-  f.mode    = '440'
-end
+file '/etc/sudoers.d/env_keep-editor',
+     content: "Defaults env_keep += EDITOR\n",
+     owner:   'root:root',
+     mode:    '440'
 ```
 
 Scripts can also be run directly from the shell.
 
-    wright -e "package('tmux')"
+    wright -e "package 'tmux'"
 
 If you would rather see the effects of running a wright script first,
 use the dry-run option:
 
-    wright --dry-run -e "package('tmux')"
+    wright --dry-run -e "package 'tmux'"
 
 For a list of command-line parameters, see
 [the manpage][wright-manpage]. For a more in-depth list of tasks you
