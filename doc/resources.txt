@@ -19,10 +19,9 @@ do so via the `mode`, `owner` or `group` attributes.
 
 [source,ruby]
 ----
-directory '~/this/is/another/directory' do |d|
-  d.mode = '755' # <1>
-  d.owner = 'nobody:nobody'
-end
+directory '~/this/is/another/directory',
+          mode: '755', # <1>
+          owner: 'nobody:nobody'
 ----
 <1> wright also supports symbolic mode strings (e.g. `'u=rwx,go=rx'`),
 but numeric notation is often more compact.
@@ -44,11 +43,10 @@ you can set the file's `content` attribute to empty string.]
 
 [source,ruby]
 ----
-file '~/this-is-another-file' do |f|
-  f.content = "Hello world\n"
-  f.mode = '400' # <1>
-  f.owner = 'nobody:nobody'
-end
+file '~/this-is-another-file',
+     content: "Hello world\n",
+     mode: '400', # <1>
+     owner: 'nobody:nobody'
 ----
 <1> wright also supports symbolic mode strings (e.g. `'u=r,go='`), but
 numeric notation is often more compact.
@@ -58,13 +56,11 @@ If you would like to render a template, you can do so using the
 
 [source,ruby]
 ----
-file '~/this-is-an-erb-file' do |f|
-  f.content = util.render_erb("Hello <%= name %>\n", name: 'ERB world')
-end
+file '~/this-is-an-erb-file',
+     content: util.render_erb("Hello <%= name %>\n", name: 'ERB world')
 
-file '~/this-is-a-mustache-file' do |f|
-  f.content = util.render_mustache("Hello {{name}}\n", name: 'Mustache world')
-end
+file '~/this-is-a-mustache-file',
+     content: util.render_mustache("Hello {{name}}\n", name: 'Mustache world')
 ----
 
 To render a template file, you can use the `render_file` helper.
@@ -73,9 +69,8 @@ To render a template file, you can use the `render_file` helper.
 ----
 File.write(File.expand_path('~/hello.mustache'), "Hello {{name}}\n")
 
-file '~/this-is-another-mustache-file' do |f|
-  f.content = util.render_file('~/hello.mustache', name: 'Mustache world')
-end
+file '~/this-is-another-mustache-file',
+     content: util.render_file('~/hello.mustache', name: 'Mustache world')
 ----
 
 Creating groups
@@ -93,11 +88,10 @@ and `system` attributes.
 
 [source,ruby]
 ----
-group 'extraordinary_gentlemen' do |g|
-  g.gid = 999
-  g.members = %w(murray quatermain nemo jekyll) # <1>
-  g.system = false
-end
+group 'extraordinary_gentlemen',
+      gid: 999,
+      members: %w(murray quatermain nemo jekyll), # <1>
+      system: false
 ----
 <1> Note that wright removes all users that are not listed here from
 the group's members list.
@@ -116,15 +110,14 @@ resource's attributes.
 
 [source,ruby]
 ----
-user 'griffin' do |u|
-  u.uid = 777
-  u.full_name = 'Hawley Griffin'
-  u.home = '/home/users/griffin'
-  u.groups = 'extraordinary_gentlemen'
-  u.primary_group = 'users'
-  u.shell = 'zsh'
-  u.system = false
-end
+user 'griffin',
+     uid: 777,
+     full_name: 'Hawley Griffin',
+     home: '/home/users/griffin',
+     groups: 'extraordinary_gentlemen',
+     primary_group: 'users',
+     shell: 'zsh',
+     system: false
 ----
 
 All user attributes are optional and have sensible defaults. For
@@ -137,9 +130,8 @@ The symlink resource can be used to create symlinks.
 
 [source,ruby]
 ----
-symlink '/etc/nginx/sites-enabled/example.org' do |s|
-  s.to = '/etc/nginx/sites-available/example.org'
-end
+symlink '/etc/nginx/sites-enabled/example.org',
+        to: '/etc/nginx/sites-available/example.org'
 ----
 
 Installing packages
@@ -158,10 +150,9 @@ options to your package manager.
 
 [source,ruby]
 ----
-package 'mg' do |p|
-  p.version = '20110905-1.1'
-  p.options = %w(--no-install-recommends --auto-remove) # <1>
-end
+package 'mg',
+        version: '20110905-1.1',
+        options: %w(--no-install-recommends --auto-remove) # <1>
 ----
 <1> If you only need a single option, you can also set `options` to a
 string such as `'--no-install-recommends'`.

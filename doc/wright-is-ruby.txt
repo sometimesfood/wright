@@ -17,9 +17,7 @@ to set `wright(1)` as the script interpreter.
 [source,ruby]
 ----
 #!/usr/bin/env wright
-directory '~/this/is/a/directory' do |d|
-  d.mode = '440'
-end
+directory '~/this/is/a/directory', mode: '440'
 ----
 
 If you do not want to use the wright interpreter, you can rewrite the
@@ -31,9 +29,7 @@ script above to use wright as a library.
 require 'wright'
 extend Wright::DSL
 
-directory '~/this/is/a/directory' do |d|
-  d.mode = '440'
-end
+directory '~/this/is/a/directory', mode: '440'
 ----
 
 The `extend Wright::DSL` line makes wright DSL methods such as
@@ -47,33 +43,21 @@ way.
 #!/usr/bin/env ruby
 require 'wright'
 
-dir = Wright::Resource::Directory.new('~/this/is/a/directory')
-dir.mode = '440'
+dir = Wright::Resource::Directory.new('~/this/is/a/directory', mode: '440')
 dir.create
 ----
 
-Hash syntax
+Block syntax
 -----------
-Resources can also be defined using an attribute hash.
+Resources can also be defined using block notation.
 
 [source,ruby]
 ----
 #!/usr/bin/env wright
 
-directory '~/this/is/a/directory',
-          mode: '440'
-----
-
-If you would rather avoid the DSL, you can also supply an attribute
-hash directly to the directory resource.
-
-[source,ruby]
-----
-#!/usr/bin/env ruby
-require 'wright'
-
-dir = Wright::Resource::Directory.new('~/this/is/a/directory', mode: '440')
-dir.create
+directory '~/this/is/a/directory' do |d|
+  d.mode = '440'
+end
 ----
 
 Manipulating resources
@@ -83,9 +67,7 @@ so you can just save them for later use.
 
 [source,ruby]
 ----
-this_is_a_directory = directory '~/this/is/a/directory' do |d|
-  d.mode = '440'
-end
+this_is_a_directory = directory '~/this/is/a/directory', mode: '440'
 this_is_a_directory.class
 # => Wright::Resource::Directory
 ----
@@ -102,21 +84,9 @@ anything else that responds to `call` message, for that matter).
 
 [source,ruby]
 ----
-file '/etc/foobard.conf' do |f|
-  f.content   = "# foobard config\n"
-  f.on_update = -> { `service foobard restart` }
-end
-----
-
-One-line resources
-------------------
-While multi-line resources are fine for more involved resource
-definitions, one-line resource definitions can be more succinct for
-simple definitions.
-
-[source,ruby]
-----
-file('/etc/foobard.conf') { |f| f.action = :remove }
+file '/etc/foobard.conf',
+     content: "# foobard config\n",
+     on_update: -> { `service foobard restart` }
 ----
 
 Dry-run mode
@@ -151,7 +121,7 @@ resources, which all support dry-run mode out of the box.
 [source,ruby]
 ----
 #!/usr/bin/env wright
-file('/tmp/foo') { |f| f.action = :remove }
+file '/tmp/foo', action: :remove
 ----
 
 Distributing wright scripts

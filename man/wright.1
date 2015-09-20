@@ -2,12 +2,12 @@
 .\"     Title: wright
 .\"    Author: [see the "AUTHOR" section]
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 06/03/2015
+.\"      Date: 09/20/2015
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "WRIGHT" "1" "06/03/2015" "\ \&" "\ \&"
+.TH "WRIGHT" "1" "09/20/2015" "\ \&" "\ \&"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -94,7 +94,7 @@ Create a system user named "foobard":
 .RS 4
 .\}
 .nf
-wright \-e \*(Aquser("foobard") { |u| u\&.system = true }\*(Aq
+wright \-e \*(Aquser "foobard", system: true\*(Aq
 .fi
 .if n \{\
 .RE
@@ -106,7 +106,7 @@ Create a system group named "foobard":
 .RS 4
 .\}
 .nf
-wright \-e \*(Aqgroup("foobard") { |u| u\&.system = true }\*(Aq
+wright \-e \*(Aqgroup "foobard", system: true\*(Aq
 .fi
 .if n \{\
 .RE
@@ -118,7 +118,7 @@ Create a file named \fI/etc/issue\fR containing the current wright version:
 .RS 4
 .\}
 .nf
-wright \-e \*(Aqfile("/etc/issue") { |f| f\&.content = Wright::VERSION }\*(Aq
+wright \-e \*(Aqfile "/etc/issue", content: Wright::VERSION\*(Aq
 .fi
 .if n \{\
 .RE
@@ -142,7 +142,7 @@ Create a symlink from \fI\&.bash_profile\fR to \fI\&.profile\fR in the current u
 .RS 4
 .\}
 .nf
-wright \-e \*(Aqsymlink("~/\&.bash_profile") { |s| s\&.to = "~/\&.profile" }\*(Aq
+wright \-e \*(Aqsymlink "~/\&.bash_profile", to: "~/\&.profile"\*(Aq
 .fi
 .if n \{\
 .RE
@@ -156,15 +156,14 @@ To install tmux and update its config file from a wright script, create the foll
 .nf
 package \*(Aqtmux\*(Aq
 
-file \*(Aq/etc/tmux\&.conf\*(Aq do |f|
-  f\&.content = <<EOF
+file \*(Aq/etc/tmux\&.conf\*(Aq,
+     mode: \*(Aq444\*(Aq,
+     on_update: \-> { puts \*(AqUpdated /etc/tmux\&.conf\*(Aq },
+     content: <<EOF
 unbind C\-b
 set \-g prefix C\-a
 bind\-key a send\-prefix
 EOF
-  f\&.mode = \*(Aq444\*(Aq
-  f\&.on_update = \-> { puts \*(AqUpdated /etc/tmux\&.conf\*(Aq }
-end
 .fi
 .if n \{\
 .RE
