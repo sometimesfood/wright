@@ -6,8 +6,7 @@ module Wright
     # Group resource, represents a group.
     #
     # @example
-    #   admins = Wright::Resource::Group.new('admins')
-    #   admins.members = ['root']
+    #   admins = Wright::Resource::Group.new('admins', members: ['root'])
     #   admins.create
     # @todo Use GnuPasswd provider on all GNU-flavoured systems
     class Group < Wright::Resource

@@ -6,8 +6,7 @@ module Wright
     # User resource, represents a user.
     #
     # @example
-    #   johndoe = Wright::Resource::User.new('johndoe')
-    #   johndoe.home = '/home/johndoe'
+    #   johndoe = Wright::Resource::User.new('johndoe', home: '/home/johndoe')
     #   johndoe.create
     class User < Wright::Resource
       # @return [Integer] the user's intended user id

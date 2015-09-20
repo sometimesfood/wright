@@ -6,8 +6,7 @@ module Wright
     # Symlink resource, represents a symlink.
     #
     # @example
-    #   link = Wright::Resource::Symlink.new('/tmp/fstab')
-    #   link.to = '/etc/fstab'
+    #   link = Wright::Resource::Symlink.new('/tmp/fstab', to: '/etc/fstab')
     #   link.create
     class Symlink < Wright::Resource
       # Initializes a Symlink.

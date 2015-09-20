@@ -9,8 +9,7 @@ module Wright
     # Symlink resource, represents a symlink.
     #
     # @example
-    #   file = Wright::Resource::File.new('/tmp/foo')
-    #   file.content = 'bar'
+    #   file = Wright::Resource::File.new('/tmp/foo', content: 'bar')
     #   file.create
     class File < Wright::Resource
       extend Forwardable
