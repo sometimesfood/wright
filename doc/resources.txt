@@ -67,7 +67,7 @@ To render a template file, you can use the `render_file` helper.
 
 [source,ruby]
 ----
-File.write(File.expand_path('~/hello.mustache'), "Hello {{name}}\n")
+file '~/hello.mustache', content: "Hello {{name}}\n"
 
 file '~/this-is-another-mustache-file',
      content: util.render_file('~/hello.mustache', name: 'Mustache world')
