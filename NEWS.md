@@ -1,10 +1,11 @@
 # wright NEWS
-## unreleased
+## 0.5.0 (2015-09-21)
 - Add attribute hash support to DSL and resources
 - Add template helpers
   - Add util.render_erb to DSL
   - Add util.render_mustache to DSL
   - Add util.render_file to DSL
+- Add support for Fedora
 
 ## 0.4.4 (2015-08-06)
 - Fix update status for file provider if content attribute is nil and
