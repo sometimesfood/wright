@@ -29,7 +29,7 @@ EOS
   unless RUBY_VERSION < '2.0.0'
     gem.add_development_dependency 'mustache', '~> 1.0.2'
   end
-  gem.add_development_dependency 'minitest', '~> 5.8.0'
+  gem.add_development_dependency 'minitest', '~> 5.8.1'
   gem.add_development_dependency 'minitest-stub-const', '~> 0.5'
   gem.add_development_dependency 'fakefs', '~> 0.6.7'
   gem.add_development_dependency 'fakeetc', '~> 0.3.0'
