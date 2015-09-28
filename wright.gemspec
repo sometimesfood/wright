@@ -37,6 +37,5 @@ EOS
   gem.add_development_dependency 'yard', '~> 0.8.7.6'
   gem.add_development_dependency 'redcarpet', '~> 3.3.2'
   gem.add_development_dependency 'simplecov', '~> 0.10.0'
-  gem.add_development_dependency 'pry', '~> 0.10.1'
   gem.add_development_dependency 'rubocop', '~> 0.34.1'
 end
