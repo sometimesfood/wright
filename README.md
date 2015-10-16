@@ -45,19 +45,17 @@ Since wright does not have any runtime dependencies apart from Ruby
 
 Installation on Debian-based systems
 ------------------------------------
-If you use a Debian-based GNU/Linux distribution such as Ubuntu, you
-can also install wright via the PPA [sometimesfood/wright][ppa]:
+If you use Debian or a Debian-based GNU/Linux distribution such as
+Ubuntu or Linux Mint, you can also install wright via the PPA
+[sometimesfood/wright][ppa]:
 
-    sudo apt-get install software-properties-common
-    sudo add-apt-repository -y ppa:sometimesfood/wright
-    sudo apt-get update && sudo apt-get install wright
-
-If you use a Debian-based distribution that is not Ubuntu, you have to
-update your apt sources manually before installing wright:
-
-    export DISTRO="$(lsb_release -sc)"
-    export PPA_LIST="sometimesfood-wright-${DISTRO}.list"
-    sudo sed -i "s/${DISTRO}/trusty/g" /etc/apt/sources.list.d/${PPA_LIST}
+    sudo apt-key --keyring /etc/apt/trusted.gpg.d/sometimesfood-wright.gpg \
+        adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DE36B117
+    cat <<EOF | sudo tee /etc/apt/sources.list.d/sometimesfood-wright-trusty.list
+    deb     http://ppa.launchpad.net/sometimesfood/wright/ubuntu trusty main
+    deb-src http://ppa.launchpad.net/sometimesfood/wright/ubuntu trusty main
+    EOF
+    sudo apt-get update && sudo apt-get -y install wright
 
 Documentation
 -------------
