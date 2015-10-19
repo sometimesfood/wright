@@ -49,13 +49,15 @@ If you use Debian or a Debian-based GNU/Linux distribution such as
 Ubuntu or Linux Mint, you can also install wright via the PPA
 [sometimesfood/wright][ppa]:
 
-    sudo apt-key --keyring /etc/apt/trusted.gpg.d/sometimesfood-wright.gpg \
-        adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DE36B117
-    cat <<EOF | sudo tee /etc/apt/sources.list.d/sometimesfood-wright-trusty.list
-    deb     http://ppa.launchpad.net/sometimesfood/wright/ubuntu trusty main
-    deb-src http://ppa.launchpad.net/sometimesfood/wright/ubuntu trusty main
-    EOF
-    sudo apt-get update && sudo apt-get -y install wright
+```bash
+sudo apt-key --keyring /etc/apt/trusted.gpg.d/sometimesfood-wright.gpg \
+    adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DE36B117
+sudo tee /etc/apt/sources.list.d/sometimesfood-wright-trusty.list <<EOF
+deb     http://ppa.launchpad.net/sometimesfood/wright/ubuntu trusty main
+deb-src http://ppa.launchpad.net/sometimesfood/wright/ubuntu trusty main
+EOF
+sudo apt-get update && sudo apt-get -y install wright
+```
 
 Documentation
 -------------
