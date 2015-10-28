@@ -10,7 +10,10 @@ describe Wright::Provider::Package::Apt do
   def apt_get(action, pkg_name, args = {})
     version = args[:version].nil? ? '' : "=#{args[:version]}"
     options = args[:options]
-    ['apt-get', '-qy', *options, action.to_s, pkg_name + version]
+    install_options = ['-o', 'Dpkg::Options::="--force-confdef"',
+                       '-o', 'Dpkg::Options::="--force-confold"']
+    apt_opts = action == :install ? [*install_options, *options] : [*options]
+    ['apt-get', '-qy', *apt_opts, action.to_s, pkg_name + version]
   end
 
   def package_provider(pkg_name, args = {})
@@ -111,7 +114,7 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name)
       apt_cmd = apt_get(:install, pkg_name)
 
-      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.expect(apt_cmd, 'apt-get_install_htop')
       @fake_capture3.stub do
         pkg_provider.send(:install_package)
       end
@@ -123,7 +126,7 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name, version: pkg_version)
       apt_cmd = apt_get(:install, pkg_name, version: pkg_version)
 
-      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.expect(apt_cmd, 'apt-get_install_abcde=2.5.4-1')
       @fake_capture3.stub do
         pkg_provider.send(:install_package)
       end
@@ -135,7 +138,7 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name, options: pkg_options)
       apt_cmd = apt_get(:install, pkg_name, options: pkg_options)
 
-      @fake_capture3.expect(apt_cmd, 'apt-get_-qy_install_htop')
+      @fake_capture3.expect(apt_cmd, 'apt-get_install_htop')
       @fake_capture3.stub do
         pkg_provider.send(:install_package)
       end
@@ -146,7 +149,7 @@ describe Wright::Provider::Package::Apt do
       pkg_provider = package_provider(pkg_name)
       apt_cmd = apt_get(:install, pkg_name)
 
-      @fake_capture3.expect(apt_cmd)
+      @fake_capture3.expect(apt_cmd, 'apt-get_install_not-a-real-package')
       @fake_capture3.stub do
         e = -> { pkg_provider.send(:install_package) }.must_raise RuntimeError
         wright_error = "cannot install package '#{pkg_name}'"

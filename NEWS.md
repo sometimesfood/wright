@@ -1,4 +1,8 @@
 # wright NEWS
+## unreleased
+- Use dpkg options --force-confdef and --force-confold when installing
+  packages using the apt provider
+
 ## 0.5.0 (2015-09-21)
 - Add attribute hash support to DSL and resources
 - Add template helpers

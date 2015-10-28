@@ -24,7 +24,10 @@ module Wright
         private
 
         def install_package
-          apt_get(:install, package_options, package_name, package_version)
+          install_options = ['-o', 'Dpkg::Options::="--force-confdef"',
+                             '-o', 'Dpkg::Options::="--force-confold"',
+                             *package_options]
+          apt_get(:install, install_options, package_name, package_version)
         end
 
         def remove_package
