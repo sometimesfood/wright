@@ -12,7 +12,7 @@ describe Wright::Provider::Package::Apt do
     options = args[:options]
     install_options = ['-o', 'Dpkg::Options::="--force-confdef"',
                        '-o', 'Dpkg::Options::="--force-confold"']
-    apt_opts = action == :install ? [*install_options, *options] : [*options]
+    apt_opts = action == :install ? [*install_options, *options] : options
     ['apt-get', '-qy', *apt_opts, action.to_s, pkg_name + version]
   end
 
