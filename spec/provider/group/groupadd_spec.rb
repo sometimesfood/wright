@@ -1,18 +1,13 @@
 require_relative '../../spec_helper'
 
-require 'wright/provider/group/gnu_passwd'
+require 'wright/provider/group/groupadd'
 require 'fakeetc'
 
-describe Wright::Provider::Group::GnuPasswd do
-  def groupadd(group_name, gid = nil, system = false)
+describe Wright::Provider::Group::Groupadd do
+  def groupadd(group_name, gid = nil)
     options = []
-    options << '--system' if system
     options += ['-g', gid.to_s] if gid
     ['groupadd', *options, group_name]
-  end
-
-  def gpasswd(group_name, members)
-    ['gpasswd', '-M', members.join(','), group_name]
   end
 
   def groupmod(group_name, gid)
@@ -28,24 +23,28 @@ describe Wright::Provider::Group::GnuPasswd do
                                     gid: gid,
                                     members: members,
                                     system: system)
-    Wright::Provider::Group::GnuPasswd.new(group_resource)
+    Wright::Provider::Group::Groupadd.new(group_resource)
   end
 
   before(:each) do
-    gnu_passwd_dir = File.join(File.dirname(__FILE__), 'gnu_passwd')
-    @fake_capture3 = FakeCapture3.new(gnu_passwd_dir)
+    groupadd_dir = File.join(File.dirname(__FILE__), 'groupadd')
+    @fake_capture3 = FakeCapture3.new(groupadd_dir)
     @groups = { 'foobar' => { gid: 42, mem: %w(foo bar) },
                 'bazqux' => { gid: 43, mem: %w(baz qux) } }
     FakeEtc.add_groups(@groups)
   end
 
+  after(:each) do
+    FakeEtc.clear_groups
+  end
+
   describe '#create_group' do
     before(:each) do
-      Wright::Provider::Group::GnuPasswd.send(:public, :create_group)
+      Wright::Provider::Group::Groupadd.send(:public, :create_group)
     end
 
     after(:each) do
-      Wright::Provider::Group::GnuPasswd.send(:private, :create_group)
+      Wright::Provider::Group::Groupadd.send(:private, :create_group)
     end
 
     it 'should create new groups' do
@@ -62,48 +61,33 @@ describe Wright::Provider::Group::GnuPasswd do
       end
     end
 
-    it 'should create new system groups' do
+    it 'should raise an exception when using the system option' do
       group_name = 'newgroup'
       gid = nil
       members = nil
       system = true
       group_provider = group_provider(group_name, gid, members, system)
-      groupadd_cmd = groupadd(group_name, gid, system)
 
-      @fake_capture3.expect(groupadd_cmd)
+      lambda do
+        group_provider.create_group
+      end.must_raise NotImplementedError
+    end
+
+    it 'should use the system_group_option for system groups' do
+      group_name = 'newgroup'
+      gid = nil
+      members = nil
+      system = true
+      groupadd_cmd = ['groupadd', 'SYSTEM_USER_OPTION', group_name]
+      group_provider = group_provider(group_name, gid, members, system)
+      def group_provider.system_group_option
+        'SYSTEM_USER_OPTION'
+      end
+
+      @fake_capture3.expect(groupadd_cmd, 'groupadd_-r_newgroup')
       @fake_capture3.stub do
         FakeEtc do
           group_provider.create_group
-        end
-      end
-    end
-
-    it 'should clear member lists for existing groups' do
-      group_name = 'foobar'
-      gid = @groups[group_name][:gid]
-      members = []
-      group_provider = group_provider(group_name, gid, members)
-      gpasswd_cmd = gpasswd(group_name, members)
-
-      @fake_capture3.expect(gpasswd_cmd)
-      @fake_capture3.stub do
-        FakeEtc do
-          group_provider.create
-        end
-      end
-    end
-
-    it 'should update member lists for existing groups' do
-      group_name = 'foobar'
-      gid = @groups[group_name][:gid]
-      members = %w(user1 user2)
-      group_provider = group_provider(group_name, gid, members)
-      gpasswd_cmd = gpasswd(group_name, members)
-
-      @fake_capture3.expect(gpasswd_cmd)
-      @fake_capture3.stub do
-        FakeEtc do
-          group_provider.create
         end
       end
     end
@@ -155,43 +139,25 @@ describe Wright::Provider::Group::GnuPasswd do
         end
       end
     end
-
-    it 'should report errors by gpasswd' do
-      user = 'not-a-user'
-      members = [user]
-      group_name = 'foobar'
-      group_provider = group_provider(group_name, nil, members)
-      gpasswd_cmd = gpasswd(group_name, members)
-
-      @fake_capture3.expect(gpasswd_cmd)
-      @fake_capture3.stub do
-        FakeEtc do
-          e = -> { group_provider.create }.must_raise RuntimeError
-          wright_error = "cannot create group '#{group_name}'"
-          gpasswd_error = "gpasswd: user '#{user}' does not exist"
-          e.message.must_equal %(#{wright_error}: "#{gpasswd_error}")
-        end
-      end
-    end
   end
 
   describe '#set_gid' do
     before(:each) do
-      Wright::Provider::Group::GnuPasswd.send(:public, :set_gid)
+      Wright::Provider::Group::Groupadd.send(:public, :set_gid)
     end
 
     after(:each) do
-      Wright::Provider::Group::GnuPasswd.send(:private, :set_gid)
+      Wright::Provider::Group::Groupadd.send(:private, :set_gid)
     end
   end
 
   describe '#set_members' do
     before(:each) do
-      Wright::Provider::Group::GnuPasswd.send(:public, :set_members)
+      Wright::Provider::Group::Groupadd.send(:public, :set_members)
     end
 
     after(:each) do
-      Wright::Provider::Group::GnuPasswd.send(:private, :set_members)
+      Wright::Provider::Group::Groupadd.send(:private, :set_members)
     end
   end
 
@@ -209,7 +175,7 @@ describe Wright::Provider::Group::GnuPasswd do
       end
     end
 
-    it 'should report errors by gpasswd' do
+    it 'should report errors by groupdel' do
       group_name = 'bazqux'
       group_provider = group_provider(group_name)
       groupdel_cmd = groupdel(group_name)
