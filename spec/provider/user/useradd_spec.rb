@@ -70,6 +70,20 @@ describe Wright::Provider::User::Useradd do
         provider.create_user
       end.must_raise NotImplementedError
     end
+
+    it 'should use the system_user_option for system users' do
+      username = @resource.name
+      resource = OpenStruct.new(name: username, system: true)
+      provider = Wright::Provider::User::Useradd.new(resource)
+      def provider.system_user_option
+        'SYSTEM_USER_OPTION'
+      end
+      expected_args = ['SYSTEM_USER_OPTION', resource.name]
+      @fake_capture3.expect(['useradd', *expected_args], 'useradd_with_options')
+      @fake_capture3.stub do
+        provider.create_user
+      end
+    end
   end
 
   describe '#update_user' do
