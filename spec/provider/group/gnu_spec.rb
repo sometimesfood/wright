@@ -1,15 +1,15 @@
 require_relative '../../spec_helper'
 
-require 'wright/provider/group/gnu_passwd'
+require 'wright/provider/group/gnu'
 require 'fakeetc'
 
-describe Wright::Provider::Group::GnuPasswd do
+describe Wright::Provider::Group::Gnu do
   def group_provider(group_name, gid = nil, members = nil, system = false)
     group_resource = OpenStruct.new(name: group_name,
                                     gid: gid,
                                     members: members,
                                     system: system)
-    Wright::Provider::Group::GnuPasswd.new(group_resource)
+    Wright::Provider::Group::Gnu.new(group_resource)
   end
 
   def gpasswd(group_name, members)
@@ -17,8 +17,8 @@ describe Wright::Provider::Group::GnuPasswd do
   end
 
   before(:each) do
-    gnu_passwd_dir = File.join(File.dirname(__FILE__), 'gnu_passwd')
-    @fake_capture3 = FakeCapture3.new(gnu_passwd_dir)
+    gnu_dir = File.join(File.dirname(__FILE__), 'gnu')
+    @fake_capture3 = FakeCapture3.new(gnu_dir)
     @groups = { 'foobar' => { gid: 42, mem: %w(foo bar) },
                 'bazqux' => { gid: 43, mem: %w(baz qux) } }
     FakeEtc.add_groups(@groups)
@@ -31,7 +31,7 @@ describe Wright::Provider::Group::GnuPasswd do
   describe '#system_group_option' do
     it 'should return the correct system option' do
       resource = OpenStruct.new(name: 'foo')
-      group = Wright::Provider::Group::GnuPasswd.new(resource)
+      group = Wright::Provider::Group::Gnu.new(resource)
       expected = '-r'
       actual = group.send(:system_group_option)
       actual.must_equal expected

@@ -63,9 +63,9 @@ end
 Wright::DSL.register_resource(Wright::Resource::Group)
 
 group_providers = {
-  'debian' => 'Wright::Provider::Group::GnuPasswd',
-  'fedora' => 'Wright::Provider::Group::GnuPasswd',
-  'rhel'   => 'Wright::Provider::Group::GnuPasswd',
+  'debian' => 'Wright::Provider::Group::Gnu',
+  'fedora' => 'Wright::Provider::Group::Gnu',
+  'rhel'   => 'Wright::Provider::Group::Gnu',
   'osx'    => 'Wright::Provider::Group::DarwinDirectoryService'
 }
 Wright::Config[:resources][:group] ||= {}

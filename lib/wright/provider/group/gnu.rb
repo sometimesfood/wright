@@ -6,7 +6,7 @@ module Wright
     class Group
       # GNU group provider. Used as a provider for {Resource::Group}
       # on GNU systems.
-      class GnuPasswd < Wright::Provider::Group::Groupadd
+      class Gnu < Wright::Provider::Group::Groupadd
         private
 
         def system_group_option
