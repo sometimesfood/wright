@@ -4,9 +4,8 @@ require 'wright/provider/user'
 module Wright
   class Provider
     class User
-      # useradd user provider. Used as a baseclass for
-      # {Wright::Provider::User} on systems with useradd(8),
-      # usermod(8) and userdel(8).
+      # useradd user provider. Used as a baseclass for user providers
+      # on systems with useradd(8), usermod(8) and userdel(8).
       class Useradd < Wright::Provider::User
         private
 
