@@ -4,7 +4,7 @@ require 'wright/provider/user/gnu'
 
 describe Wright::Provider::User::Gnu do
   describe '#system_user_option' do
-    it 'should return -r' do
+    it 'should return the correct system option' do
       resource = OpenStruct.new(name: 'foo')
       user = Wright::Provider::User::Gnu.new(resource)
       expected = '-r'
