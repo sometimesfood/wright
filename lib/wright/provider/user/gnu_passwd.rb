@@ -36,8 +36,12 @@ module Wright
             '-s' => shell,
             '-d' => home
           }.reject { |_k, v| v.nil? }.flatten
-          options << '-r' if system_user?
+          options << system_user_option if system_user?
           options.map(&:to_s)
+        end
+
+        def system_user_option
+          '-r'
         end
 
         def comment
