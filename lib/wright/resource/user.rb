@@ -90,9 +90,9 @@ end
 Wright::DSL.register_resource(Wright::Resource::User)
 
 user_providers = {
-  'debian' => 'Wright::Provider::User::GnuPasswd',
-  'fedora' => 'Wright::Provider::User::GnuPasswd',
-  'rhel'   => 'Wright::Provider::User::GnuPasswd',
+  'debian' => 'Wright::Provider::User::Gnu',
+  'fedora' => 'Wright::Provider::User::Gnu',
+  'rhel'   => 'Wright::Provider::User::Gnu',
   'osx'    => 'Wright::Provider::User::DarwinDirectoryService'
 }
 Wright::Config[:resources][:user] ||= {}

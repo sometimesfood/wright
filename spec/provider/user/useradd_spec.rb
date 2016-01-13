@@ -3,14 +3,14 @@ require_relative '../../spec_helper'
 require 'fakeetc'
 require 'wright/provider'
 require 'wright/provider/user'
-require 'wright/provider/user/gnu_passwd'
+require 'wright/provider/user/useradd'
 
-describe Wright::Provider::User::GnuPasswd do
+describe Wright::Provider::User::Useradd do
   before(:each) do
     username = 'johndoe'
     @resource = OpenStruct.new(name: username)
-    gnu_passwd_dir = File.join(File.dirname(__FILE__), 'gnu_passwd')
-    @fake_capture3 = FakeCapture3.new(gnu_passwd_dir, {})
+    useradd_dir = File.join(File.dirname(__FILE__), 'useradd')
+    @fake_capture3 = FakeCapture3.new(useradd_dir, {})
   end
 
   after(:each) do
@@ -20,15 +20,15 @@ describe Wright::Provider::User::GnuPasswd do
 
   describe '#create_user' do
     before(:each) do
-      Wright::Provider::User::GnuPasswd.send(:public, :create_user)
+      Wright::Provider::User::Useradd.send(:public, :create_user)
     end
 
     after(:each) do
-      Wright::Provider::User::GnuPasswd.send(:private, :create_user)
+      Wright::Provider::User::Useradd.send(:private, :create_user)
     end
 
     it 'should add users' do
-      provider = Wright::Provider::User::GnuPasswd.new(@resource)
+      provider = Wright::Provider::User::Useradd.new(@resource)
 
       @fake_capture3.expect(%W(useradd #{@resource.name}))
       @fake_capture3.stub do
@@ -45,8 +45,8 @@ describe Wright::Provider::User::GnuPasswd do
                                 groups: [],
                                 shell: '/bin/bash',
                                 home: "/home/#{username}",
-                                system: true)
-      provider = Wright::Provider::User::GnuPasswd.new(resource)
+                                system: false)
+      provider = Wright::Provider::User::Useradd.new(resource)
 
       expected_args = %W(-u #{resource.uid}
                          -g #{resource.primary_group}
@@ -54,7 +54,6 @@ describe Wright::Provider::User::GnuPasswd do
                          -G #{resource.groups.join(',')}
                          -s #{resource.shell}
                          -d #{resource.home}
-                         -r
                          #{resource.name})
       FakeEtc.add_groups('anonymous' => { gid: 123 })
       @fake_capture3.expect(['useradd', *expected_args], 'useradd_with_options')
@@ -62,20 +61,43 @@ describe Wright::Provider::User::GnuPasswd do
         FakeEtc { provider.create_user }
       end
     end
+
+    it 'should raise an exception when using the system option' do
+      username = @resource.name
+      resource = OpenStruct.new(name: username, system: true)
+      provider = Wright::Provider::User::Useradd.new(resource)
+      lambda do
+        provider.create_user
+      end.must_raise NotImplementedError
+    end
+
+    it 'should use the system_user_option for system users' do
+      username = @resource.name
+      resource = OpenStruct.new(name: username, system: true)
+      provider = Wright::Provider::User::Useradd.new(resource)
+      def provider.system_user_option
+        'SYSTEM_USER_OPTION'
+      end
+      expected_args = ['SYSTEM_USER_OPTION', resource.name]
+      @fake_capture3.expect(['useradd', *expected_args], 'useradd_with_options')
+      @fake_capture3.stub do
+        provider.create_user
+      end
+    end
   end
 
   describe '#update_user' do
     before(:each) do
-      Wright::Provider::User::GnuPasswd.send(:public, :update_user)
+      Wright::Provider::User::Useradd.send(:public, :update_user)
     end
 
     after(:each) do
-      Wright::Provider::User::GnuPasswd.send(:private, :update_user)
+      Wright::Provider::User::Useradd.send(:private, :update_user)
     end
 
     it 'should update users' do
       @resource.uid = 42
-      provider = Wright::Provider::User::GnuPasswd.new(@resource)
+      provider = Wright::Provider::User::Useradd.new(@resource)
 
       FakeEtc.add_users(@resource.name => { uid: @resource.uid + 1 })
       @fake_capture3.expect(%W(usermod -u #{@resource.uid} #{@resource.name}))
@@ -87,15 +109,15 @@ describe Wright::Provider::User::GnuPasswd do
 
   describe '#remove_user' do
     before(:each) do
-      Wright::Provider::User::GnuPasswd.send(:public, :remove_user)
+      Wright::Provider::User::Useradd.send(:public, :remove_user)
     end
 
     after(:each) do
-      Wright::Provider::User::GnuPasswd.send(:private, :remove_user)
+      Wright::Provider::User::Useradd.send(:private, :remove_user)
     end
 
     it 'should delete users' do
-      provider = Wright::Provider::User::GnuPasswd.new(@resource)
+      provider = Wright::Provider::User::Useradd.new(@resource)
 
       FakeEtc.add_users(@resource.name => {})
       @fake_capture3.expect(%W(userdel #{@resource.name}))

@@ -4,9 +4,9 @@ require 'wright/provider/user'
 module Wright
   class Provider
     class User
-      # GNU passwd user provider. Used as a provider for
-      # {Resource::User} on GNU systems.
-      class GnuPasswd < Wright::Provider::User
+      # useradd user provider. Used as a baseclass for user providers
+      # on systems with useradd(8), usermod(8) and userdel(8).
+      class Useradd < Wright::Provider::User
         private
 
         def create_user
@@ -36,8 +36,12 @@ module Wright
             '-s' => shell,
             '-d' => home
           }.reject { |_k, v| v.nil? }.flatten
-          options << '-r' if system_user?
+          options << system_user_option if system_user?
           options.map(&:to_s)
+        end
+
+        def system_user_option
+          fail NotImplementedError
         end
 
         def comment
