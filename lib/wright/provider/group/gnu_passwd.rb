@@ -11,7 +11,7 @@ module Wright
 
         def create_group
           options = []
-          options << '--system' if system_group?
+          options << system_group_option if system_group?
           options += ['-g', gid.to_s] if gid
           cmd = 'groupadd'
           args = [*options, group_name]
@@ -34,6 +34,10 @@ module Wright
           cmd = 'groupmod'
           args = ['-g', gid.to_s, group_name]
           exec_or_fail(cmd, args, "cannot create group '#{group_name}'")
+        end
+
+        def system_group_option
+          '-r'
         end
       end
     end

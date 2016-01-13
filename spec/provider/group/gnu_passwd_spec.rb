@@ -6,7 +6,7 @@ require 'fakeetc'
 describe Wright::Provider::Group::GnuPasswd do
   def groupadd(group_name, gid = nil, system = false)
     options = []
-    options << '--system' if system
+    options << '-r' if system
     options += ['-g', gid.to_s] if gid
     ['groupadd', *options, group_name]
   end
