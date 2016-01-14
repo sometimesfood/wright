@@ -74,11 +74,15 @@ module Wright
     #   command
     # @param error_message [String] the error message to display in
     #   case of an error
+    # @param opts [Hash] the options
+    # @option opts [Bool] :ignore_stderr (true) denotes whether output
+    #   on stderr should be ignored or not
     # @raise [RuntimeError] if the command did not exit successfully
     # @return [String] the stdout output of the command
-    def exec_or_fail(command, args, error_message)
+    def exec_or_fail(command, args, error_message, opts = {})
+      ignore_stderr = opts.fetch(:ignore_stderr, true)
       stdout, stderr, status = Open3.capture3(env, command, *args)
-      return stdout if status.success?
+      return stdout if status.success? && (stderr.empty? || ignore_stderr)
 
       error = stderr.chomp
       error = stdout.chomp if error.empty?
