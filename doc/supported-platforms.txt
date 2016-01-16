@@ -8,10 +8,11 @@ wright currently fully supports the following platforms:
 - Ubuntu
 - RHEL/Centos ≥7
 - Fedora
+- OpenBSD
 
 Untested platforms
 ------------------
-While other Unix-like operating systems such as FreeBSD, OpenBSD or
+While other Unix-like operating systems such as FreeBSD, NetBSD or
 GNU/Linux distributions not listed above are not tested at the moment,
 wright should in principle be able to run on these platforms.
 

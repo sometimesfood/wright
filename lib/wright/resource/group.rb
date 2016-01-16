@@ -63,10 +63,11 @@ end
 Wright::DSL.register_resource(Wright::Resource::Group)
 
 group_providers = {
-  'debian' => 'Wright::Provider::Group::Gnu',
-  'fedora' => 'Wright::Provider::Group::Gnu',
-  'rhel'   => 'Wright::Provider::Group::Gnu',
-  'osx'    => 'Wright::Provider::Group::DarwinDirectoryService'
+  'debian'  => 'Wright::Provider::Group::Gnu',
+  'fedora'  => 'Wright::Provider::Group::Gnu',
+  'rhel'    => 'Wright::Provider::Group::Gnu',
+  'openbsd' => 'Wright::Provider::Group::Openbsd',
+  'osx'     => 'Wright::Provider::Group::DarwinDirectoryService'
 }
 Wright::Config[:resources][:group] ||= {}
 Wright::Config[:resources][:group][:provider] ||=

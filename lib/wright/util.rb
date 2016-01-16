@@ -63,9 +63,11 @@ module Wright
     def self.os_family
       system_arch = RbConfig::CONFIG['target_os']
       case system_arch
-      when /darwin/
+      when /\Adarwin/
         'osx'
-      when /linux/
+      when /\Aopenbsd/
+        'openbsd'
+      when /\Alinux/
         distro
       else
         'other'
