@@ -81,10 +81,11 @@ end
 Wright::DSL.register_resource(Wright::Resource::Package)
 
 package_providers = {
-  'debian' => 'Wright::Provider::Package::Apt',
-  'fedora' => 'Wright::Provider::Package::Yum',
-  'rhel'   => 'Wright::Provider::Package::Yum',
-  'osx'    => 'Wright::Provider::Package::Homebrew'
+  'debian'  => 'Wright::Provider::Package::Apt',
+  'fedora'  => 'Wright::Provider::Package::Yum',
+  'rhel'    => 'Wright::Provider::Package::Yum',
+  'openbsd' => 'Wright::Provider::Package::Openbsd',
+  'osx'     => 'Wright::Provider::Package::Homebrew'
 }
 Wright::Config[:resources][:package] ||= {}
 Wright::Config[:resources][:package][:provider] ||=
