@@ -122,6 +122,12 @@ EOS
       end
     end
 
+    it 'should detect OpenBSD' do
+      stub_os('openbsd5.8') do
+        Wright::Util.os_family.must_equal 'openbsd'
+      end
+    end
+
     it 'should detect other operating systems' do
       stub_os('and now for something completely different') do
         Wright::Util.os_family.must_equal 'other'
