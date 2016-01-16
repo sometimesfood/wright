@@ -4,6 +4,7 @@
   packages using the apt provider
 - Add OpenBSD package provider
 - Add OpenBSD user provider
+- Add OpenBSD group provider
 
 ## 0.5.0 (2015-09-21)
 - Add attribute hash support to DSL and resources

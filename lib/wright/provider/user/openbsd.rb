@@ -8,6 +8,7 @@ module Wright
       # on OpenBSD systems.
       class Openbsd < Wright::Provider::User::Useradd
         private
+
         def system_user_option
           min_uid = 100
           max_uid = 999

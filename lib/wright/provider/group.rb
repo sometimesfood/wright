@@ -117,6 +117,16 @@ module Wright
       def remove_member(_member, _group)
         fail NotImplementedError
       end
+
+      private
+
+      def system_gid_range
+        (100..999)
+      end
+
+      def next_system_gid
+        Wright::Util::User.next_free_gid(system_gid_range)
+      end
     end
   end
 end

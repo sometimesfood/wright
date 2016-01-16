@@ -45,9 +45,8 @@ module Wright
           Etc.group { |g| break g if g.name == group_name }
         end
 
-        def next_system_gid
-          system_gid_range = (1...500)
-          Wright::Util::User.next_free_gid(system_gid_range)
+        def system_gid_range
+          (1..499)
         end
       end
     end
