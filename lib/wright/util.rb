@@ -62,16 +62,15 @@ module Wright
     #   GNU/Linux systems) or 'other' for unknown operating systems
     def self.os_family
       system_arch = RbConfig::CONFIG['target_os']
-      case system_arch
-      when /\Adarwin/
-        'osx'
-      when /\Aopenbsd/
-        'openbsd'
-      when /\Alinux/
-        distro
-      else
-        'other'
-      end
+      os_names = {
+        /\Adarwin/  => 'osx',
+        /\Alinux/   => 'linux',
+        /\Aopenbsd/ => 'openbsd',
+        //          => 'other'
+      }
+      os = os_names.find { |arch_re, _os_name| system_arch.match(arch_re) }
+      os_name = os.last
+      os_name == 'linux' ? distro : os_name
     end
 
     # Runs a code block in a clean bundler environment.
