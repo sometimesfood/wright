@@ -118,8 +118,6 @@ module Wright
         fail NotImplementedError
       end
 
-      private
-
       def system_gid_range
         (100..999)
       end
