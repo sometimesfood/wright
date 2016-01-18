@@ -52,7 +52,7 @@ module Wright
       def self.add_autoloads_for_current_dir(parent_class)
         klass = Wright::Util::ActiveSupport.constantize(parent_class)
         Dir['*.rb'].each do |filename|
-          classname = "#{Wright::Util.filename_to_classname(filename)}"
+          classname = Wright::Util.filename_to_classname(filename)
           klass.autoload classname, ::File.expand_path(filename)
         end
       end

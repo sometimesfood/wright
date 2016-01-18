@@ -117,7 +117,7 @@ module Wright
     end
 
     def log_error(exception)
-      resource = "#{resource_name}"
+      resource = resource_name.to_s
       resource << " '#{name}'" if name
       Wright.log.error "#{resource}: #{exception}"
     end
