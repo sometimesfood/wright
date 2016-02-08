@@ -31,11 +31,11 @@ EOS
   end
   gem.add_development_dependency 'minitest', '~> 5.8.4'
   gem.add_development_dependency 'minitest-stub-const', '~> 0.5'
-  gem.add_development_dependency 'fakefs', '~> 0.7.0'
+  gem.add_development_dependency 'fakefs', '~> 0.8.0'
   gem.add_development_dependency 'fakeetc', '~> 0.3.0'
   gem.add_development_dependency 'rake', '~> 10.4.2'
   gem.add_development_dependency 'yard', '~> 0.8.7.6'
   gem.add_development_dependency 'redcarpet', '~> 3.3.2'
-  gem.add_development_dependency 'simplecov', '~> 0.11.0'
+  gem.add_development_dependency 'simplecov', '~> 0.11.2'
   gem.add_development_dependency 'rubocop', '~> 0.37.0'
 end
