@@ -21,8 +21,9 @@ describe Wright::Util do
     if defined?(Bundler)
       yield
     else
-      fake_bundler = Class.new
-      def fake_bundler.with_clean_env; end
+      fake_bundler = Class.new do
+        def with_clean_env; end
+      end
       Object.stub_const(:Bundler, fake_bundler) { yield }
     end
   end
