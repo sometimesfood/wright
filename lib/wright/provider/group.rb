@@ -71,7 +71,7 @@ module Wright
         when :remove
           !group_exists?
         else
-          fail ArgumentError, "invalid action '#{action}'"
+          raise ArgumentError, "invalid action '#{action}'"
         end
       end
 
@@ -99,23 +99,23 @@ module Wright
       end
 
       def create_group
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def remove_group
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def set_gid
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def add_member(_member, _group)
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def remove_member(_member, _group)
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def system_gid_range

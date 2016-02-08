@@ -44,7 +44,7 @@ module Wright
       # @raise [ArgumentError] if the parent class cannot be resolved
       def self.add_autoloads(directory, parent_class)
         unless class_exists?(parent_class)
-          fail ArgumentError, "Can't resolve parent_class #{parent_class}"
+          raise ArgumentError, "Can't resolve parent_class #{parent_class}"
         end
         add_autoloads_unsafe(directory, parent_class)
       end

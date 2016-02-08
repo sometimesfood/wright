@@ -32,7 +32,7 @@ module Wright
         end
 
         def system_group_option
-          fail NotImplementedError
+          raise NotImplementedError
         end
       end
     end

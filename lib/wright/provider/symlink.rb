@@ -10,7 +10,7 @@ module Wright
       #
       # @return [void]
       def create
-        fail Errno::EEXIST, link_name_expanded if regular_file?
+        raise Errno::EEXIST, link_name_expanded if regular_file?
 
         symlink = symlink_to_s
         unless_uptodate(:create, "symlink already created: #{symlink}") do
@@ -24,7 +24,7 @@ module Wright
       #
       # @return [void]
       def remove
-        fail "'#{link_name_expanded}' is not a symlink" if regular_file?
+        raise "'#{link_name_expanded}' is not a symlink" if regular_file?
 
         unless_uptodate(:remove, "symlink already removed: '#{link_name}'") do
           unless_dry_run("remove symlink: '#{link_name}'") do

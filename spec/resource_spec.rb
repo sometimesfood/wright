@@ -159,7 +159,7 @@ describe Wright::Resource do
         # provider that always raises exceptions
         class RaisesExceptions < Wright::Provider
           def fail_train
-            fail 'Fail train!'
+            raise 'Fail train!'
           end
         end
       end

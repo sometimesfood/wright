@@ -76,7 +76,7 @@ module Wright
       def self.symbolic_mode_to_i(mode, base_mode, filetype = :file)
         is_directory = (filetype == :directory)
         unless symbolic_mode?(mode)
-          fail ArgumentError, "Invalid file mode \"#{mode}\""
+          raise ArgumentError, "Invalid file mode \"#{mode}\""
         end
         mode_i = base_mode
         mode.split(/,/).each do |mode_clause|

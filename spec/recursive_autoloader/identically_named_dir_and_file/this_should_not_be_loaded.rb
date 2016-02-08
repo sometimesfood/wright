@@ -1,1 +1,1 @@
-fail 'This should not be loaded'
+raise 'This should not be loaded'

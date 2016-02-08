@@ -39,7 +39,7 @@ module Wright
       end
 
       def self.to_id(object, type)
-        fail ArgumentError unless [:group, :user].include?(type)
+        raise ArgumentError unless [:group, :user].include?(type)
         return nil if object.nil?
         return object.to_i unless object.is_a?(String)
         type == :user ? Etc.getpwnam(object).uid : Etc.getgrnam(object).gid
@@ -82,13 +82,13 @@ module Wright
           used_ids << id if id_range.include?(id)
         end
         free_ids = id_range.to_a - used_ids
-        fail "No free #{id_type} in range #{id_range}" if free_ids.empty?
+        raise "No free #{id_type} in range #{id_range}" if free_ids.empty?
         free_ids.min
       end
       private_class_method(:next_free_id)
 
       def self.id_iterator(id_type)
-        fail ArgumentError unless [:uid, :gid].include?(id_type)
+        raise ArgumentError unless [:uid, :gid].include?(id_type)
         id_type == :uid ? Etc.method(:passwd) : Etc.method(:group)
       end
       private_class_method :id_iterator

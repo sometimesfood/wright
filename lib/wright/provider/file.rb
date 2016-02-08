@@ -98,7 +98,7 @@ module Wright
 
       def fail_if_directory
         return unless ::File.directory?(filename_expanded)
-        fail Errno::EISDIR, filename_expanded
+        raise Errno::EISDIR, filename_expanded
       end
     end
   end

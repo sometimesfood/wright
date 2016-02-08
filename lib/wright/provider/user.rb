@@ -83,7 +83,7 @@ module Wright
         when :remove
           !user_exists?
         else
-          fail ArgumentError, "invalid action '#{action}'"
+          raise ArgumentError, "invalid action '#{action}'"
         end
       end
 
@@ -133,15 +133,15 @@ module Wright
       end
 
       def create_user
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def update_user
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def remove_user
-        fail NotImplementedError
+        raise NotImplementedError
       end
     end
   end

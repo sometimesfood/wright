@@ -41,7 +41,7 @@ module Wright
         end
 
         def system_user_option
-          fail NotImplementedError
+          raise NotImplementedError
         end
 
         def comment

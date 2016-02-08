@@ -55,7 +55,7 @@ module Wright
         return [user, group] unless user_and_group.is_a?(String)
 
         if user_and_group.count(':') > 1
-          fail ArgumentError, "Invalid owner: '#{user_and_group}'"
+          raise ArgumentError, "Invalid owner: '#{user_and_group}'"
         end
 
         user, group = user_and_group.split(':')

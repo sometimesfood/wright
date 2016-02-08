@@ -56,7 +56,7 @@ module Wright
       if on_update.respond_to?(:call) || on_update.nil?
         @on_update = on_update
       else
-        fail ArgumentError, "#{on_update} is not callable"
+        raise ArgumentError, "#{on_update} is not callable"
       end
     end
 

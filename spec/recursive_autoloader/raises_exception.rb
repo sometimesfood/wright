@@ -1,1 +1,1 @@
-fail 'This should never be loaded'
+raise 'This should never be loaded'

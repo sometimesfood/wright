@@ -31,7 +31,7 @@ module Wright
 
       # @return [Array<String>] the installed package versions
       def installed_versions
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       # @return [Bool] true if the package is installed, false
@@ -74,16 +74,16 @@ module Wright
         when :remove
           !installed?
         else
-          fail ArgumentError, "invalid action '#{action}'"
+          raise ArgumentError, "invalid action '#{action}'"
         end
       end
 
       def install_package
-        fail NotImplementedError
+        raise NotImplementedError
       end
 
       def remove_package
-        fail NotImplementedError
+        raise NotImplementedError
       end
     end
   end

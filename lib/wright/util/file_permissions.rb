@@ -45,7 +45,7 @@ module Wright
       # @param filetype [Symbol] the file's type (+:file+ or +:directory+)
       def initialize(filename, filetype)
         unless VALID_FILETYPES.include?(filetype)
-          fail ArgumentError, "Invalid filetype '#{filetype}'"
+          raise ArgumentError, "Invalid filetype '#{filetype}'"
         end
         @filename = filename
         @filetype = filetype

@@ -12,7 +12,7 @@ module Wright
       #
       # @return [void]
       def create
-        fail Errno::EEXIST, dirname_expanded if regular_file?
+        raise Errno::EEXIST, dirname_expanded if regular_file?
 
         dir_permissions = permissions
         unless_uptodate(:create, "directory already created: '#{dir_name}'") do
@@ -29,7 +29,7 @@ module Wright
       def remove
         if ::File.exist?(dirname_expanded) &&
            !::File.directory?(dirname_expanded)
-          fail "'#{dirname_expanded}' exists but is not a directory"
+          raise "'#{dirname_expanded}' exists but is not a directory"
         end
 
         unless_uptodate(:remove, "directory already removed: '#{dir_name}'") do

@@ -86,7 +86,7 @@ module Wright
 
       error = stderr.chomp
       error = stdout.chomp if error.empty?
-      fail %(#{error_message}: "#{error}")
+      raise %(#{error_message}: "#{error}")
     end
 
     def env

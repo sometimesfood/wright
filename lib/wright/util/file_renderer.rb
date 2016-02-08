@@ -42,7 +42,7 @@ module Wright
         file_extension = ::File.extname(filename)
         rendering_class = FILE_RENDERERS[file_extension]
         unknown_template_type = "unknown template type '#{file_extension}'"
-        fail ArgumentError, unknown_template_type unless rendering_class
+        raise ArgumentError, unknown_template_type unless rendering_class
         rendering_class.new(hash)
       end
     end
