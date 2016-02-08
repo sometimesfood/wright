@@ -43,7 +43,7 @@ module Wright
         none: "\e[0m",
         red: "\e[31m",
         yellow: "\e[33m"
-      }
+      }.freeze
       private_constant :COLOR_MAP
     end
   end

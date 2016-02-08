@@ -36,7 +36,7 @@ module Wright
         'g' => 02070,
         'o' => 01007,
         'a' => 07777
-      }
+      }.freeze
       private_constant :USER_MAP
 
       def self.user_mask(target)
@@ -50,7 +50,7 @@ module Wright
         'x' => 0111,
         's' => 06000,
         't' => 01000
-      }
+      }.freeze
       private_constant :MODE_MAP
 
       def self.mode_mask(mode, is_directory)

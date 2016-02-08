@@ -73,7 +73,7 @@ module Wright
         end
       end
 
-      alias_method :uninstall, :remove
+      alias uninstall remove
     end
   end
 end

@@ -23,11 +23,11 @@ module Wright
 
       # @return [String] the user's intended home directory path
       attr_accessor :home
-      alias_method :homedir, :home
+      alias homedir home
 
       # @return [String, Integer] the user's intended primary group
       attr_accessor :primary_group
-      alias_method :login_group, :primary_group
+      alias login_group primary_group
 
       # @return [Bool] true if the user should be a system
       #   user. Ignored if {#uid} is set.

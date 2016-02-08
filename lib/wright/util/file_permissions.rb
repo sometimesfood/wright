@@ -36,7 +36,7 @@ module Wright
       # @return [Integer] the file's intended mode
       attr_reader :mode
 
-      VALID_FILETYPES = [:file, :directory]
+      VALID_FILETYPES = [:file, :directory].freeze
       private_constant :VALID_FILETYPES
 
       # Initializes a FilePermissions object.

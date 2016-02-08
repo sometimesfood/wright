@@ -36,7 +36,7 @@ module Wright
       FILE_RENDERERS = {
         '.erb' => ErbRenderer,
         '.mustache' => MustacheRenderer
-      }
+      }.freeze
 
       def renderer_for_file(filename)
         file_extension = ::File.extname(filename)

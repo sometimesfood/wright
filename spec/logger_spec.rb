@@ -9,7 +9,7 @@ FORMATS = {
   warn:  :yellow,
   error: :red,
   fatal: :red
-}
+}.freeze
 
 describe Wright::Logger do
   before(:each) do
