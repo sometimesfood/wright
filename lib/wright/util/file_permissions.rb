@@ -119,9 +119,9 @@ module Wright
       def default_mode
         case filetype
         when :file
-          ~::File.umask & 0666
+          ~::File.umask & 0o666
         when :directory
-          ~::File.umask & 0777
+          ~::File.umask & 0o777
         end
       end
     end

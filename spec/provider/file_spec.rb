@@ -8,7 +8,7 @@ describe Wright::Provider::File do
     @file_resource = OpenStruct.new(name: 'foo',
                                     owner: 23,
                                     group: 42,
-                                    mode: 0600,
+                                    mode: 0o600,
                                     content: 'Hello world')
 
     file = "'#{@file_resource.name}'"
@@ -72,7 +72,7 @@ describe Wright::Provider::File do
         reset_logger
         FakeFS do
           create_target_file
-          File.chmod(0111, @file_resource.name)
+          File.chmod(0o111, @file_resource.name)
           file.create
         end
         assert file.updated?

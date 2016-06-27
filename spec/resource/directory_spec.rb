@@ -30,7 +30,7 @@ describe Wright::Resource::Directory do
         dir = Wright::Resource::Directory.new(@dirname)
         dir.create
         assert File.directory?(@dirname)
-        Wright::Util::File.file_mode(@dirname).must_equal ~::File.umask & 0777
+        Wright::Util::File.file_mode(@dirname).must_equal ~::File.umask & 0o777
         Wright::Util::File.file_owner(@dirname).must_equal Process.uid
         Wright::Util::File.file_group(@dirname).must_equal Process.gid
       end
@@ -44,7 +44,7 @@ describe Wright::Resource::Directory do
         dir.group = 42
         dir.create
         assert File.directory?(@dirname)
-        Wright::Util::File.file_mode(@dirname).must_equal 0644
+        Wright::Util::File.file_mode(@dirname).must_equal 0o644
         Wright::Util::File.file_owner(@dirname).must_equal 23
         Wright::Util::File.file_group(@dirname).must_equal 42
       end
@@ -62,7 +62,7 @@ describe Wright::Resource::Directory do
     it 'should update existing directories' do
       FakeFS do
         FileUtils.mkdir_p(@dirname)
-        FileUtils.chmod(0600, @dirname)
+        FileUtils.chmod(0o600, @dirname)
         FileUtils.chown(0, 0, @dirname)
         dir = Wright::Resource::Directory.new(@dirname)
         dir.mode = '644'
@@ -70,7 +70,7 @@ describe Wright::Resource::Directory do
         dir.group = 42
         dir.create
         assert File.directory?(@dirname)
-        Wright::Util::File.file_mode(@dirname).must_equal 0644
+        Wright::Util::File.file_mode(@dirname).must_equal 0o644
         Wright::Util::File.file_owner(@dirname).must_equal 23
         Wright::Util::File.file_group(@dirname).must_equal 42
       end
@@ -79,12 +79,12 @@ describe Wright::Resource::Directory do
     it 'should update the access mode for existing directories' do
       FakeFS do
         FileUtils.mkdir_p(@dirname)
-        FileUtils.chmod(0600, @dirname)
+        FileUtils.chmod(0o600, @dirname)
         dir = Wright::Resource::Directory.new(@dirname)
         dir.mode = '644'
         dir.create
         assert File.directory?(@dirname)
-        Wright::Util::File.file_mode(@dirname).must_equal 0644
+        Wright::Util::File.file_mode(@dirname).must_equal 0o644
       end
     end
 

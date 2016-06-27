@@ -8,7 +8,7 @@ describe Wright::Provider::Directory do
     @dir_resource = OpenStruct.new(name: '/tmp/foo',
                                    owner: 23,
                                    group: 42,
-                                   mode: 0700)
+                                   mode: 0o700)
 
     dir = "'#{@dir_resource.name}'"
     @create_message = "INFO: create directory: #{dir}\n"

@@ -32,12 +32,12 @@ describe FilePermissions do
     it 'should update file modes when using integer modes' do
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
-        FileUtils.chmod(0600, @file_permissions.filename)
+        FileUtils.chmod(0o600, @file_permissions.filename)
         @file_permissions.uptodate?.must_equal true
-        @file_permissions.mode = 0666
+        @file_permissions.mode = 0o666
         @file_permissions.uptodate?.must_equal false
         @file_permissions.update
-        @file_permissions.current_mode.must_equal 0666
+        @file_permissions.current_mode.must_equal 0o666
         @file_permissions.uptodate?.must_equal true
       end
     end
@@ -45,11 +45,11 @@ describe FilePermissions do
     it 'should not change file modes when using no-op mode strings' do
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
-        FileUtils.chmod(0600, @file_permissions.filename)
+        FileUtils.chmod(0o600, @file_permissions.filename)
         @file_permissions.mode = 'ugo+'
         @file_permissions.uptodate?.must_equal true
         @file_permissions.update
-        @file_permissions.current_mode.must_equal 0600
+        @file_permissions.current_mode.must_equal 0o600
         @file_permissions.uptodate?.must_equal true
       end
     end
@@ -57,11 +57,11 @@ describe FilePermissions do
     it 'should update file modes when using symbolic mode strings' do
       FakeFS do
         FileUtils.touch(@file_permissions.filename)
-        FileUtils.chmod(0600, @file_permissions.filename)
+        FileUtils.chmod(0o600, @file_permissions.filename)
         @file_permissions.mode = 'u+rwx,g=rx,o=rX'
         @file_permissions.uptodate?.must_equal false
         @file_permissions.update
-        @file_permissions.current_mode.must_equal 0754
+        @file_permissions.current_mode.must_equal 0o754
         @file_permissions.uptodate?.must_equal true
       end
     end
@@ -69,10 +69,10 @@ describe FilePermissions do
     it 'should update directory modes when using symbolic mode strings' do
       FakeFS do
         FileUtils.mkdir(@dir_permissions.filename)
-        FileUtils.chmod(0600, @dir_permissions.filename)
+        FileUtils.chmod(0o600, @dir_permissions.filename)
         @dir_permissions.mode = 'u+rwx,g=rx,o=rX'
         @dir_permissions.update
-        @dir_permissions.current_mode.must_equal 0755
+        @dir_permissions.current_mode.must_equal 0o755
       end
     end
 
@@ -110,13 +110,13 @@ describe FilePermissions do
       begin
         old_umask = File.umask
 
-        File.umask(0000)
+        File.umask(0o000)
         @file_permissions.mode = 'o='
-        @file_permissions.mode.must_equal 0660
+        @file_permissions.mode.must_equal 0o660
 
-        File.umask(0246)
+        File.umask(0o246)
         @file_permissions.mode = 'o='
-        @file_permissions.mode.must_equal 0420
+        @file_permissions.mode.must_equal 0o420
       ensure
         File.umask(old_umask)
       end
@@ -126,13 +126,13 @@ describe FilePermissions do
       begin
         old_umask = File.umask
 
-        File.umask(0000)
+        File.umask(0o000)
         @dir_permissions.mode = 'o='
-        @dir_permissions.mode.must_equal 0770
+        @dir_permissions.mode.must_equal 0o770
 
-        File.umask(0246)
+        File.umask(0o246)
         @dir_permissions.mode = 'o='
-        @dir_permissions.mode.must_equal 0530
+        @dir_permissions.mode.must_equal 0o530
       ensure
         File.umask(old_umask)
       end

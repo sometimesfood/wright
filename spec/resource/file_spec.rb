@@ -67,7 +67,7 @@ describe Wright::Resource::File do
     it 'should update existing files' do
       FakeFS do
         FileUtils.touch(@filename)
-        FileUtils.chmod(0600, @filename)
+        FileUtils.chmod(0o600, @filename)
         FileUtils.chown(0, 0, @filename)
         file = Wright::Resource::File.new(@filename)
         file.mode = '644'
@@ -76,7 +76,7 @@ describe Wright::Resource::File do
         file.content = 'hello world'
         file.create
         File.read(@filename).must_equal 'hello world'
-        Wright::Util::File.file_mode(@filename).must_equal 0644
+        Wright::Util::File.file_mode(@filename).must_equal 0o644
         Wright::Util::File.file_owner(@filename).must_equal 23
         Wright::Util::File.file_group(@filename).must_equal 42
       end
@@ -85,19 +85,19 @@ describe Wright::Resource::File do
     it 'should not overwrite existing files when content is nil' do
       FakeFS do
         File.write(@filename, 'old content')
-        File.chmod(0600, @filename)
+        File.chmod(0o600, @filename)
         file = Wright::Resource::File.new(@filename)
         file.mode = '644'
         file.create
         File.read(@filename).must_equal 'old content'
-        Wright::Util::File.file_mode(@filename).must_equal 0644
+        Wright::Util::File.file_mode(@filename).must_equal 0o644
       end
     end
 
     it 'should not change up-to-date files' do
       FakeFS do
         File.write(@filename, 'hello world')
-        FileUtils.chmod(0600, @filename)
+        FileUtils.chmod(0o600, @filename)
         FileUtils.chown(23, 42, @filename)
         file = Wright::Resource::File.new(@filename)
         file.mode = '600'
@@ -106,7 +106,7 @@ describe Wright::Resource::File do
         file.content = 'hello world'
         file.create
         File.read(@filename).must_equal 'hello world'
-        Wright::Util::File.file_mode(@filename).must_equal 0600
+        Wright::Util::File.file_mode(@filename).must_equal 0o600
         Wright::Util::File.file_owner(@filename).must_equal 23
         Wright::Util::File.file_group(@filename).must_equal 42
       end
@@ -166,7 +166,7 @@ describe Wright::Resource::File do
         file.mode = '0765'
         file.create
         File.exist?(expanded_path).must_equal true
-        Wright::Util::File.file_mode(expanded_path).must_equal 0765
+        Wright::Util::File.file_mode(expanded_path).must_equal 0o765
       end
     end
   end

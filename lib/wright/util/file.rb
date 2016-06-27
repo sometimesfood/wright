@@ -32,10 +32,10 @@ module Wright
     # Various file methods.
     module File
       USER_MAP = {
-        'u' => 04700,
-        'g' => 02070,
-        'o' => 01007,
-        'a' => 07777
+        'u' => 0o4700,
+        'g' => 0o2070,
+        'o' => 0o1007,
+        'a' => 0o7777
       }.freeze
       private_constant :USER_MAP
 
@@ -45,11 +45,11 @@ module Wright
       private_class_method :user_mask
 
       MODE_MAP = {
-        'r' => 0444,
-        'w' => 0222,
-        'x' => 0111,
-        's' => 06000,
-        't' => 01000
+        'r' => 0o444,
+        'w' => 0o222,
+        'x' => 0o111,
+        's' => 0o6000,
+        't' => 0o1000
       }.freeze
       private_constant :MODE_MAP
 
@@ -168,7 +168,7 @@ module Wright
       # @return [Integer] the file mode as an integer or +nil+ if the
       #   file does not exist
       def self.file_mode(path)
-        ::File.exist?(path) ? (::File.stat(path).mode & 07777) : nil
+        ::File.exist?(path) ? (::File.stat(path).mode & 0o7777) : nil
       end
 
       # Returns a file's owner.

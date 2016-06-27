@@ -17,8 +17,8 @@ describe Util::File do
     it 'should return the correct mode for a given file' do
       FakeFS do
         FileUtils.touch(@file)
-        FileUtils.chmod(0644, @file)
-        Util::File.file_mode(@file).must_equal 0644
+        FileUtils.chmod(0o644, @file)
+        Util::File.file_mode(@file).must_equal 0o644
       end
     end
 
@@ -59,12 +59,12 @@ describe Util::File do
 
   describe 'numeric_mode_to_i' do
     it 'should not change octal integer modes' do
-      Util::File.numeric_mode_to_i(0644).must_equal 0644
+      Util::File.numeric_mode_to_i(0o644).must_equal 0o644
     end
 
     it 'should convert numeric string modes' do
-      Util::File.numeric_mode_to_i('0644').must_equal 0644
-      Util::File.numeric_mode_to_i('644').must_equal 0644
+      Util::File.numeric_mode_to_i('0644').must_equal 0o644
+      Util::File.numeric_mode_to_i('644').must_equal 0o644
     end
 
     it 'should return nil for non-numeric mode strings' do
@@ -75,29 +75,29 @@ describe Util::File do
   describe 'symbolic_mode_to_i' do
     it 'should convert symbolic modes for files' do
       type = :file
-      mode = 00644
+      mode = 0o0644
       FakeFS do
         FileUtils.touch(@file)
         FileUtils.chmod(mode, @file)
-        Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0644
-        Util::File.symbolic_mode_to_i('u=r,go+w', mode, type).must_equal 0466
-        Util::File.symbolic_mode_to_i('+x', mode, type).must_equal 0755
-        Util::File.symbolic_mode_to_i('+X', mode, type).must_equal 0644
-        Util::File.symbolic_mode_to_i('a-r', mode, type).must_equal 0200
-        Util::File.symbolic_mode_to_i('+s', mode, type).must_equal 06644
-        Util::File.symbolic_mode_to_i('+t', mode, type).must_equal 01644
+        Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0o644
+        Util::File.symbolic_mode_to_i('u=r,go+w', mode, type).must_equal 0o466
+        Util::File.symbolic_mode_to_i('+x', mode, type).must_equal 0o755
+        Util::File.symbolic_mode_to_i('+X', mode, type).must_equal 0o644
+        Util::File.symbolic_mode_to_i('a-r', mode, type).must_equal 0o200
+        Util::File.symbolic_mode_to_i('+s', mode, type).must_equal 0o6644
+        Util::File.symbolic_mode_to_i('+t', mode, type).must_equal 0o1644
       end
     end
 
     it 'should convert symbolic modes for directories' do
       type = :directory
-      mode = 00644
+      mode = 0o0644
       FakeFS do
         FileUtils.mkdir(@dir)
         FileUtils.chmod(mode, @dir)
-        Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0644
-        Util::File.symbolic_mode_to_i('+x', mode, type).must_equal 0755
-        Util::File.symbolic_mode_to_i('+X', mode, type).must_equal 0755
+        Util::File.symbolic_mode_to_i('u=rw,go=r', mode, type).must_equal 0o644
+        Util::File.symbolic_mode_to_i('+x', mode, type).must_equal 0o755
+        Util::File.symbolic_mode_to_i('+X', mode, type).must_equal 0o755
       end
     end
 

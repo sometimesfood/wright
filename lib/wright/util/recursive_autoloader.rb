@@ -77,8 +77,8 @@ module Wright
           Dir['*/'].each do |dir|
             subclass = Wright::Util.filename_to_classname(dir)
             ensure_subclass_exists(parent_class, subclass)
-            new_parent = Wright::Util.filename_to_classname(
-              ::File.join(parent_class, dir))
+            filename = ::File.join(parent_class, dir)
+            new_parent = Wright::Util.filename_to_classname(filename)
             add_autoloads_unsafe(dir, new_parent)
           end
         end
