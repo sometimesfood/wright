@@ -34,7 +34,7 @@ EOS
   gem.add_development_dependency 'fakefs', '~> 0.8.0'
   gem.add_development_dependency 'fakeetc', '~> 0.3.0'
   gem.add_development_dependency 'rake', '~> 10.4.2'
-  gem.add_development_dependency 'yard', '~> 0.8.7.6'
+  gem.add_development_dependency 'yard', '~> 0.9.12'
   gem.add_development_dependency 'redcarpet', '~> 3.3.2'
   gem.add_development_dependency 'simplecov', '~> 0.11.2'
   gem.add_development_dependency 'rubocop', '~> 0.41.0'
