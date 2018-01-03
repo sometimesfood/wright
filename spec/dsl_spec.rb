@@ -27,7 +27,7 @@ describe Wright::DSL do
     @recipe.must_respond_to(resource_method_name)
 
     # Ruby 1.9: "0 for 1", Ruby 2: "0 for 1..2"
-    error_message_re = /\Awrong number of arguments \(0 for 1(..2)?\)\Z/
+    error_message_re = /\Awrong number of arguments \(.* 1(..2)?\)\Z/
     e = -> { @recipe.send(resource_method_name) }.must_raise ArgumentError
     e.message.must_match error_message_re
 
