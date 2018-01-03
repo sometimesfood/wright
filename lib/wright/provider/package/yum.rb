@@ -11,8 +11,9 @@ module Wright
       class Yum < Wright::Provider::Package
         # @return [Array<String>] the installed package versions
         def installed_versions
-          version_format = '%{VERSION}-%{RELEASE}'
-          rpm_args = %W(-q #{package_name} --qf #{version_format})
+          version_format =
+            '%{VERSION}-%{RELEASE}' # rubocop:disable Style/FormatStringToken
+          rpm_args = %W[-q #{package_name} --qf #{version_format}]
           stdout, _, status = Open3.capture3(env, 'rpm', *rpm_args)
           status.success? ? [stdout] : []
         end

@@ -1,5 +1,8 @@
 TrivialAccessors:
   AllowPredicates: true
+# TODO: remove this as soon as Ruby 1.9 support is dropped
+SymbolArray:
+  EnforcedStyle: brackets
 AllCops:
   Exclude:
     - '.bundle/**/*'

@@ -50,7 +50,7 @@ module Wright
 
       def add_whiskers(doc)
         with_whiskers = {}
-        doc.keys.each { |k| with_whiskers["{{#{k}}}"] = doc[k] }
+        doc.each_key { |k| with_whiskers["{{#{k}}}"] = doc[k] }
         with_whiskers
       end
     end

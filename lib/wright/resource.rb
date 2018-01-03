@@ -53,11 +53,11 @@ module Wright
     # @return [void]
     # @raise [ArgumentError] if on_update is not callable
     def on_update=(on_update)
-      if on_update.respond_to?(:call) || on_update.nil?
-        @on_update = on_update
-      else
+      if on_update && !on_update.respond_to?(:call)
         raise ArgumentError, "#{on_update} is not callable"
       end
+
+      @on_update = on_update
     end
 
     # Runs the resource's current action.
@@ -107,7 +107,7 @@ module Wright
     def might_update_resource
       begin
         yield
-      rescue => e
+      rescue StandardError => e
         log_error(e)
         raise e unless ignore_failure
       end

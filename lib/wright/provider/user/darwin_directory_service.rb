@@ -26,12 +26,12 @@ module Wright
 
         def remove_user
           exec_or_fail('dscl',
-                       %W(. -delete /Users/#{user_name}),
+                       %W[. -delete /Users/#{user_name}],
                        "cannot remove user '#{user_name}'")
         end
 
         def dscl_args(cmd, key, value)
-          %W(. -#{cmd} /Users/#{user_name} #{key} #{value})
+          %W[. -#{cmd} /Users/#{user_name} #{key} #{value}]
         end
 
         def default_attributes

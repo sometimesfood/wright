@@ -26,7 +26,7 @@ module Wright
         end
 
         def pkg_info
-          pkg_info_cmd = %W(pkg_info -e #{package_name}->0)
+          pkg_info_cmd = %W[pkg_info -e #{package_name}->0]
           stdout = Open3.capture3(env, *pkg_info_cmd).first
           stdout
         end
