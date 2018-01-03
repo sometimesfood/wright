@@ -23,12 +23,15 @@ describe Wright::Logger do
   end
 
   it 'should enable colors on TTYs' do
-    Wright::Logger.new
+    logdev = StringIO.new
+    def logdev.tty?; true; end
+    Wright::Logger.new(logdev)
     Wright::Config[:log][:colorize].must_equal true
   end
 
   it 'should disable colors if the log device is not a TTY' do
-    Wright::Logger.new(StringIO.new)
+    logdev = StringIO.new
+    Wright::Logger.new(logdev)
     Wright::Config[:log][:colorize].must_equal false
   end
 
