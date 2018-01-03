@@ -2,8 +2,8 @@ wright
 ======
 [![Gem Version](https://img.shields.io/gem/v/wright.svg?style=flat-square)][gem]
 [![Build Status](https://img.shields.io/travis/sometimesfood/wright.svg?style=flat-square)][travis]
-[![Code Climate](https://img.shields.io/codeclimate/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
-[![Test Coverage](https://img.shields.io/codeclimate/coverage/github/sometimesfood/wright.svg?style=flat-square)][codeclimate]
+[![Maintainability](https://img.shields.io/codeclimate/maintainability/sometimesfood/wright.svg?style=flat-square)][codeclimate]
+[![Test Coverage](https://img.shields.io/codeclimate/c/sometimesfood/wright.svg?style=flat-square)][codeclimate]
 [![Gem Dependencies](https://img.shields.io/gemnasium/sometimesfood/wright.svg?style=flat-square)][gemnasium]
 
 Lightweight configuration management.
